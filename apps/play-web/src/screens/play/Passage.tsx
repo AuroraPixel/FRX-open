@@ -1,13 +1,15 @@
 // A journey's passage (plan item 58; 演出: 换地点时旧场景暗下去、新场景亮起来): while the stage darkens the
 // old scene and loads the new one, the page goes to ink and the player's own words for the journey
-// rise in it, then the place's name in brush, with the hour and the weather under it. It holds at
-// least 2.1 s and until the new scene is up, then gives way to it. Weak motion keeps plain fades.
+// rise in it, then the place's name in brush, with the hour and the weather under it. It gives way
+// to the page once the scene is ready or the loading allowance expires. Weak motion keeps plain fades.
 import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { weatherWords } from '../../lib/weather';
 import { showPin, useShowTime } from './showClock';
 import { PASSAGE, type ShowLevel, type TravelShow, passageAt } from './shows';
 import styles from './Shows.module.css';
+
+const SCENE_WAIT_SECONDS = 8;
 
 export interface PassageProps {
   show: TravelShow;
@@ -27,7 +29,7 @@ export function Passage({ show, level, sceneUp, onDone }: PassageProps) {
 
   useEffect(() => {
     if (showPin() !== null) return;
-    if (leaving === null && t >= p.hold && sceneUp) setLeaving(t);
+    if (leaving === null && t >= p.hold && (sceneUp || t >= SCENE_WAIT_SECONDS)) setLeaving(t);
     if (leaving !== null && t >= leaving + p.out) done.current();
   }, [t, sceneUp, leaving, p]);
 

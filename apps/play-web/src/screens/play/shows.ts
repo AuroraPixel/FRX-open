@@ -78,8 +78,7 @@ export interface PassageLook {
 }
 
 /**
- * The passage `t` seconds in; `leaving` is when it started to go (null while it holds: it holds at
- * least `hold` seconds and until the new scene is up).
+ * The passage `t` seconds in; `leaving` is when the fade began (null while the passage holds).
  */
 export function passageAt(t: number, level: ShowLevel, leaving: number | null): PassageLook {
   const p = level === 'full' ? PASSAGE.full : PASSAGE.weak;
