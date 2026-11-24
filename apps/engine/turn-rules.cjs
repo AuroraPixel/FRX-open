@@ -796,6 +796,42 @@ function itemNamesFrom(phrase) {
   return names.includes(whole) ? names : [...names, whole];
 }
 
+const sameItemName = (left, right) => left.endsWith(right) || right.endsWith(left);
+
+// An unlisted purchase's price is settled by the action card, but its physical delivery
+// comes from the story. Require the card's named object and an explicit delivery to the player.
+function storyPurchaseGaps(story, gained, receipts, playerNames, npcNames) {
+  const players = [...new Set(playerNames.filter(Boolean))]
+    .map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  if (!players) return [];
+  const carried = /(?:将|把)([^，,。！？；]{2,36}?)(?:收|放|揣|摄|纳)(?:进|入)(?:了)?(?:自己(?:的)?)?(?:袖|怀|行囊|储物袋|囊)(?:中|里)?/g;
+  const accepted = /(?:接过|收下|拿到|领到)(?:了)?([^，,。！？；]{2,24})/g;
+  const subject = new RegExp(`^(?:${players})`);
+  const otherActors = [...OTHERS.split('|'), '小贩', ...npcNames.filter(Boolean)];
+  const deliveries = plain(story).replace(/[“『"][^”』"]*[”』"]/g, '。').split(/[。！？!?；;\n]/)
+    .map(s => s.trim()).filter(s => subject.test(s) && !DENY_BEFORE.test(s) && !SUPPOSE.test(s));
+  const missing = new Set();
+  for (const r of receipts) {
+    if (!r.ok || r.kind !== 'act' || r.trade?.direction !== 'buy' || r.trade.fee || r.trade.settled
+      || !r.paid?.some(payment => payment.stat === '灵石' && payment.after < payment.before)) continue;
+    const title = plain(r.card?.title).match(/^(?:买下|买入|购下|购入|购得)([^，,。！？；]{2,24})$/);
+    if (!title) continue;
+    const name = itemNameFrom(title[1]);
+    if (name.length < 2 || name.length > 10 || (!ITEM_LIKE.test(name) && !/(?:残件|构件|部件|零件)$/.test(name))
+      || /灵石$/.test(name) || npcNames.includes(name) || gained.some(item => sameItemName(item, name))) continue;
+    const delivered = deliveries.some(sentence => [...sentence.matchAll(carried), ...sentence.matchAll(accepted)]
+      .some(match => {
+        const head = sentence.slice(0, match.index);
+        const clause = head.split(/[，,：:]/).at(-1).replace(subject, '').trim();
+        return itemNameFrom(match[1]) === name && !/[没未不别莫勿想欲]$/.test(clause)
+          && !/看着|看见|瞧见|目睹|递给/.test(clause)
+          && !otherActors.some(actor => clause.startsWith(actor));
+      }));
+    if (delivered) missing.add(`「${name}」已经扣款，正文也写了你收货，但本回合没有对应的新入囊物品。用正文名称登记；已用别名登记的，沿用原编号并统一名称，勿再加一件`);
+  }
+  return [...missing];
+}
+
 // Read a definite pickup whose objects were named in the previous sentence. Keep this stricter
 // than the free-text hints: the protagonist, the drop and the number of distinct items must agree.
 function collectiveLootGaps(story, gained, playerNames, npcNames) {
@@ -824,7 +860,7 @@ function collectiveLootGaps(story, gained, playerNames, npcNames) {
     for (const name of names) {
       if (/灵石$/.test(name)) continue;
       const actual = candidates.has(name) ? name
-        : [...candidates].find(item => item.endsWith(name) || name.endsWith(item));
+        : [...candidates].find(item => sameItemName(item, name));
       if (actual) candidates.delete(actual);
       else missing.add(`正文写了你拾得「${name}」，本回合却没有对应的新入囊物品。用正文名称逐件登记；已用别名登记的，沿用原编号并统一名称，勿再加一件`);
     }
@@ -1118,4 +1154,4 @@ function ownedOnly(op, sets) {
   });
 }
 
-module.exports = { RULES, lifePills, CHECK_GROUPS, CHECK_WORDS, TRADE_WORDS, COMBAT_WORDS, SKILL_WORDS, modifierFor, checkOutcome, lifeOwns, claimsBreakthrough, refusedConsumption, storyAcquisitions, collectiveLootGaps, stoneFlow, purseBookkeeping, itemNameFrom, parseEffects, presettle, useItem, claimItem, resolveCheck, lookupInventory, checkOwnership, checkStory, expendable, splitCommands, dropReceiptRepeats, ownedSets, ownedValues, ownedOnly, hasOwned, freeCharacterId, castOf, movedOn, fallenLeftBehind, mechanics };
+module.exports = { RULES, lifePills, CHECK_GROUPS, CHECK_WORDS, TRADE_WORDS, COMBAT_WORDS, SKILL_WORDS, modifierFor, checkOutcome, lifeOwns, claimsBreakthrough, refusedConsumption, storyAcquisitions, collectiveLootGaps, storyPurchaseGaps, stoneFlow, purseBookkeeping, itemNameFrom, parseEffects, presettle, useItem, claimItem, resolveCheck, lookupInventory, checkOwnership, checkStory, expendable, splitCommands, dropReceiptRepeats, ownedSets, ownedValues, ownedOnly, hasOwned, freeCharacterId, castOf, movedOn, fallenLeftBehind, mechanics };

@@ -15,7 +15,7 @@ def entry(item_id, name):
     return {"0": item_id, "1": name, "2": "重要物品", "3": "窄巷拾得", "4": "线索", "5": "1"}
 
 
-def examine(story, names, held=()):
+def examine(story, names, held=(), receipts=()):
     state = {
         "0": {"B1": {"0": "B1", "1": "旅人", "2": "炼气一层", "26": "5"}},
         "1": {f"I{i}": entry(f"I{i}", name) for i, name in enumerate(held, 1)},
@@ -26,7 +26,7 @@ def examine(story, names, held=()):
     commands = "\n".join(f"set({json.dumps(entry(f'I{i}', name), ensure_ascii=False)})"
                          for i, name in enumerate(names, 90))
     result = asyncio.run(settle_card(archive, commands, "loot-test", reply=story,
-                                     pilot={"receipts": [], "story": story}))
+                                     pilot={"receipts": list(receipts), "story": story}))
     assert not result["errors"]
     return result
 
@@ -55,3 +55,31 @@ def test_only_confirmed_pickups_require_a_gain(story):
     result = examine(story, [])
     assert not result["pilot"].get("acquisitions")
     assert not result["state"]["1"]
+
+
+PURCHASE = {"kind": "act", "ok": True, "card": {"kind": "买卖", "title": "买下这枚刻纹铜构件"},
+            "trade": {"direction": "buy", "price": 2}, "paid": [{"stat": "灵石", "before": 5, "after": 3}],
+            "commands": 'add("B1",{"26":"3"})', "owns": {"currency": True}}
+DELIVERY = "你走到摊前，付给小贩两块灵石，随手将那枚刻着水纹的刻纹铜构件摄入袖中。"
+
+
+def test_an_unlisted_purchase_needs_a_new_item_when_the_player_received_it():
+    result = examine(DELIVERY, [], held=["刻纹铜构件"], receipts=[PURCHASE])
+    [problem] = result["pilot"]["acquisitions"]
+    assert "刻纹铜构件" in problem
+
+    result = examine(DELIVERY, ["刻纹铜构件"], receipts=[PURCHASE])
+    assert not result["pilot"].get("acquisitions")
+    assert result["state"]["0"]["B1"]["26"] == "3"
+
+
+@pytest.mark.parametrize("story, trade", [
+    ("你如数付了灵石，小贩却一把将那枚刻纹铜构件收入袖中。", PURCHASE["trade"]),
+    ("你看着对方将那枚刻纹铜构件收入袖中。", PURCHASE["trade"]),
+    ("你放下灵石，还没接过刻纹铜构件。", PURCHASE["trade"]),
+    ("你问：『要我把刻纹铜构件收入袖中吗？』", PURCHASE["trade"]),
+    (DELIVERY, {"direction": "buy", "price": 2, "fee": True}),
+])
+def test_unlisted_trade_only_checks_explicit_delivery_of_a_paid_purchase(story, trade):
+    result = examine(story, [], receipts=[{**PURCHASE, "trade": trade}])
+    assert not result["pilot"].get("acquisitions")

@@ -1173,8 +1173,12 @@ async function settle(input) {
     const before = inventoryCounts(context, initialArchive.data.state.currentState);
     const gained = [...inventoryCounts(context, result.newState)]
       .filter(([name, count]) => count > (before.get(name) || 0)).map(([name]) => name);
-    const missing = rules.collectiveLootGaps(input.pilot.story || input.story || "", gained,
-      [storyScene.player, "你", "主角"], storyScene.npcs);
+    const story = input.pilot.story || input.story || "";
+    const player = [storyScene.player, "你", "主角"];
+    const missing = [
+      ...rules.collectiveLootGaps(story, gained, player, storyScene.npcs),
+      ...rules.storyPurchaseGaps(story, gained, lifeReceipts(storyFirst), player, storyScene.npcs),
+    ];
     if (missing.length) pilot.acquisitions = missing;
   }
   let dailyItemUses = pilotDailyUses;

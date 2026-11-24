@@ -219,6 +219,9 @@ class AfterTurn:
             stored = lineage[stored]
         return stored == version
 
+    def remember_write(self, user_id, name, version):
+        self.lineage.setdefault((user_id, name), {})[version] = version - 1
+
     async def run(self, previous, ws, name, request_id, log_id):
         if previous is not None:
             await asyncio.gather(previous, return_exceptions=True)
@@ -309,6 +312,7 @@ class AfterTurn:
                     )
                 elif path == HOST + "/evolution/commit":
                     result = await commit_evolution(records, body)
+                    self.remember_write(records.user_id, body["scope"]["archive"], result["version"])
                 else:
                     return await base(need)
             except HTTPException as exc:
@@ -330,8 +334,7 @@ class AfterTurn:
             changes = page_changes(before, result["archive"])
             if any(changes.values()):
                 written = await self.write_when_quiet(ws, name, scope, before, changes)
-                lineage = self.lineage.setdefault((ws.user.id, name), {})
-                lineage[written["version"]] = written["version"] - 1
+                self.remember_write(ws.user.id, name, written["version"])
         # A setting the job wrote more than once ends as its last write.
         writes = {write["key"]: write["value"] for write in result.get("writes") or []}
         for key, value in writes.items():
