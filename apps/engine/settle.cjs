@@ -243,6 +243,21 @@ const textOf = value => String(value ?? "").replace(/<[^>]*>/g, "").trim();
 const BONUS = /[一-龥]{1,4}\s*[+\-＋－]\s*\d+(?:\.\d+)?%?/g;
 const wordsOnly = text => text.replace(BONUS, "").replace(/^[，,、；;\s]+|[，,、；;\s]+$/g, "").replace(/([，,、；;])[，,、；;\s]+/g, "$1") || "无";
 
+function inventoryCounts(context, state) {
+  const bag = state["1"] || {};
+  const counts = new Map();
+  for (const row of Object.values(bag)) {
+    const name = characterName(row);
+    if (name) counts.set(name, (counts.get(name) || 0) + (Number(context.itemStackCount(row["5"])) || 0));
+  }
+  for (const worn of context.equippedItemRows(state["0"]?.B1)) {
+    if (Object.hasOwn(bag, worn.id || worn["0"])) continue;
+    const name = characterName(worn) || characterName({ 1: worn.name });
+    if (name) counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  return counts;
+}
+
 // What a life save's story may hand the player in one beat (the owner's fourth playtest: sixty-six
 // turns in which a token, a talisman, a recipe, a herb and a whole 储物袋 were handed over and none
 // reached the bag, for the preset told the model not to register them). The beat's account:
@@ -1154,6 +1169,14 @@ async function settle(input) {
   // A turn's settlement (it has a story) reports the gear its commands moved; a bare block of
   // commands returns exactly what the card's own settlement returned.
   const gear = "story" in input ? gearReceipts(context, wornBefore, result.newState, input.pilot?.receipts || []) : [];
+  if (pilot && life && storyScene) {
+    const before = inventoryCounts(context, initialArchive.data.state.currentState);
+    const gained = [...inventoryCounts(context, result.newState)]
+      .filter(([name, count]) => count > (before.get(name) || 0)).map(([name]) => name);
+    const missing = rules.collectiveLootGaps(input.pilot.story || input.story || "", gained,
+      [storyScene.player, "你", "主角"], storyScene.npcs);
+    if (missing.length) pilot.acquisitions = missing;
+  }
   let dailyItemUses = pilotDailyUses;
   if (input.action && !input.pilot) {
     try {

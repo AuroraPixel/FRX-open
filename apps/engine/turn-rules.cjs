@@ -796,6 +796,42 @@ function itemNamesFrom(phrase) {
   return names.includes(whole) ? names : [...names, whole];
 }
 
+// Read a definite pickup whose objects were named in the previous sentence. Keep this stricter
+// than the free-text hints: the protagonist, the drop and the number of distinct items must agree.
+function collectiveLootGaps(story, gained, playerNames, npcNames) {
+  const players = [...new Set(playerNames.filter(Boolean))]
+    .map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  if (!players) return [];
+  const inHand = `(?:落入|飞入|滚入|滑入)(?:了)?(?:(?:${players})的?)?(?:掌[中心]|手[中里])`;
+  const putAway = '收下|收起|收妥|收入(?:囊中|储物袋|袖中)|揣入袖中';
+  const pickup = new RegExp(`^(?:${players})([^。！？；]{0,28}?)([两二三四])(?:件(?:东西|物品)?|物)(?:轻巧|稳稳|同时|一齐|应声|尽数|一并|都)?(?:${inHand}|${putAway})$`);
+  const counts = { 两: 2, 二: 2, 三: 3, 四: 4 };
+  const told = plain(story).replace(/[“「『"][^”」』"]*[”」』"]/g, '。');
+  const sentences = told.split(/[。！？!?；;\n]/).map(s => s.trim()).filter(Boolean);
+  const missing = new Set();
+  for (let index = 1; index < sentences.length; index += 1) {
+    const current = sentences[index], previous = sentences[index - 1];
+    const caught = current.match(pickup);
+    if (!caught || DENY_BEFORE.test(current) || SUPPOSE.test(current)
+      || /看[到见着]|望见|见到|目睹|[，,]\s*(?:他|她|对方|那人)/.test(caught[1])) continue;
+    if (DENY_BEFORE.test(previous) || SUPPOSE.test(previous)) continue;
+    const dropped = previous.match(/(?:遗落下|遗落|遗下|掉落下|掉落|掉下|散落着|散落)([^。！？；]{2,90})$/);
+    if (!dropped) continue;
+    const names = [...new Set(itemNamesFrom(dropped[1]))];
+    if (names.length !== counts[caught[2]] || names.some(name => !name || name.length > 10
+      || !ITEM_LIKE.test(name) || npcNames.includes(name))) continue;
+    const candidates = new Set(gained);
+    for (const name of names) {
+      if (/灵石$/.test(name)) continue;
+      const actual = candidates.has(name) ? name
+        : [...candidates].find(item => item.endsWith(name) || name.endsWith(item));
+      if (actual) candidates.delete(actual);
+      else missing.add(`正文写了你拾得「${name}」，本回合却没有对应的新入囊物品。用正文名称逐件登记；已用别名登记的，沿用原编号并统一名称，勿再加一件`);
+    }
+  }
+  return [...missing];
+}
+
 // A story that hands the player a thing which never reaches the bag leaves the two
 // apart: the next turn the player cannot use it.
 function storyAcquisitions(story, bagNames, playerNames, npcNames) {
@@ -1082,4 +1118,4 @@ function ownedOnly(op, sets) {
   });
 }
 
-module.exports = { RULES, lifePills, CHECK_GROUPS, CHECK_WORDS, TRADE_WORDS, COMBAT_WORDS, SKILL_WORDS, modifierFor, checkOutcome, lifeOwns, claimsBreakthrough, refusedConsumption, storyAcquisitions, stoneFlow, purseBookkeeping, itemNameFrom, parseEffects, presettle, useItem, claimItem, resolveCheck, lookupInventory, checkOwnership, checkStory, expendable, splitCommands, dropReceiptRepeats, ownedSets, ownedValues, ownedOnly, hasOwned, freeCharacterId, castOf, movedOn, fallenLeftBehind, mechanics };
+module.exports = { RULES, lifePills, CHECK_GROUPS, CHECK_WORDS, TRADE_WORDS, COMBAT_WORDS, SKILL_WORDS, modifierFor, checkOutcome, lifeOwns, claimsBreakthrough, refusedConsumption, storyAcquisitions, collectiveLootGaps, stoneFlow, purseBookkeeping, itemNameFrom, parseEffects, presettle, useItem, claimItem, resolveCheck, lookupInventory, checkOwnership, checkStory, expendable, splitCommands, dropReceiptRepeats, ownedSets, ownedValues, ownedOnly, hasOwned, freeCharacterId, castOf, movedOn, fallenLeftBehind, mechanics };

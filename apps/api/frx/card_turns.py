@@ -1633,8 +1633,9 @@ class PilotTurn:
             self.metrics.rewrites += 1
             first_reply = raw[:20000]
             self.first_reply = first_reply
-            if ((result.get("pilot") or {}).get("mismatches")
-                    or (result.get("pilot") or {}).get("protocol")):
+            pilot = result.get("pilot") or {}
+            commands_only = not (pilot.get("mismatches") or pilot.get("protocol"))
+            if not commands_only:
                 rewritten = await self.rewrite(raw, rewrite_reasons)
                 # A rewrite without a story keeps the one the player read, problems and all.
                 if has_words(reply_story(rewritten)):
@@ -1650,6 +1651,16 @@ class PilotTurn:
                 result.setdefault("pilot", {}).setdefault("protocol", []).append(
                     "模型回复被截断，请重新输出完整正文、状态指令和行动卡")
             problems = self.problems(result)
+            if commands_only and pilot.get("acquisitions") and self.blocking(result):
+                self.metrics.rewrites += 1
+                rewritten = await self.rewrite(
+                    raw, problems + [problem_text(e) for e in result.get("errors") or []]
+                )
+                if has_words(reply_story(rewritten)):
+                    raw = rewritten
+                    story, commands, branches = split_reply(raw)
+                    result = await self.settle(raw, story, commands)
+                    problems = self.problems(result)
         unresolved = []
         if rewrite_reasons and problems and not self.blocking(result):
             # The story checks read free text. After one rewrite a remaining doubt is kept for
@@ -1683,13 +1694,13 @@ class PilotTurn:
 
     @staticmethod
     def problems(result):
-        """Ownership violations, story mismatches and bookkeeping misses (stones the story moved
-        but the commands did not book), plus missing life reply blocks and choices."""
+        """Ownership, story and bookkeeping problems, including missing confirmed pickups."""
         pilot = result.get("pilot") or {}
         return (
             list(pilot.get("ownership") or [])
             + list(pilot.get("mismatches") or [])
             + list(pilot.get("bookkeeping") or [])
+            + list(pilot.get("acquisitions") or [])
             + list(pilot.get("protocol") or [])
         )
 
@@ -1700,6 +1711,7 @@ class PilotTurn:
         checked by reading free text."""
         pilot = result.get("pilot") or {}
         return (list(result.get("errors") or []) + list(pilot.get("ownership") or [])
+                + list(pilot.get("acquisitions") or [])
                 + list(pilot.get("protocol") or []))
 
     async def rewrite(self, raw, problems, commands_only=False):
