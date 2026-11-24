@@ -1994,11 +1994,20 @@ def snapshot_state(logs, log, field, fallback):
     return None
 
 
-def history(name, value, requests=None, looks=None):
+def log_annals(log):
+    """The stored lines that belong to a turn, excluding prose-only and fight replies."""
+    kind = log.get("frxKind")
+    if kind and kind not in ("chronicle", "interrupted", "breakthrough"):
+        return []
+    return [entry for entry in log.get("frxChronicle") or [] if isinstance(entry, dict)]
+
+
+def history(name, value, requests=None, looks=None, *, numbers=None):
     """Every turn of a save as the contract's turns, oldest first: the player's log before each
     reply as the action, the engine's receipts (from the turn's request when it is known, else
     read from the cards in the log), the story, the options; each place as the look it keeps
-    (`looks`, else the rules'). Read only."""
+    (`looks`, else the rules'). With `numbers`, format only that page of absolute turn numbers.
+    Earlier logs still supply snapshots, known characters and the previous options. Read only."""
     data = value["data"]
     logs = data.get("logs") or []
     requests = requests or {}
@@ -2010,12 +2019,21 @@ def history(name, value, requests=None, looks=None):
     # A save of the cultivation life has no options: its latest turn ends with its action cards.
     playing = life_of(value)
     last = max((index for index, log in enumerate(logs) if is_turn(log)), default=None)
+    last_line = next((index for index in range(len(logs) - 1, -1, -1)
+                      if is_turn(logs[index]) and log_annals(logs[index])), None)
+    has_latest_line = False
     for index, log in enumerate(logs):
         if not is_turn(log):
             continue
         number += 1
+        if numbers is not None and number >= numbers.stop:
+            break
         before = snapshot_state(logs, log, "frxBeforeSnapshot", state) or previous
         after = snapshot_state(logs, log, "frxStateSnapshot", state) or before
+        if numbers is not None and number not in numbers:
+            previous = after
+            offered = branch_options(log.get("branchContent", ""))
+            continue
         user = logs[index - 1] if index and logs[index - 1].get("type") == "user" else None
         request = requests.get(log.get("frxRequestId")) or {}
         settlement = request.get("settlement") or {}
@@ -2024,12 +2042,11 @@ def history(name, value, requests=None, looks=None):
         if receipts is None:
             receipts = card_receipts(story_with_cards(story))
         reading = {"logs": logs[: index + 1], "archiveId": data.get("archiveId")}
-        chronicle = []
+        chronicle = [chronicle_block(entry) for entry in log_annals(log)]
+        has_latest_line |= index == last_line
         if log.get("frxKind") == "chronicle":
             # A verb of the cultivation life: its annals lines, no action and no story.
             action, story = None, ""
-            chronicle = [chronicle_block(entry) for entry in log.get("frxChronicle") or []
-                         if isinstance(entry, dict)]
         elif log.get("frxKind") == "passage":
             # 写一段: the passage the model wrote out of an annals line, and nothing else.
             action = None
@@ -2037,8 +2054,6 @@ def history(name, value, requests=None, looks=None):
             # A verb broken off by a scene, or an attempt at a gate: its annals lines, then the
             # scene's first beat or the gate's big scene.
             action = None
-            chronicle = [chronicle_block(entry) for entry in log.get("frxChronicle") or []
-                         if isinstance(entry, dict)]
         elif log.get("frxKind") in {"fight", "fought"}:
             # A move in a fight: the move as the action and its round; the move that ended the
             # fight has the battle report as its story too.
@@ -2049,10 +2064,6 @@ def history(name, value, requests=None, looks=None):
             action = played_action(request["played"], offered)
         else:
             action = action_block(user_action_text(user["content"], offered)) if user else None
-        if not log.get("frxKind") and log.get("frxChronicle"):
-            # a beat of the cultivation life that a pending event opened: its annals line
-            chronicle = [chronicle_block(entry) for entry in log["frxChronicle"]
-                         if isinstance(entry, dict)]
         blocks = turn_blocks(
             action=action,
             receipts=receipts,
@@ -2088,7 +2099,8 @@ def history(name, value, requests=None, looks=None):
                          and isinstance(book.get("chapter"), int) else {})})
         previous = after
         offered = branch_options(log.get("branchContent", ""))
-    mark_latest_line(turns)
+    if has_latest_line:
+        mark_latest_line(turns)
     return turns
 
 

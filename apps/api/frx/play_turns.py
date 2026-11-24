@@ -1133,12 +1133,17 @@ def changes_between(before, after):
 # ---------------------------------------------------------------- the desk
 
 
-def turn_requests(records, name):
+def turn_requests(records, name, request_ids=None):
     """The save's turn requests by id, with what the history reads from them: the settlement,
     and for a turn the new interface sent, the words, option and chips it was sent with and the
     ids its finished turn gave its blocks."""
+    query = records.requests_of(name)
+    if request_ids is not None:
+        if not request_ids:
+            return {}
+        query = query.where(CardRequest.id.in_(request_ids))
     with records.sessions() as session:
-        rows = session.scalars(records.requests_of(name)).all()
+        rows = session.scalars(query).all()
         found = {}
         for row in rows:
             entry = {"id": row.id, "status": row.status,
@@ -1867,12 +1872,15 @@ class TurnDesk:
     # ------------------------------------------------------------ reading
 
     def page(self, ws, save, before=None, limit=10):
-        turns = history(save.name, save.value, turn_requests(ws.records, save.name),
-                        places_of(ws.records, save, keep=False))
-        if before:
-            turns = [turn for turn in turns if turn["no"] < before]
-        shown = turns[-limit:] if limit else []
-        return {"turns": shown, "more": len(turns) > len(shown)}
+        replies = [log for log in save.data["logs"] if is_turn(log)]
+        end = min(len(replies), max(0, before - 1)) if before else len(replies)
+        start = max(0, end - limit)
+        if start == end:
+            return {"turns": [], "more": start > 0}
+        ids = {log["frxRequestId"] for log in replies[start:end] if log.get("frxRequestId")}
+        turns = history(save.name, save.value, turn_requests(ws.records, save.name, ids),
+                        places_of(ws.records, save, keep=False), numbers=range(start + 1, end + 1))
+        return {"turns": turns, "more": start > 0}
 
     def pending(self, ws, save):
         """The turn under way or waiting for its settlement, or None when there is none."""

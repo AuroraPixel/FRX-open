@@ -169,7 +169,7 @@ def play_save_router(store, settings, runtime, jobs=None):
                       ws: Workspace = Depends(workspace)):
         """What a standing verb would do if done now (gameplay plan item 12): the engine works it
         out with the verb's own code and writes nothing."""
-        save = await asyncio.to_thread(find_save, ws.records, archive_id)
+        save = await asyncio.to_thread(find_save, ws.records, archive_id, lean=True)
         if life_of(save.value) is None:
             raise refused(NOT_LIFE)
         try:
