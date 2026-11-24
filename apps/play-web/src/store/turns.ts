@@ -350,7 +350,8 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
     },
 
     async retry() {
-      const { saveId, live, request } = get();
+      const { saveId, live, request, turns } = get();
+      if (live?.status === 'pending' || (!live && turns.at(-1)?.status === 'pending')) return get().settle();
       const at = version();
       if (!saveId || !live || live.status === 'streaming' || at === undefined) return;
       liveText.clear();
@@ -417,11 +418,17 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
     },
 
     async settle() {
-      const { saveId, live } = get();
+      const { saveId, live, turns } = get();
       const at = version();
-      if (!saveId || !live || live.status !== 'pending' || at === undefined) return;
-      set({ live: { ...live, status: 'streaming', settling: true, error: undefined }, error: null });
-      await follow((signal) => play.retry(saveId, live.id, { version: at }, signal));
+      const saved = turns.at(-1);
+      const pending = live ?? (saved?.status === 'pending' ? { ...saved, open: null } : null);
+      if (!saveId || pending?.status !== 'pending' || at === undefined) return;
+      set({
+        turns: turns.filter((turn) => turn.id !== pending.id),
+        live: { ...pending, status: 'streaming', settling: true, error: undefined },
+        error: null,
+      });
+      await follow((signal) => play.retry(saveId, pending.id, { version: at }, signal));
     },
 
     async undo(toTurn) {

@@ -475,7 +475,13 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
   }
   // Only a foe the receipts left unhurt: writing a full bar over a hit is still judged.
   const registeredIds = new Set([...registered.values()].filter(id => fullBar(asObject(base["0"]?.[id]?.["11"])?.["血量"])));
-  const kept = [], dropped = [], notes = [], restored = new Set();
+  const kept = [], dropped = [], notes = [], restored = new Map();
+  const restoreBiography = (id, bio) => {
+    kept.push(`set(${JSON.stringify(bio)})`);
+    restored.set(id, bio);
+    present.add(id);
+    notes.push(`${id}（${characterName(bio)}）按传记回到场上`);
+  };
   const startingHp = target => `${target}的血量以引擎登记为准`;
   // IDs held by characters off the scene, and every ID a renumbered character may not take.
   const occupied = new Set([...(cast.knownIds || []), ...Object.keys(biographies)].filter(id => !present.has(id)));
@@ -578,10 +584,7 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
           // back on the scene under their own ID: the book goes on with them
           present.add(target);
         } else if (bio && sameName(characterName(bio), name) && !(cast.fallen && cast.fallen(bio))) {
-          kept.push(`set(${JSON.stringify(bio)})`);
-          restored.add(target);
-          present.add(target);
-          notes.push(`${target}（${characterName(bio)}）按传记回到场上`);
+          restoreBiography(target, bio);
           command = "add"; changed = true;
         } else {
           const fresh = rules.freeCharacterId(target[0], taken);
@@ -617,10 +620,7 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
     }
     if (command !== "set" && !present.has(target)) {
       if (command !== "de" && biographies[target] && !restored.has(target)) {
-        kept.push(`set(${JSON.stringify(biographies[target])})`);
-        restored.add(target);
-        present.add(target);
-        notes.push(`${target}（${characterName(biographies[target])}）按传记回到场上`);
+        restoreBiography(target, biographies[target]);
       } else if (!restored.has(target)) {
         dropped.push(span);
         continue;
@@ -638,7 +638,7 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
       kept.push(`add(${JSON.stringify(target)},${JSON.stringify(columns)})`);
     } else kept.push(retarget(span, target));
   }
-  return { text: kept.join("\n"), dropped, notes, claimedRise: player?.claimedRise || null,
+  return { text: kept.join("\n"), dropped, notes, restored, claimedRise: player?.claimedRise || null,
     refusedGifts: gifts?.refused || [], refusedPieces: gifts?.pieces || [], bags: gifts?.bags || [] };
 }
 
@@ -867,7 +867,7 @@ async function storyMode(input) {
 }
 
 // Report only operations that would change a value the receipts settled.
-async function effectiveViolations(context, archive, delta, receipts) {
+async function effectiveViolations(context, archive, delta, receipts, restored) {
   const sets = rules.ownedSets(receipts);
   const flagged = delta.filter(op => rules.checkOwnership([op], receipts).length);
   if (!flagged.length) return [];
@@ -880,7 +880,11 @@ async function effectiveViolations(context, archive, delta, receipts) {
     context.probeState = structuredClone(base);
     context.probeDelta = [op];
     const after = (await vm.runInContext("applyChanges(probeState, probeDelta, {persistEffects:false})", context, { timeout: 1500 })).newState;
-    if (rules.ownedValues(context, after, sets, after) !== rules.ownedValues(context, base, sets, after)) violations.push(...rules.checkOwnership([op], receipts));
+    // A returning life NPC already had a relationship in the stored biography.
+    const id = op.command === "set" ? op.data?.["0"] : null;
+    const bio = sets.life && id && !base["0"]?.[id] ? restored?.get(id) : null;
+    const before = bio ? { ...base, 0: { ...base["0"], [id]: bio } } : base;
+    if (rules.ownedValues(context, after, sets, after) !== rules.ownedValues(context, before, sets, after)) violations.push(...rules.checkOwnership([op], receipts));
   }
   return [...new Set(violations)];
 }
@@ -916,7 +920,7 @@ async function settle(input) {
   const storyAfter = (input.pilot?.receipts || []).filter(receipt => receipt?.afterStory);
   const context = makeContext(archive, input.seed, input.knowledge, errors, settingsWrites);
   context.commandText = input.commands;
-  let modelCommands, pilotDropped = [], pilotNotes = [], storyScene = null, pilotClaimedRise = null, pilotRealm = null;
+  let modelCommands, pilotRestored, pilotDropped = [], pilotNotes = [], storyScene = null, pilotClaimedRise = null, pilotRealm = null;
   // In a life save, the catalogue's goods past the beat's cap the story's commands were refused
   // (storyThing), and the bags handed over for the engine to open.
   let pilotRefusedGifts = [], pilotRefusedPieces = [], pilotBags = [];
@@ -963,6 +967,7 @@ async function settle(input) {
         lockedItems: state => scratch.storedItemIds(state) } : {}),
     });
     cleaned.text = normalized.text;
+    pilotRestored = normalized.restored;
     pilotClaimedRise = normalized.claimedRise;
     pilotRefusedGifts = normalized.refusedGifts || [];
     pilotRefusedPieces = normalized.refusedPieces || [];
@@ -1078,7 +1083,7 @@ async function settle(input) {
         bookkeeping.push(...rules.purseBookkeeping(story, purse, [storyScene.player, "你", "主角"], storyScene.npcs));
       }
     }
-    pilot = { ownership: await effectiveViolations(context, archive, delta, receipts), mismatches: [...new Set(mismatches)], bookkeeping, dropped: pilotDropped, notes: pilotNotes,
+    pilot = { ownership: await effectiveViolations(context, archive, delta, receipts, pilotRestored), mismatches: [...new Set(mismatches)], bookkeeping, dropped: pilotDropped, notes: pilotNotes,
       ...(pilotBags.length ? { bags: pilotBags } : {}) };
     delta = [...context.receiptParsed.delta, ...delta];
     if (storyAfter.length) {
