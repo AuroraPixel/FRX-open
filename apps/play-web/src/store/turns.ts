@@ -106,6 +106,7 @@ const initial = {
 
 /** Codes that mean the server holds a turn of its own: show that one instead. */
 const BUSY = new Set(['turn_in_progress', 'pending_settlement']);
+export const TURN_STREAM_IDLE_MS = 30_000;
 
 export const useTurnsStore = create<TurnsStore>()((set, get) => {
   const failed = (error: unknown) => (error instanceof ApiError ? error : new ApiError('network'));
@@ -132,18 +133,50 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
    */
   async function follow(
     start: (signal?: AbortSignal) => Promise<Response>,
-    { from, queue = [] }: { from?: { turnId: string; after: number }; queue?: QueueItem[] } = {},
+    { from, queue = [], requestId }: { from?: { turnId: string; after: number }; queue?: QueueItem[]; requestId?: string } = {},
   ) {
-    const saveId = get().saveId;
-    if (!saveId) return;
+    const currentSave = get().saveId;
+    if (!currentSave) return;
+    const saveId = currentSave;
     controller?.abort();
     const own = new AbortController();
     controller = own;
     let liveTurnId = from?.turnId;
     let named = Boolean(liveTurnId);
+    let lastActivity = Date.now();
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
+    const stillFollowing = () => controller === own && get().live?.status === 'streaming';
+    const scheduleCheck = () => {
+      idleTimer = setTimeout(() => void checkQuiet(), Math.max(0, TURN_STREAM_IDLE_MS - (Date.now() - lastActivity)));
+    };
+    async function checkQuiet() {
+      if (!stillFollowing()) return;
+      if (Date.now() - lastActivity < TURN_STREAM_IDLE_MS) {
+        scheduleCheck();
+        return;
+      }
+      lastActivity = Date.now();
+      try {
+        const id = liveTurnId ?? requestId;
+        if (!id) return;
+        const pending = await play.pending(saveId, own.signal);
+        if (!stillFollowing() || pending?.status === 'streaming') return;
+        const saved = pending?.id === id ||
+          (await play.turns(saveId, undefined, own.signal)).turns.some((turn) => turn.id === id);
+        if (!saved || !stillFollowing()) return;
+        controller = null;
+        own.abort();
+        await get().reload();
+      } catch {
+        // Keep the existing stream while a status read fails or the model is still working.
+      } finally {
+        if (stillFollowing()) scheduleCheck();
+      }
+    }
     const giveBack = () => {
       if (!named && queue.length) useQueueStore.getState().restore(queue);
     };
+    scheduleCheck();
     try {
       const end = await streamTurn({
         saveId,
@@ -152,6 +185,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         turnId: from?.turnId,
         after: from?.after,
         onEvent: (event) => {
+          lastActivity = Date.now();
           if (event.event === 'turn') {
             liveTurnId = event.turn.id;
             named = true;
@@ -208,6 +242,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         },
       });
     } finally {
+      clearTimeout(idleTimer);
       if (controller === own) controller = null;
     }
   }
@@ -238,7 +273,9 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
   async function post(request: TurnRequest) {
     const saveId = get().saveId;
     if (!saveId) return;
-    await follow((signal) => play.postTurn(saveId, request, signal), { queue: request.queue ?? [] });
+    await follow((signal) => play.postTurn(saveId, request, signal), {
+      queue: request.queue ?? [], requestId: request.requestId,
+    });
   }
 
   return {
