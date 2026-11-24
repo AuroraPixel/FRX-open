@@ -781,6 +781,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
           key={meeting.id + meeting.charId}
           entry={meeting}
           where={`${scenery.place} · ${scenery.hourName}`}
+          inFight={Boolean(fightNow)}
           onLeave={endMeeting}
           onGone={meetingGone}
         />

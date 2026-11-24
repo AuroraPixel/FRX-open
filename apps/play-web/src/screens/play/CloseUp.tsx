@@ -4,11 +4,14 @@
 import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { EnterBlock } from '../../contracts';
+import { Btn } from '../../ui/Btn';
 import { Seal } from '../../ui/Marks';
 import styles from './CloseUp.module.css';
 
 /** The close-up stays at least this long. */
 export const HOLD_MS = 1200;
+/** A fight's controls become available even when the player does not dismiss the introduction. */
+export const FIGHT_HOLD_MS = 4500;
 
 /** Characters of the line a close-up holds: about two lines at its width. */
 const LINE_BUDGET = 40;
@@ -46,13 +49,14 @@ export interface CloseUpProps {
   entry: EnterBlock;
   /** 「青岚山 · 观云台 · 子时」 under the line */
   where: string;
+  inFight?: boolean;
   /** the player asked to go on: the page comes back while the bars leave */
   onLeave: () => void;
   /** the bars are gone */
   onGone: () => void;
 }
 
-export function CloseUp({ entry, where, onLeave, onGone }: CloseUpProps) {
+export function CloseUp({ entry, where, inFight = false, onLeave, onGone }: CloseUpProps) {
   const box = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -82,6 +86,12 @@ export function CloseUp({ entry, where, onLeave, onGone }: CloseUpProps) {
   };
   const askRef = useRef(ask);
   askRef.current = ask;
+
+  useEffect(() => {
+    if (!inFight || leaving) return;
+    const timer = setTimeout(() => askRef.current(), FIGHT_HOLD_MS);
+    return () => clearTimeout(timer);
+  }, [inFight, leaving]);
 
   // every key ends it, and none reaches the page behind (the option keys, the panel keys)
   useEffect(() => {
@@ -132,7 +142,17 @@ export function CloseUp({ entry, where, onLeave, onGone }: CloseUpProps) {
           <figcaption className={styles.where}>{where}</figcaption>
         </figure>
       )}
-      <span className="visually-hidden">点按或按任意键继续</span>
+      <Btn
+        variant="solid"
+        className={styles.proceed}
+        disabled={leaving}
+        onClick={(event) => {
+          event.stopPropagation();
+          ask();
+        }}
+      >
+        {inFight ? '继续斗法' : '继续'}
+      </Btn>
     </div>
   );
 }

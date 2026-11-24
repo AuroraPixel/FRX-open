@@ -139,7 +139,8 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
     controller?.abort();
     const own = new AbortController();
     controller = own;
-    let named = Boolean(from);
+    let liveTurnId = from?.turnId;
+    let named = Boolean(liveTurnId);
     const giveBack = () => {
       if (!named && queue.length) useQueueStore.getState().restore(queue);
     };
@@ -152,6 +153,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         after: from?.after,
         onEvent: (event) => {
           if (event.event === 'turn') {
+            liveTurnId = event.turn.id;
             named = true;
             if (!get().taken) set({ taken: true });
           }
@@ -174,9 +176,9 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
       const problem = failed(error);
       if (problem.code === 'aborted') return;
       if (problem.code === 'unauthorized') keepForReturn(named);
-      if (from && problem.code === 'not_found' && gone !== from.turnId) {
-        gone = from.turnId;
-        // the turn being picked up finished more than a minute ago: it is history now
+      if (liveTurnId && problem.code === 'not_found' && gone !== liveTurnId) {
+        gone = liveTurnId;
+        // The server may have committed the turn before a restart or before its events expired.
         set({ live: null, reconnecting: 0 });
         if (controller === own) controller = null;
         await get().reload();

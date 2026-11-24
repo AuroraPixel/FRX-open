@@ -114,8 +114,16 @@
   color: var(--text);
 }
 
+.proceed {
+  position: absolute;
+  right: max(var(--s-22), env(safe-area-inset-right, 0px));
+  bottom: max(var(--s-12), env(safe-area-inset-bottom, 0px));
+  z-index: 1;
+}
+
 .closeUp[data-leaving] .title,
-.closeUp[data-leaving] .words {
+.closeUp[data-leaving] .words,
+.closeUp[data-leaving] .proceed {
   animation: global(fade-out) var(--d-bars) ease both;
 }
 
