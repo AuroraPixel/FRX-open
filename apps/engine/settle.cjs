@@ -451,6 +451,7 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
   // story writes after the first slash stands. A save in the cultivation-life play holds a beat's
   // time to its own limits instead (cast.beatTime, life/scene.cjs).
   const clock = !cast.beatTime && receipts.some(r => r.ok && r.time?.minutes > 0) ? String(rules.mechanics.clockRow(base)?.["0"] ?? "") : null;
+  const journey = cast.life && receipts.some(r => r.ok && r.kind === "travel");
   const present = new Set(Object.keys(base["0"] || {}));
   const registered = new Map();
   for (const r of receipts) {
@@ -475,7 +476,13 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
     const op = ops && ops.length === 1 ? ops[0] : null;
     const id = op ? (op.command === "set" ? op.data?.["0"] : op.id) : null;
     if (cast.beatTime && op?.command === "add" && id === "TIME_LOCATION_ROW" && op.data && Object.hasOwn(op.data, "0")) {
-      const held = cast.beatTime(String(rules.mechanics.clockRow(base)?.["0"] ?? ""), String(op.data["0"] ?? ""));
+      const engineRow = String(rules.mechanics.clockRow(base)?.["0"] ?? "");
+      if (engineRow && journey && rules.checkOwnership([op], receipts).length) {
+        kept.push(`add("TIME_LOCATION_ROW",${JSON.stringify({ ...op.data, 0: engineRow })})`);
+        notes.push("地点以本回合的赶路回执为准");
+        continue;
+      }
+      const held = cast.beatTime(engineRow, String(op.data["0"] ?? ""));
       if (held.note) {
         kept.push(`add("TIME_LOCATION_ROW",${JSON.stringify({ ...op.data, 0: held.text })})`);
         notes.push(held.note);

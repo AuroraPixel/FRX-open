@@ -121,6 +121,45 @@ function leaving(trip) {
 
 const fighting = env => String(env.state['0']?.B1?.['31']).trim() === 'true' || Boolean(env.play?.fight);
 
+const ARRIVAL = '(?:暗渡回|渡回|潜回|返回|回到|抵达|到达|赶到|潜入|进入|踏入|走进|来到|移步至)';
+const DESTINATION = new RegExp(`${ARRIVAL}(?<spot>[\\p{Script=Han}·]{2,30})[。！？；，、,.!?;\\s]*$`, 'u');
+const NONARRIVAL = /(?:未能|没能|没有|没法|无法|不能|并未|尚未|还未|只差|差点|若|如果|打算|准备|设法|试图|计划|想要|即将|便可|就能|才(?:能|可))/;
+
+// The successful act already paid for this movement. A district or nearby landmark can be
+// more precise in the scene than on the map without granting a journey to another map point.
+async function sceneArrival(env, args, earlier) {
+  const act = earlier.findLast(receipt => receipt.ok && receipt.kind === 'act');
+  if (!act || !['成功', '大成功'].includes(act.check?.outcome)
+      || (act.check.kind !== '潜行' && act.check.kind !== '脱身' && act.card?.route !== '转移')
+      || earlier.some(receipt => receipt.ok && receipt.kind === 'travel') || fighting(env)) return;
+  const intent = String(act.card?.title || '').split(/[。！？；，、,.!?;\n]/).filter(part => part.trim()).at(-1)?.trim();
+  const spot = intent?.match(DESTINATION)?.groups.spot;
+  if (!spot || NONARRIVAL.test(intent)) return;
+
+  const story = String(args.story || '').replace(/“[^”]*”|「[^」]*」|『[^』]*』|"[^"]*"/g, '');
+  const confirmation = new RegExp(`${ARRIVAL}${spot}`, 'u');
+  const confirmed = story.split(/[。！？；.!?;\n]/).some(sentence => /你|主角/.test(sentence)
+    && sentence.split(/[，,]/).some(part => confirmation.test(part) && !NONARRIVAL.test(part)));
+  if (!confirmed) return;
+
+  const now = mechanics.readClock(env.state);
+  const where = places.readWhere(now?.place.slice(1));
+  if (!where.xy || !where.region || !where.area || spot === where.spot) return;
+  const [x, y] = where.xy;
+  const map = env.worldMap;
+  const anchor = places.factsOf(placeText(where.region, where.area, '', x, y).slice(1), map).place;
+  const point = places.poisOf(map).find(poi => poi.name === anchor);
+  if (!point || point.main_region !== where.region
+      || ![where.region, where.area, anchor].some(name => spot.startsWith(name))) return;
+  const place = placeText(where.region, where.area, spot, x, y);
+  if (places.factsOf(place.slice(1), map).place !== anchor) return;
+
+  const row = mechanics.clockText({ ...now, place }, 0);
+  await env.settle({ kind: 'scene_arrival', ok: true, source: 'engine',
+    summary: `抵达${spot}`, arrival: { spot, place: place.slice(1) }, owns: ownsNothing(),
+    commands: `add("TIME_LOCATION_ROW",${JSON.stringify({ 0: row })})` });
+}
+
 function plan(env, verb, upTo = null, source = 'verb') {
   if (!mechanics.readClock(env.state)) return { refused: '时间行里没有可识别的日期，无法赶路' };
   if (fighting(env)) return { refused: '仍在战斗中，不能赶路' };
@@ -225,4 +264,4 @@ function install(verbs) {
   verbs.VERBS.travel = verbPlan;
 }
 
-module.exports = { RULES, walkOf, route, plan, move, near, install, hooks };
+module.exports = { RULES, walkOf, route, plan, move, sceneArrival, near, install, hooks };

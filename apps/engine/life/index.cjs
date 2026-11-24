@@ -421,6 +421,7 @@ const OPS = {
   chance: gate.chanceOp,
   calm: perks.calmOp,
   travel: travel.move,
+  scene_arrival: travel.sceneArrival,
   lead: leads.prove,
   karma: karma.karma,
   knot: karma.knot,
@@ -456,7 +457,7 @@ async function run(input, env, apply, earlier) {
       return receipt;
     },
   });
-  const result = (await OPS[op](env, args)) ?? {};
+  const result = (await OPS[op](env, args, input.receipts || [])) ?? {};
   // A 奇遇's scene that closed gives what its cell holds, as its cards went (rewards.cjs, item 50).
   if (!result.error && rewards.watches(op)) await rewards.settle(env);
   // A job its receipts did is paid, one past its day dropped (jobs.cjs, plan item 35).

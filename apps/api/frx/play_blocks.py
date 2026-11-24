@@ -625,6 +625,7 @@ RECEIPT_KINDS = {
     # a journey (items 27, 28: the verb travel, and the model's move_place with its annals lines),
     # a stretch gathering, a day hunting, and what a felled foe leaves (item 30)
     "travel": ("quest", "赶路"),
+    "scene_arrival": ("quest", "抵达"),
     "gather": ("gain", "采集"),
     "hunt": ("quest", "狩猎"),
     "loot": ("gain", "战利品"),

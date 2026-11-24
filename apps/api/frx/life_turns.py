@@ -761,7 +761,7 @@ def present_of(interruption):
     return [str(found["id"])] if isinstance(found, dict) and found.get("id") else []
 
 
-TIME_ROW = re.compile(r'add\("TIME_LOCATION_ROW",\s*(\{[^{}]*\})\)')
+TIME_ROW = re.compile(r'\badd\s*\(\s*"TIME_LOCATION_ROW"\s*,\s*(\{[^{}]*\})\s*\)')
 
 
 def road_of(receipts):
@@ -785,21 +785,17 @@ def road_of(receipts):
     return None
 
 
-def held_to_road(commands, road):
-    """The story's commands with each time row's place held to the road's (its time left to the
-    beat's limits). The model writes the place of the state its prompt shows, the one before the
-    journey: back at the start when the road is still near it, else another map place, which the
-    engine refuses (the turn waited for its settlement after a rewrite that did the same; batch
-    5)."""
+def held_to_place(commands, place):
+    """Keep the engine's location in the model's time row while settling its other commands."""
     def hold(found):
         try:
             data = json.loads(found[1])
         except ValueError:
             return found[0]
         text = str(data.get("0") or "")
-        if "/" not in text:
+        if "0" not in data:
             return found[0]
-        data["0"] = text.split("/", 1)[0] + "/" + road
+        data["0"] = text.split("/", 1)[0] + "/" + place
         return 'add("TIME_LOCATION_ROW",' + json.dumps(data, ensure_ascii=False) + ")"
     return TIME_ROW.sub(hold, str(commands or ""))
 
@@ -1190,7 +1186,7 @@ async def before_story(plan, archive, seed, knowledge, admitted, life):
         plan["life"]["interrupted"] = interrupted_words(life["verb"], life["interrupted"])
         road = road_of(receipts)
         if road:
-            # broken off on the road: the beat's time row keeps the road (held_to_road)
+            # Broken off on the road: the beat's time row keeps the road.
             plan["life"]["interrupted"]["road"] = road
     elif life.get("entered"):
         plan["life"]["entered"] = {"title": str(life["entered"].get("title") or "")}
@@ -2005,19 +2001,36 @@ def life_settler(archive_before, seed, knowledge, beat, turn):
     road = (beat.get("interrupted") or {}).get("road")
 
     async def settle(raw, story, commands):
-        if road:
-            commands = held_to_road(commands, road)
         # A rewrite settles again: the beat's own receipts go and are made anew from it.
         turn.receipts[:] = [receipt for receipt in turn.receipts
                             if not any(receipt is made for made in after["receipts"])]
         before_receipts = copy.deepcopy(turn.receipts)
+        fixed_place = road or road_of(turn.receipts)
+        act = beat.get("act") or {}
+        check = act.get("check") or {}
+        arrived = []
+        if (
+            not fixed_place and check.get("outcome") in {"成功", "大成功"}
+            and (check.get("kind") in {"潜行", "脱身"}
+                 or (act.get("card") or {}).get("route") == "转移")
+        ):
+            landing = await life_op(
+                archive_before, seed, knowledge, turn.receipts, "scene_arrival",
+                {"story": plain(story)},
+            )
+            arrived = landing.get("receipts") or []
+            fixed_place = next((r["arrival"]["place"] for r in arrived if r.get("arrival")), None)
+            turn.receipts.extend(arrived)
+        if fixed_place:
+            commands = held_to_place(commands, fixed_place)
         seen = {}
-        after["receipts"], after["cards"] = await after_story(
+        scene_receipts, after["cards"] = await after_story(
             archive_before, seed, knowledge, turn.receipts, raw, beat, commands,
             seen)
+        after["receipts"] = arrived + scene_receipts
         # a close on the beat a matter opened (batch 9's close rule), for the turn's metrics
         after["matter"] = seen.get("matter")
-        turn.receipts.extend(after["receipts"])
+        turn.receipts.extend(scene_receipts)
         settled = await settle_card(
             archive_before, commands, seed, knowledge, reply=raw,
             pilot={"receipts": turn.receipts, "story": story},
@@ -2036,7 +2049,6 @@ def life_settler(archive_before, seed, knowledge, beat, turn):
         # left, settled or met, and any actual progress on them
         late += await promises_kept(archive_before, settled, seed, knowledge,
                                     turn.receipts + late, late, raw)
-        act = beat.get("act") or {}
         failed = (act.get("outcome") or (act.get("check") or {}).get("outcome")) in FAILED
         tasks, ignored = clock_completions(raw, [] if failed else beat.get("clockTasks") or [])
         noted = await threads_noted(archive_before, settled, seed, knowledge,
