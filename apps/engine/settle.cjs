@@ -1164,7 +1164,8 @@ async function settle(input) {
   if (errors.length) return { errors };
   context.stateInput = structuredClone(archive.data.state.currentState);
   const wornBefore = structuredClone(archive.data.state.currentState);
-  const result = await vm.runInContext("applyChanges(stateInput, parsed.delta, {persistEffects:false})", context, { timeout: 1500 });
+  context.keepDeparted = life;
+  const result = await vm.runInContext("applyChanges(stateInput, parsed.delta, {persistEffects:false, keepDeparted})", context, { timeout: 1500 });
   if (errors.length) return { errors };
   // A turn's settlement (it has a story) reports the gear its commands moved; a bare block of
   // commands returns exactly what the card's own settlement returned.
@@ -1193,10 +1194,11 @@ async function settle(input) {
       return { errors: [error.message], itemUseError: error.message };
     }
   }
-  context.settledState = result.newState;
+  // Serialize an NPC's final row in the biography even when the story removed it from the scene.
+  context.biographyState = { ...result.newState, 0: { ...result.departedCharacters, ...result.newState["0"] } };
   context.changedCharacters = result.updatedCharacterIds;
   context.newLog = {id: '__frx_settlement__'};
-  await vm.runInContext("autoGenerateCharacterWorldBooks(changedCharacters, newLog, settledState)", context, { timeout: 1500 });
+  await vm.runInContext("autoGenerateCharacterWorldBooks(changedCharacters, newLog, biographyState)", context, { timeout: 1500 });
   const biographyPatches = archive.data.logs.flatMap((log, index) =>
     JSON.stringify(log.biographySnapshot) !== JSON.stringify(initialArchive.data.logs[index]?.biographySnapshot)
       ? [{id:log.id, index, value:log.biographySnapshot}] : []);

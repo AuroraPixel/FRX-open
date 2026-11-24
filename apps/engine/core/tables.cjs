@@ -161,6 +161,7 @@ newState = JSON.parse(JSON.stringify(baseState));
 const characterNameChanges = {};
 const updatedCharacterIds = new Set();
 const settingsWrites = [];
+const departedCharacters = {};
 // An explicit attribute edit takes precedence over a duplicate remark anywhere in the batch.
 // Key by the row itself because set/de can replace a character under the same ID.
 const healthWrites = new Map();
@@ -419,6 +420,7 @@ if (id.startsWith('C') || id.startsWith('G')) updatedCharacterIds.add(id);
 } else if (newState[tableIndex] && newState[tableIndex][id]) {
 const item = newState[tableIndex][id];
 if (item && item['1']) characterNameChanges[id] = item['1'].split('|')[0];
+if (options.keepDeparted && tableIndex === '0' && /^[CG]/.test(id)) departedCharacters[id] = item;
 delete newState[tableIndex][id];
 }
 break;
@@ -552,7 +554,7 @@ if (persistEffects) await db.archives.put(archive);
 if (npcAvatarsNeedsUpdate) {
 if (persistEffects) await db.archives.put(archive);
 }
-return { newState, characterNameChanges, updatedCharacterIds, settingsWrites };
+return { newState, characterNameChanges, updatedCharacterIds, settingsWrites, departedCharacters };
 }
 
 // app.js 10694
