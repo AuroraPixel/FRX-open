@@ -8,6 +8,7 @@ game's evolving state fields and individual snapshot payloads.
 import copy
 import hashlib
 import json
+from functools import lru_cache
 from uuid import uuid4
 
 from fastapi import HTTPException
@@ -37,6 +38,7 @@ from sqlalchemy.orm import (
 )
 
 from .card_snapshots import KEPT, NEAR, SERVER_FIELDS, TABLES, is_kept
+from .domain import ROOT
 from .storage import Base
 
 SNAPSHOT_FIELDS = (
@@ -525,6 +527,30 @@ def iter_records(session, user_id, collections=None):
         yield from session.scalars(records_query(user_id, collection).order_by(model.key))
 
 
+@lru_cache(maxsize=1)
+def demo_map():
+    return json.loads((ROOT / "content/map.json").read_text(encoding="utf-8"))
+
+
+def add_demo_coast(state):
+    """Extend the original demo map when reading a save, preserving its existing places."""
+    world = state.get("worldMap")
+    if not isinstance(world, dict) or world.get("width") != 430:
+        return state
+    regions = world.get("main_regions")
+    if not isinstance(regions, list) or [region.get("name") for region in regions
+                                        if isinstance(region, dict)] != ["潮岚道"]:
+        return state
+
+    expanded = demo_map()
+    world["width"] = expanded["width"]
+    for field in ("terrains", "main_regions", "sub_regions", "points_of_interest"):
+        existing = world.get(field) or []
+        names = {entry.get("name") for entry in existing if isinstance(entry, dict)}
+        world[field] = existing + [clone(entry) for entry in expanded[field] if entry["name"] not in names]
+    return state
+
+
 def archive_value(row, lean=False):
     if row.deleted:
         return None
@@ -557,7 +583,7 @@ def archive_value(row, lean=False):
     seen = set()
     return {**clone(row.document_meta or {}), "name": row.name,
             "data": {**clone(row.data_meta or {}), "archiveId": row.archive_id,
-                     "state": row.state.value,
+                     "state": add_demo_coast(row.state.value),
                      "logs": [log.value(lean, at == 0 or at >= len(logs) - NEAR, seen, payloads)
                               for at, log in enumerate(logs)]}}
 

@@ -22,7 +22,8 @@
     "gate": 2,
     "hook": 1,
     "venue": 1,
-    "calendar": 1
+    "calendar": 1,
+    "starSea": 1
   },
   "texts": {
     "main": "主线·{章}（{进度}）：{办法}",

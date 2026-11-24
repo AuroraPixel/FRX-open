@@ -67,6 +67,32 @@
       "opens": "开比",
       "note": "学徒比试布阵和手法，弟子以本门贡献换取观席。",
       "worth": false
+    },
+    {
+      "id": "sea-ruins",
+      "name": "潮下遗址",
+      "place": "候潮石窟",
+      "month": 2,
+      "day": 1,
+      "every": 2,
+      "first": 2,
+      "days": 45,
+      "opens": "退潮可入",
+      "note": "海底遗址随潮露出，筑基及以上可以入内。",
+      "worth": true
+    },
+    {
+      "id": "xutian",
+      "name": "照海台",
+      "place": "照海台",
+      "month": 7,
+      "day": 1,
+      "every": 24,
+      "first": 23,
+      "days": 60,
+      "opens": "现世",
+      "note": "结丹及以上可入殿。最深处藏有结婴灵药，错过可静候下次。",
+      "worth": true
     }
   ],
   "own": {

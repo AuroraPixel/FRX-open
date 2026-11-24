@@ -26,6 +26,8 @@ BODY = BIRTHS_FILE["body"]
 BASELINES = json.loads((ROOT / "content/combat.json").read_text(encoding="utf-8"))["baselines"]
 SECTS = json.loads((ROOT / "content/life/sects.json").read_text(encoding="utf-8"))["sects"]
 MONTH_DAYS = 30
+REGIONAL_ROUTES = json.loads((ROOT / "content/life/star-sea.json").read_text(encoding="utf-8"))
+REGIONAL_LORE = REGIONAL_ROUTES["narration"]
 
 UNCONFIGURED = "还没有配置主回合的模型，开不了修仙人生"
 UNADMITTED = "眼下的模型没有通过工具准入，开不了修仙人生"
@@ -39,6 +41,33 @@ def life_of(save):
     state = data.get("state") if isinstance(data, dict) else None
     play = state.get("frxPlay") if isinstance(state, dict) else None
     return play if isinstance(play, dict) and play.get("version") == VERSION else None
+
+
+def regional_lore(archive, *, director=False, destination=None):
+    state = archive["data"]["state"]
+    tables = state.get("currentState") or {}
+    rows = tables.get("4") or []
+    time_row = next((row for row in rows if isinstance(row, dict) and row.get("id") == "TIME_LOCATION_ROW"), {})
+    area = str(time_row.get("0") or "").split("/")
+    region = area[1] if len(area) > 1 else ""
+    if destination:
+        points = (state.get("worldMap") or {}).get("points_of_interest") or []
+        arrived = next((poi for poi in points if poi.get("name") == destination), None)
+        if arrived:
+            region = arrived.get("main_region")
+    if region == REGIONAL_ROUTES["overseas"]:
+        lore = REGIONAL_LORE["overseas"]
+    elif region == REGIONAL_ROUTES["mainland"]:
+        players = tables.get("0") or {}
+        rank = str((players.get("B1") or {}).get("2") or "").split("|", 1)[0]
+        if not re.match(r"筑基(?:后期|大圆满|圆满|巅峰)|假丹|结丹|金丹|元婴|化神|炼虚|合体|大乘", rank):
+            return ""
+        lore = REGIONAL_LORE["mainland"]
+        if (state.get("frxPlay") or {}).get("starSea", {}).get("entered"):
+            lore = REGIONAL_LORE["return"]
+    else:
+        return ""
+    return "\n".join([lore, REGIONAL_LORE["director"]]) if director else lore
 
 
 def new_life(month=FIRST_MONTH, birth=None, difficulty=None):

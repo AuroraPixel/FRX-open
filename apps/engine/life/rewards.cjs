@@ -612,4 +612,4 @@ function install(verbs) {
   verbs.hooks.more = env => [...before(env), ...listed(env)];
 }
 
-module.exports = { roll, grant, loot, fortune, fortuneChance, gather, hunt, install, listed, speciesOf, blockedFor, watches, settle };
+module.exports = { roll, grant, itemOf, loot, fortune, fortuneChance, gather, hunt, install, listed, speciesOf, blockedFor, watches, settle };

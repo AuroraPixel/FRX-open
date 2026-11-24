@@ -206,6 +206,7 @@ function plan(env, verb, upTo = null, source = 'verb') {
       settled.summary += `；时间 ${settled.time.before}→${settled.time.after}` + (settled.age ? `；年龄 ${settled.age.before}→${settled.age.after}` : '');
       if (!arrived) return;
       chronicle.write(env, 'arrive', { 到: dest.name });
+      require('./star-sea.cjs').arrived(env, trip.from, dest);
       // 心境 (item 36): the first visit to the place and to its region; the place left counts as seen
       const gains = mind.arrived(env, { place: dest.name, region: dest.sub_region || dest.main_region },
         { place: trip.from.facts.place, region: trip.from.poi ? trip.from.poi.sub_region || trip.from.poi.main_region : null });
@@ -264,4 +265,4 @@ function install(verbs) {
   verbs.VERBS.travel = verbPlan;
 }
 
-module.exports = { RULES, walkOf, route, plan, move, sceneArrival, near, install, hooks };
+module.exports = { RULES, walkOf, standing, route, plan, move, sceneArrival, near, install, hooks };

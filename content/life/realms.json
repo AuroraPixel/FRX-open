@@ -104,6 +104,130 @@
         "takes": 50,
         "waits": 30
       }
+    },
+    "sea-ruins": {
+      "name": "潮下遗址",
+      "place": "候潮石窟",
+      "calendar": "sea-ruins",
+      "requires": {
+        "minMajor": 2
+      },
+      "layers": [
+        3,
+        4
+      ],
+      "width": [
+        2,
+        3
+      ],
+      "rests": [
+        1,
+        1
+      ],
+      "weights": {
+        "战": 2,
+        "险": 3,
+        "宝": 3,
+        "秘": 2
+      },
+      "fights": [
+        {
+          "who": "海兽",
+          "tier": 2,
+          "weight": 3
+        },
+        {
+          "who": "劫修",
+          "tier": 2,
+          "weight": 2
+        }
+      ],
+      "guardian": {
+        "who": "海兽",
+        "tier": 3,
+        "goods": [
+          "sea-tide-pearl"
+        ]
+      },
+      "tier": "二阶",
+      "danger": 35,
+      "keepHerbs": true,
+      "earlyExit": true,
+      "yields": [
+        "定潮珠",
+        "二阶灵草",
+        "二阶灵物"
+      ],
+      "others": {
+        "most": 3,
+        "takes": 35,
+        "waits": 20
+      }
+    },
+    "xutian": {
+      "name": "照海台",
+      "place": "照海台",
+      "calendar": "xutian",
+      "requires": {
+        "minMajor": 3
+      },
+      "layers": [
+        4,
+        6
+      ],
+      "width": [
+        2,
+        3
+      ],
+      "rests": [
+        1,
+        2
+      ],
+      "weights": {
+        "战": 2,
+        "险": 3,
+        "宝": 3,
+        "秘": 2
+      },
+      "fights": [
+        {
+          "who": "妖兽",
+          "tier": 3,
+          "weight": 3
+        },
+        {
+          "who": "劫修",
+          "tier": 3,
+          "weight": 2
+        },
+        {
+          "who": "妖兽",
+          "tier": 4,
+          "weight": 1
+        }
+      ],
+      "guardian": {
+        "who": "妖兽",
+        "tier": 4,
+        "goods": [
+          "xutian-ginseng",
+          "recipe-xutian-ginseng"
+        ]
+      },
+      "tier": "三阶",
+      "danger": 60,
+      "keepHerbs": true,
+      "earlyExit": true,
+      "yields": [
+        "悬汐银参",
+        "古丹方",
+        "三阶灵物"
+      ],
+      "others": {
+        "most": 5,
+        "takes": 55,
+        "waits": 35
+      }
     }
   }
 }

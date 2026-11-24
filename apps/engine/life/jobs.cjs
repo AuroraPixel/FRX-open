@@ -115,7 +115,19 @@ function drawn(env, place, half) {
     notices.push({ id: `${place}·${half}·${n}`, kind: name, title: fill(rule.title, values), text: fill(rule.text, values),
       place: at.name, goal: rule.goal, days, pay });
   }
-  return notices;
+  return [...localNotices(env, place, half), ...notices];
+}
+
+function localNotices(env, board, half) {
+  return Object.entries(RULES.local?.[board] || {}).flatMap(([kind, notice]) => {
+    const completed = Object.values(env.state['6'] || {}).some(row =>
+      row?.['1'] === `差事：${notice.title}` && String(row['5']).startsWith('已完成'));
+    if (completed || mechanics.cultivator(env).major < notice.major
+      || !places.mayEnter(env, notice.place)) return [];
+    const active = taken(env).find(entry => entry.board === board && entry.kind === kind);
+    return [{ id: active?.id || `${board}·${half}·${kind}`, kind, title: notice.title, text: notice.text,
+      place: notice.place, goal: notice.goal, days: notice.days, pay: notice.pay }];
+  });
 }
 
 const taken = env => list(env.play?.jobs);
@@ -202,6 +214,8 @@ function did(job, receipt, here) {
 function goodsFor(env, entry) {
   const rewards = require('./rewards.cjs');
   const rule = RULES.reward;
+  const reward = RULES.local?.[entry.board]?.[entry.kind]?.reward;
+  if (reward) return [rewards.itemOf(goods.byId(reward), 1)];
   const facts = places.factsOf(entry.place, env.worldMap);
   return rewards.roll(env, rule.source, { place: entry.place, tier: places.tierAt(entry.place, env.worldMap),
     danger: Number(facts.danger) || 0, without: rule.without, fewer: rule.fewer, target: `${rule.seed}:${entry.id}` }).items;

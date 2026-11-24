@@ -56,6 +56,7 @@ from .card_turns import (
 from .card_vectors import parse_rerank_order
 from .domain import ROOT
 from .gateway import Gateway, ModelFailure, model_failure
+from .life import regional_lore
 from .life_prompt import LifeBeat, command_repair_messages, life_entry, life_preset
 from .request_policy import GENERATION_SECONDS, REPAIR_SECONDS
 
@@ -177,7 +178,7 @@ def macro_expander(seed, player_name, variables=None):
     return expand
 
 
-def build_messages(payload, seed, worldbook, pilot=None, director=None, dialogue=False, life=None):
+def build_messages(payload, seed, worldbook, pilot=None, director=None, dialogue=False, life=None, regional=""):
     """The turn prompt. `director` is the server's plot evolution block (【主线】, 【剧情指导】,
     【未回收的伏笔】); a pilot plan may carry the engine's 【修行】 block as progressText.
     `dialogue` adds the new interface's dialogue rule to the narrator's preset. `life` is a beat
@@ -230,6 +231,8 @@ def build_messages(payload, seed, worldbook, pilot=None, director=None, dialogue
         entries = [entry for entry in map(pilot_entry, entries) if entry]
     entries.sort(key=lambda e: e.get("insertion_order", 100))
     before = [e["content"] for e in entries if e.get("extensions", {}).get("position", 0) == 0]
+    if regional:
+        before.append("【地域世界书】" + regional)
     # The original UI already supplies ordered history, equipment and map context.
     user = (
         expanded_input
@@ -754,9 +757,12 @@ async def plan_turn(
             if directed
             else ""
         )
+        trips = [(receipt.get("travel") or {}) for receipt in ((plan or {}).get("receipts") or [])]
+        landing = next((trip.get("to") for trip in reversed(trips) if trip.get("arrived")), None)
         messages = build_messages(
             payload, reservation["seed"], read_worldbook(records), pilot=pilot,
             director=guidance, dialogue=dialogue, life=beat,
+            regional=regional_lore(archive_before, destination=landing) if beat is not None else "",
         )
     except (HTTPException, ModelFailure, LifeRefusal):
         records.finish_request(request_id, "", "failed")

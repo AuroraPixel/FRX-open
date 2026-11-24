@@ -26,7 +26,8 @@
       "fortune": "fortune",
       "saga": "calendar",
       "people": "visit",
-      "thread": "thread"
+      "thread": "thread",
+      "starSea": "director"
     },
     "peopleEvents": {
       "诀别": "friend_death",

@@ -46,7 +46,7 @@ from .card_store import CardStore, state_digest
 from .card_turns import TOOL_SPECS, live_memory, strip_cards, tool_capable, tool_message
 from .domain import ROOT
 from .gateway import Gateway, ModelFailure
-from .life import life_of
+from .life import life_of, regional_lore
 from .life_memory import active_matters, life_evidence
 from .storage import now
 from .usage import scope as usage_scope
@@ -1724,7 +1724,8 @@ def build_messages(prep, reason, progress):
     ]
     play = life_of(prep.value)
     if play is not None:
-        sections[-1:-1] = life_sections(play, progress)
+        lore = regional_lore(prep.value, director=True)
+        sections[-1:-1] = ([("地域世界书与推进机会", lore)] if lore else []) + life_sections(play, progress)
         if not prep.disabled and prep.plot and prep.index is not None:
             chapter = prep.plot["chapters"][prep.index]
             review = story_review_text(chapter, completed_story_facts(prep.value))

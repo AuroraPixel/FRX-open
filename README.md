@@ -1,6 +1,6 @@
 # 云汀修行录 · FRX Open
 
-可以自行部署的中文修仙文字 RPG。玩家写下行动或选择行动卡。剧情由你配置的语言模型续写，骰子、斗法、修炼、历法、任务和交易由结算引擎处理。内置示例世界「云汀」有渡口、集市、宗门和一处随潮水开放的秘境。
+可以自行部署的中文修仙文字 RPG。玩家写下行动或选择行动卡。剧情由你配置的语言模型续写，骰子、斗法、修炼、历法、任务和交易由结算引擎处理。内置示例世界「云汀」有渡口、集市和宗门。筑基后期可以查古阵或搭商路去落灯海，完成护航、采药和猎妖委托，探索候潮石窟与照海台。
 
 - `apps/play-web/` 是 React 界面和 three.js 舞台。
 - `apps/api/frx/` 提供账号、存档、回合和模型接口。
@@ -39,7 +39,7 @@ docker compose --env-file deploy/multiuser.env -f compose.multiuser.yaml up -d -
 首次部署需要空数据库。SMTP 和验证码签名密钥的配置见 [环境变量样板](.env.example)。密钥和存档应保存在本地数据目录或部署环境中。改 DOM、规则或接口后，可以用下列命令检查最小回归。
 
 ```sh
-uv run pytest -q tests/test_public_world.py tests/test_mail_delivery.py
+uv run pytest -q tests/test_public_world.py tests/test_star_sea.py
 npm --prefix apps/play-web test
 ```
 

@@ -115,8 +115,9 @@ function here(env) {
 function table(env) {
   const { facts, region } = here(env);
   // A world factor's danger (妖兽主宰) lifts them further.
-  const up = (Number(region?.up) || 0) + world.hooks(env, 'danger').reduce((sum, hook) => sum + hook.up, 0);
-  const rows = list(ENCOUNTERS.tables[facts.kind]).map(row => ({ ...row, tier: Math.min(TOP, row.tier + up) }));
+  const local = ENCOUNTERS.places?.[facts.place];
+  const up = (local ? 0 : Number(region?.up) || 0) + world.hooks(env, 'danger').reduce((sum, hook) => sum + hook.up, 0);
+  const rows = list(local || ENCOUNTERS.tables[facts.kind]).map(row => ({ ...row, tier: Math.min(TOP, row.tier + up) }));
   return { facts, region, rows };
 }
 

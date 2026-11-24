@@ -113,8 +113,18 @@ function generate(id, opening) {
 
 const sectNames = Object.entries(places.mapFacts().reduce((all, poi) => (poi.kind === '宗门' ? { ...all, [poi.name]: true } : all), {})).map(([name]) => name);
 const sectOf = row => sectNames.find(name => identityOf(row).includes(name)) || null;
-const fits = (env, row, spec) => mechanics.parseRealm(row?.['2']).major === spec.requires.major
-  && spec.requires.identity.some(word => identityOf(row).includes(word)) && !mechanics.isFallen(env.ctx, row);
+function admission(env, row, spec, player = false) {
+  const { major, minMajor, identity } = spec.requires;
+  const rank = mechanics.parseRealm(row?.['2']).major;
+  const order = mechanics.COMBAT.realms.order;
+  if (minMajor != null && rank < minMajor) return `${spec.name}只许${order[minMajor]}期及以上的修士进`;
+  if (major != null && rank !== major) return `${spec.name}只许${order[major]}期的人进`;
+  if (identity?.length && !identity.some(word => identityOf(row).includes(word))
+      && !(player && require('./sect.cjs').disciple(env))) return `${spec.name}只许宗门弟子进`;
+  return null;
+}
+
+const fits = (env, row, spec) => !admission(env, row, spec) && !mechanics.isFallen(env.ctx, row);
 
 function othersOf(env, realm, spec) {
   const mine = sectOf(env.state['0']?.B1);
@@ -156,7 +166,7 @@ function view(env) {
   const reached = Math.floor((now - minuteOf(realm.opening)) / DAY) + 1;
   return {
     id: realm.id, name: realm.name, until: clock.dateOf(until * DAY), daysLeft: Math.max(0, until - Math.floor(now / DAY)),
-    depth: realm.depth, at: realm.at, exit: realm.at >= realm.depth, layers,
+    depth: realm.depth, at: realm.at, exit: Boolean(REALMS.realms[realm.id].earlyExit || realm.at >= realm.depth), layers,
     others: realm.others.map(other => ({ id: other.id, name: other.name, side: other.side, layer: Math.max(0, Math.min(realm.depth, reached)) })),
     taken: realm.taken.map(item => ({ name: item.name, count: item.count })),
   };
@@ -199,7 +209,7 @@ function herbsOut(env, realm, commands, owns) {
 async function out(env, how) {
   const realm = env.play.realm;
   const commands = [], owns = ownsNothing();
-  const stones = herbsOut(env, realm, commands, owns);
+  const stones = REALMS.realms[realm.id].keepHerbs ? 0 : herbsOut(env, realm, commands, owns);
   const handed = realm.handed;
   const brought = stones ? `灵草折成灵石${chronicle.count(stones)}块`
     : handed ? `灵草${chronicle.count(handed.herbs)}株交给宗门，得贡献${chronicle.count(handed.contribution)}` + (handed.pills ? `、筑基丹${chronicle.count(handed.pills)}枚` : '') : '';
@@ -256,6 +266,9 @@ function hurt(env, card, outcome, commands, owns) {
 async function loot(env, realm, target, nth = 1) {
   const spec = REALMS.realms[realm.id];
   const items = rewards.roll(env, '秘境', { tier: spec.tier, place: spec.place, danger: spec.danger, target: `${realm.id}:${target}`, nth }).items;
+  if (nth === 2) {
+    items.push(...list(spec.guardian.goods).map(id => rewards.itemOf(goods.byId(id), 1)));
+  }
   const made = rewards.grant(env, items);
   for (const item of items) realm.taken.push({ id: item.id, name: item.name, class: item.class, count: item.count });
   return { items, made };
@@ -359,10 +372,8 @@ async function enter(env, args) {
   const opening = clock.dateKey(open.day);
   if (env.play.realmsDone?.[id] === opening) return env.refuse(`这一次的${spec.name}已经进过了`);
   if (places.placeFacts(env).place !== spec.place) return env.refuse(`要先到${spec.place}`);
-  const player = env.state['0']?.B1;
-  if (mechanics.parseRealm(player?.['2']).major !== spec.requires.major) return env.refuse(`${spec.name}只许${mechanics.COMBAT.realms.order[spec.requires.major]}期的人进`);
-  // A sect's disciple (sect.cjs, plan item 46: in a sect, or written as a disciple).
-  if (!require('./sect.cjs').disciple(env) && !spec.requires.identity.some(word => identityOf(player).includes(word))) return env.refuse(`${spec.name}只许宗门弟子进`);
+  const reason = admission(env, env.state['0']?.B1, spec, true);
+  if (reason) return env.refuse(reason);
   require('./saga.cjs').enteredRealm(env, spec.calendar, opening);
   const map = generate(id, opening);
   const realm = { id, name: spec.name, place: spec.place, opening, until: clock.dateKey(open.until), entered: clock.dateKey(clock.today(env)),
@@ -403,7 +414,9 @@ async function leave(env) {
   if (why) return env.refuse(why);
   await guardOver(env, realm);
   if (env.clock().minutes >= minuteOf(realm.until)) return shut(env);
-  if (realm.at < realm.depth) return env.refuse('出口在最深处，还没走到');
+  if (realm.at < realm.depth) {
+    return REALMS.realms[realm.id].earlyExit ? out(env, 'leave') : env.refuse('出口在最深处，还没走到');
+  }
   const now = env.clock().minutes;
   const waiting = realm.others.find(other => other.waits && !realm.met.includes(other.id) && reaches(realm, realm.depth + 1) <= now);
   if (waiting) {
@@ -445,13 +458,10 @@ function entrance(env) {
   const open = calendar.openNow(env, spec.calendar);
   const fixed = calendar.CALENDAR.fixed.find(each => each.id === spec.calendar);
   const coming = !open && fixed ? calendar.nextOpen(env, fixed, clock.today(env)) : null;
-  const player = env.state['0']?.B1;
   const note = env.play.realm ? '已经在秘境里了'
     : !open ? `${spec.name}眼下没有开启`
     : env.play.realmsDone?.[id] === clock.dateKey(open.day) ? `这一次的${spec.name}已经进过了`
-    : mechanics.parseRealm(player?.['2']).major !== spec.requires.major ? `${spec.name}只许${mechanics.COMBAT.realms.order[spec.requires.major]}期的人进`
-    : !require('./sect.cjs').disciple(env) && !spec.requires.identity.some(word => identityOf(player).includes(word)) ? `${spec.name}只许宗门弟子进`
-    : null;
+    : admission(env, env.state['0']?.B1, spec, true);
   return { id, name: spec.name, open: !!open,
     ...(open ? { until: clock.dateOf(open.until * DAY) } : {}),
     ...(coming ? { next: clock.dateOf(coming.day * DAY) } : {}),

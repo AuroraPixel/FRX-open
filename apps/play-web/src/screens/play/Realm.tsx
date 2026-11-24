@@ -63,6 +63,7 @@ export function RealmMap({ realm, onStep, disabled = false }: RealmMapProps) {
   const titleId = useId();
   const taken = realm.taken.map((item) => `${item.name}${two(item.count)}`).join('、');
   const live = Boolean(onStep) && !disabled;
+  const deepest = realm.at >= realm.depth;
   return (
     <section className={styles.realm} aria-labelledby={titleId}>
       <header className={styles.head}>
@@ -71,7 +72,7 @@ export function RealmMap({ realm, onStep, disabled = false }: RealmMapProps) {
           <b>{daysLeftWords(realm.daysLeft)}</b>
           <span>{realm.until.text}关闭</span>
           <span>
-            {realm.exit ? '已到最深处' : `第${chineseNumber(Math.min(realm.at + 1, realm.depth))}层`} · 共{chineseNumber(realm.depth)}层
+            {deepest ? '已到最深处' : `第${chineseNumber(Math.min(realm.at + 1, realm.depth))}层`} · 共{chineseNumber(realm.depth)}层
           </span>
         </p>
       </header>
@@ -118,7 +119,7 @@ export function RealmMap({ realm, onStep, disabled = false }: RealmMapProps) {
           <span className={styles.nodes}>
             {realm.exit && onStep ? (
               <button type="button" className={styles.leave} disabled={!live} onClick={() => onStep({ action: 'leave' })}>
-                出秘境
+                {deepest ? '出秘境' : '提前撤出'}
               </button>
             ) : (
               <span className={styles.exitWord}>出口</span>

@@ -112,6 +112,7 @@ const places = require('./places.cjs');
 const trade = require('./trade.cjs');
 const goods = require('./goods.cjs');
 const travel = require('./travel.cjs');
+const starSea = require('./star-sea.cjs');
 const verbs = require('./verbs.cjs');
 const methods = require('./methods.cjs');
 const speed = require('./speed.cjs');
@@ -275,7 +276,10 @@ function waysFor(env, condition, soon = null) {
     // realm held, whatever day its calendar opens it (沉钟泽: the 诸院's 炼气 disciples)
     if (value && !places.mayEnter(env, value, { open: true })) return [];
     const days = value ? reach(env, value) : null;
-    if (days === null) return [];
+    if (days === null) {
+      const next = value ? starSea.hintTo(env, value) : null;
+      return next ? [next] : [];
+    }
     const event = calendar.upcoming(env, 5).find(entry => entry.kind === 'fixed' && entry.place === value);
     // the main line's own day near: by when to be there
     const text = soon ? fill(T.arriveBy, { 期: soon.date.text, 地: value, 日: numeral(days) })
@@ -1215,7 +1219,7 @@ function calendarHints(env) {
   return [];
 }
 
-const SOURCES = [['thread', threadHints], ['earn', earnHints], ['main', mainHints], ['job', jobHints], ['duty', dutyHints],
+const SOURCES = [['thread', threadHints], ['starSea', starSea.hints], ['earn', earnHints], ['main', mainHints], ['job', jobHints], ['duty', dutyHints],
   ['due', dueHints], ['gate', env => gateOnce(env)],
   ['hook', hookHints], ['venue', venueHints], ['calendar', calendarHints],
   ['talk', env => [...threadHints(env, true), ...talkHints(env)]]];
@@ -1367,7 +1371,7 @@ function hintsOf(env) {
   // Concrete unfinished events lead; optional generic conversations only fill spare space after
   // cultivation, resources and scheduled obligations, including older saves' followUp threads.
   const first = [...new Set(['thread', ...(soon || ready ? ['main'] : []), ...(ready || gateSoon(env) ? ['gate'] : []),
-    ...(hurt ? ['due', 'gate'] : [])])];
+    ...(hurt ? ['due', 'gate'] : []), 'starSea'])];
   const order = [...first.map(name => SOURCES.find(([key]) => key === name)), ...SOURCES.filter(([name]) => !first.includes(name))];
   for (const [name, source] of order) {
     if (out.length >= RULES.most) break;

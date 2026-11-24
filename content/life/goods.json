@@ -2797,6 +2797,101 @@
       "key": false,
       "unit": "片",
       "shop": false
+    },
+    {
+      "id": "sea-tide-pearl",
+      "name": "定潮珠",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 2200,
+      "uses": "候潮石窟中得到的护身法宝，装备后增强神识与法防",
+      "key": true,
+      "kind": "器",
+      "type": "法宝",
+      "unit": "颗",
+      "effect": "神识+6、法防+12",
+      "shop": false
+    },
+    {
+      "id": "sea-core",
+      "name": "海妖内丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 450,
+      "uses": "白螺滩海兽的内丹，可作海炼丹方的主材",
+      "key": true,
+      "part": "妖丹",
+      "unit": "枚",
+      "shop": false
+    },
+    {
+      "id": "xutian-ginseng",
+      "name": "悬汐银参",
+      "class": "灵物",
+      "tier": "三阶",
+      "price": 50000,
+      "uses": "照海台的珍稀灵参，可炼成助结婴的灵药",
+      "key": true,
+      "unit": "株",
+      "shop": false
+    },
+    {
+      "id": "recipe-sea-ascension",
+      "name": "丹方·海炼降尘丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 1500,
+      "uses": "白螺滩猎妖所得的海妖内丹可炼成辅助结丹的降尘丹",
+      "key": true,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "shop": false,
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "海妖内丹",
+            "count": 2
+          }
+        ],
+        "days": 12,
+        "output": {
+          "name": "降尘丹",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-xutian-ginseng",
+      "name": "丹方·九曲灵参丸",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 20000,
+      "uses": "借海妖内丹和照海台灵参炼制结婴灵药",
+      "key": true,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "shop": false,
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "海妖内丹",
+            "count": 1
+          },
+          {
+            "name": "悬汐银参",
+            "count": 1
+          }
+        ],
+        "days": 45,
+        "output": {
+          "name": "九曲灵参丸",
+          "count": 1
+        }
+      }
     }
   ]
 }

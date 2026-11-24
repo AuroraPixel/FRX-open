@@ -487,13 +487,25 @@ function fightView(env, round) {
 
 // ---------------------------------------------------------------- the teleport arrays
 
+function crossing(env, station, destination) {
+  const rule = RULES.teleport.stations[station];
+  const link = list(rule?.links).find(each => each.to === destination);
+  if (!link) return null;
+  const taken = bookOf(env).stations[station];
+  const repair = rule.repair && !repaired(env, station)
+    ? taken && !lapsed(env, taken) ? 'taken' : 'available' : null;
+  const conflict = env.play.world?.events?.['star-sea-dispute']?.stages;
+  const duty = conflict?.happen && !conflict.aftermath ? (link.warFee || 0) : 0;
+  return { stones: link.stones + duty, repair };
+}
+
 function cross(env, at, dest) {
   const here = at.facts.place;
   const station = here ? RULES.teleport.stations[here] : null;
   if (!station) return null;
-  const link = list(station.links).find(each => each.to === dest.name);
+  const link = crossing(env, here, dest.name);
   if (!link) return { refused: fill(TEXTS.noLink, { 到: dest.name }) + `，只通${list(station.links).map(each => each.to).join('、')}` };
-  if (station.repair && !repaired(env, here)) return { refused: fill(TEXTS.broken, { 地: here, 事: station.repair.title }) };
+  if (link.repair) return { refused: fill(TEXTS.broken, { 地: here, 事: station.repair.title }) };
   const purse = mechanics.stonesOf(env.state['0']?.B1) ?? 0;
   if (purse < link.stones) return { refused: fill(TEXTS.purse, { 数: chronicle.numeral(link.stones), 有: chronicle.numeral(purse) }) };
   return { days: RULES.teleport.days, stones: link.stones, station: here };
@@ -511,7 +523,7 @@ function view(env) {
   return {
     laid: book.laid.filter(each => each.place === place).map(shownOf),
     field: book.field.filter(each => each.place === place).map(shownOf),
-    ...(station ? { station: { links: list(station.links), ...(station.repair ? { broken: !repaired(env, here), repair: station.repair.title } : {}) } } : {}),
+    ...(station ? { station: { links: list(station.links).map(({ to }) => ({ to, stones: crossing(env, here, to).stones })), ...(station.repair ? { broken: !repaired(env, here), repair: station.repair.title } : {}) } } : {}),
   };
 }
 
@@ -536,4 +548,4 @@ function install(verbs, { fight, interrupt, clocks, travel }) {
   fight.hooks.moves = { ...fight.hooks.moves, break: breakMove };
 }
 
-module.exports = { RULES, arrayPlan, auraBonus, sealed, pace, cross, view, install, laidAt };
+module.exports = { crossing, RULES, arrayPlan, auraBonus, sealed, pace, cross, view, install, laidAt };
