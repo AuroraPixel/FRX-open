@@ -114,11 +114,15 @@ const atLeast = (have, need) => have.major > need.major || (have.major === need.
 const stepDaysOf = major => speed.stepDaysOf(major);
 const TIER_REALMS = data('goods').tiers;
 const given = value => value !== undefined && value !== null && value !== '';
+const DESCRIBED_CAP = new RegExp(
+  `(?:可修(?:炼)?[至到]|(?:修炼|修行)上限[：:])\\s*((?:${ORDER.slice(1).join('|')})(?:[一二三四五六七八九十\\d]+层|初期|中期|后期|大圆满|圆满|巅峰)?)`,
+);
 
 // ---------------------------------------------------------------- what the sheet reads
 
 // The method's cultivation cap by its name: its item row, worn or in the bag. The cap written on it
-// (物品表第 7 列; a worn method keeps it as maxRealm), else the realm of its tier (gear.tierOfItem:
+// (物品表第 7 列; a worn method keeps it as maxRealm), an explicit cap in the item's own text,
+// or the realm of its tier (gear.tierOfItem:
 // 一阶 炼气, 二阶 筑基 …; the numeric balance after plan item 50: a cap not written no longer reaches
 // every realm). { ...realm, written } or null when there is no method.
 function capOf(env, name) {
@@ -129,6 +133,10 @@ function capOf(env, name) {
   const text = plain(row['7'] ?? row.cap ?? row.maxRealm);
   const written = text ? mechanics.parseRealm(text) : null;
   if (written && !written.unknown) return { ...written, written: true };
+  for (const field of [row.effect ?? row['4'], row.description ?? row['3']]) {
+    const described = plain(field).match(DESCRIBED_CAP);
+    if (described) return { ...mechanics.parseRealm(described[1]), written: true };
+  }
   const tier = gear.tierOfItem(env, row);
   const realm = TIER_REALMS[tier] ? mechanics.parseRealm(TIER_REALMS[tier]) : null;
   return realm && !realm.unknown ? { ...realm, written: false, tier } : null;

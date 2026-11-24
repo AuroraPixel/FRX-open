@@ -634,7 +634,9 @@ function dealOf(env, card, bag) {
     const good = item ? goods.ofItem(env.state['1']?.[item.id] || { 1: item.name }) : null;
     return good && good.class !== STONES ? { price: trade.each(env, good, 'sell') } : item ? { unpriced: true } : {};
   }
-  const good = [goods.lookup(key)].find(each => each && each.class !== STONES) || namedGood(title);
+  const method = METHOD_PURCHASE.test(purchaseName(title));
+  const good = [goods.lookup(key)].find(each => each && each.class !== STONES && (!method || each.type === '功法'))
+    || namedGood(title, method ? '功法' : null);
   if (good) return { price: trade.each(env, good, 'buy'), good: { id: good.id, name: good.name } };
   const place = places.placeFacts(env).place;
   const tier = (place && places.tierAt(place, env.worldMap)) || goods.tierOf(mechanics.parseRealm(env.state['0']?.B1?.['2']).major);
@@ -690,10 +692,14 @@ function saleItem(bag, key, title, sellWords) {
 // { name, type } when the name ends in a piece's word (goods.gearTypeOf), else null.
 const BUY_VERB = /买下|买入|购入|购买|购得|换取|换得|求购|订下|拿下|买/;
 const MEASURE = /^(?:那|这)?(?:[一两二三四五六七八九十]+)?(?:面|件|把|柄|口|副|套|枚|张|杆|只|顶|双|袭|领|具)?/;
-function pieceAsked(key, title) {
+const METHOD_PURCHASE = /(?:功法|心法|[诀经功](?:拓本|抄本|全本|残卷|残篇|残册|玉简)?)[》」』】]*$/;
+function purchaseName(title) {
   const said = BUY_VERB.test(title) ? title.slice(title.search(BUY_VERB)).replace(BUY_VERB, '') : '';
-  const named = said.split(/[与和及、，,。并再后]/)[0].replace(MEASURE, '').trim();
-  for (const name of [/^[A-Za-z]+\d+$/.test(key) ? '' : key, named]) {
+  return said.split(/[与和及、，,。并再后]/)[0].replace(MEASURE, '').trim();
+}
+
+function pieceAsked(key, title) {
+  for (const name of [/^[A-Za-z]+\d+$/.test(key) ? '' : key, purchaseName(title)]) {
     const type = name ? goods.gearTypeOf(name, '') : null;
     if (type) return { name, type };
   }
@@ -701,10 +707,10 @@ function pieceAsked(key, title) {
 }
 
 // The catalogue good whose name (or alias) the title says, the longest; spirit stones never.
-function namedGood(title) {
+function namedGood(title, type) {
   let best = null;
   for (const good of goods.GOODS) {
-    if (good.class === STONES) continue;
+    if (good.class === STONES || (type && good.type !== type)) continue;
     for (const name of [good.name, ...(good.aliases || [])]) {
       if (name.length >= 2 && title.includes(name) && (!best || name.length > best.length)) best = { good, length: name.length };
     }
