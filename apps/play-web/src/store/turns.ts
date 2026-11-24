@@ -107,6 +107,7 @@ const initial = {
 /** Codes that mean the server holds a turn of its own: show that one instead. */
 const BUSY = new Set(['turn_in_progress', 'pending_settlement']);
 export const TURN_STREAM_IDLE_MS = 30_000;
+const TURN_STATUS_TIMEOUT_MS = 12_000;
 
 export const useTurnsStore = create<TurnsStore>()((set, get) => {
   const failed = (error: unknown) => (error instanceof ApiError ? error : new ApiError('network'));
@@ -156,20 +157,29 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         return;
       }
       lastActivity = Date.now();
+      const id = liveTurnId ?? requestId;
+      if (!id) {
+        scheduleCheck();
+        return;
+      }
+      const probe = new AbortController();
+      const stopProbe = () => probe.abort();
+      const deadline = setTimeout(stopProbe, TURN_STATUS_TIMEOUT_MS);
+      own.signal.addEventListener('abort', stopProbe, { once: true });
       try {
-        const id = liveTurnId ?? requestId;
-        if (!id) return;
-        const pending = await play.pending(saveId, own.signal);
+        const pending = await play.pending(saveId, probe.signal);
         if (!stillFollowing() || pending?.status === 'streaming') return;
         const saved = pending?.id === id ||
-          (await play.turns(saveId, undefined, own.signal)).turns.some((turn) => turn.id === id);
+          (await play.turns(saveId, undefined, probe.signal)).turns.some((turn) => turn.id === id);
         if (!saved || !stillFollowing()) return;
         controller = null;
         own.abort();
         await get().reload();
       } catch {
-        // Keep the existing stream while a status read fails or the model is still working.
+        // Keep the existing stream while a status read fails or times out.
       } finally {
+        clearTimeout(deadline);
+        own.signal.removeEventListener('abort', stopProbe);
         if (stillFollowing()) scheduleCheck();
       }
     }
