@@ -1,0 +1,50 @@
+.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: var(--s-6) 0;
+  color: var(--faint);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .12em;
+}
+
+.diamond {
+  width: 8px;
+  height: 8px;
+  border: var(--hair) solid var(--gold);
+  background: var(--glow-soft);
+  transform: rotate(45deg);
+  animation: turn 3.2s linear infinite;
+}
+
+@keyframes turn {
+  from { transform: rotate(45deg); }
+  to { transform: rotate(405deg); }
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-8);
+  padding: var(--s-36) var(--s-16);
+  text-align: center;
+}
+
+.empty strong {
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.empty span {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}

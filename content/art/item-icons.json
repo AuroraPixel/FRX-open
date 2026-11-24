@@ -1,0 +1,1377 @@
+{
+ "rules": [
+  {
+   "type": "武器",
+   "anyWord": [
+    "飞剑"
+   ],
+   "icon": "flying-sword"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "短剑",
+    "匕首",
+    "短匕",
+    "短刃",
+    "袖剑"
+   ],
+   "icon": "dagger"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "剑"
+   ],
+   "icon": "sword"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "刀"
+   ],
+   "icon": "saber"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "枪",
+    "矛",
+    "戟",
+    "槊"
+   ],
+   "icon": "spear"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "弓",
+    "弩",
+    "箭"
+   ],
+   "icon": "bow"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "鞭",
+    "索",
+    "绳"
+   ],
+   "icon": "whip"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "扇"
+   ],
+   "icon": "fan"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "针",
+    "镖",
+    "梭",
+    "暗器"
+   ],
+   "icon": "needle"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "杖",
+    "棍",
+    "棒",
+    "拂尘"
+   ],
+   "icon": "staff"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "锤",
+    "斧",
+    "锏",
+    "钺",
+    "杵"
+   ],
+   "icon": "hammer"
+  },
+  {
+   "type": "武器",
+   "anyWord": [
+    "盾"
+   ],
+   "icon": "shield"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "盾"
+   ],
+   "icon": "shield"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "护腕",
+    "手套",
+    "护臂",
+    "腕"
+   ],
+   "icon": "bracer"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "靴",
+    "鞋",
+    "履"
+   ],
+   "icon": "boots"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "冠",
+    "帽",
+    "盔",
+    "头巾",
+    "发带",
+    "抹额",
+    "斗笠",
+    "簪"
+   ],
+   "icon": "crown"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "斗篷",
+    "披风",
+    "大氅",
+    "鹤氅",
+    "披肩"
+   ],
+   "icon": "cloak"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "甲",
+    "铠",
+    "护心",
+    "鳞衣"
+   ],
+   "icon": "soft-armor"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "戒",
+    "镯",
+    "项链",
+    "环"
+   ],
+   "icon": "ring"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "佩",
+    "坠"
+   ],
+   "icon": "pendant"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "面具"
+   ],
+   "icon": "mask"
+  },
+  {
+   "type": "护甲",
+   "anyWord": [
+    "袍",
+    "衣",
+    "衫",
+    "裙",
+    "服",
+    "袄",
+    "褂"
+   ],
+   "icon": "robe"
+  },
+  {
+   "type": "功法",
+   "anyWord": [
+    "玉简",
+    "玉册"
+   ],
+   "icon": "jade-slip"
+  },
+  {
+   "type": "功法",
+   "anyWord": [
+    "竹简"
+   ],
+   "icon": "bamboo-slips"
+  },
+  {
+   "type": "功法",
+   "anyWord": [
+    "拓片",
+    "拓本",
+    "石刻",
+    "碑"
+   ],
+   "icon": "rubbing"
+  },
+  {
+   "type": "功法",
+   "anyWord": [
+    "书",
+    "谱",
+    "册",
+    "典",
+    "经",
+    "录",
+    "笔记",
+    "手札",
+    "心得",
+    "抄本"
+   ],
+   "icon": "book"
+  },
+  {
+   "type": "功法",
+   "anyWord": [
+    "卷",
+    "篇",
+    "页",
+    "诀",
+    "决",
+    "功",
+    "法",
+    "术",
+    "秘籍"
+   ],
+   "icon": "scroll"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "飞剑",
+    "剑"
+   ],
+   "icon": "flying-sword"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "镜",
+    "鉴"
+   ],
+   "icon": "mirror"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "铃",
+    "钟",
+    "磬"
+   ],
+   "icon": "bell"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "印",
+    "玺"
+   ],
+   "icon": "seal"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "鼎",
+    "炉"
+   ],
+   "icon": "cauldron"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "罗盘"
+   ],
+   "icon": "compass"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "阵盘",
+    "盘"
+   ],
+   "icon": "array-disk"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "琴"
+   ],
+   "icon": "qin"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "笛",
+    "箫"
+   ],
+   "icon": "flute"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "灯",
+    "烛"
+   ],
+   "icon": "lamp"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "面具"
+   ],
+   "icon": "mask"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "旗",
+    "幡"
+   ],
+   "icon": "banner"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "葫芦"
+   ],
+   "icon": "gourd"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "瓶"
+   ],
+   "icon": "bottle"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "伞"
+   ],
+   "icon": "umbrella"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "塔"
+   ],
+   "icon": "pagoda"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "环",
+    "圈",
+    "镯",
+    "戒",
+    "轮"
+   ],
+   "icon": "ring"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "傀儡",
+    "人偶"
+   ],
+   "icon": "puppet"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "盾"
+   ],
+   "icon": "shield"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "扇"
+   ],
+   "icon": "fan"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "针",
+    "梭"
+   ],
+   "icon": "needle"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "杖",
+    "拂尘"
+   ],
+   "icon": "staff"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "符",
+    "箓"
+   ],
+   "icon": "talisman"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "令",
+    "牌"
+   ],
+   "icon": "token"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "图",
+    "卷"
+   ],
+   "icon": "scroll"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "佩",
+    "玉"
+   ],
+   "icon": "pendant"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "袋",
+    "囊"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "砖",
+    "锭"
+   ],
+   "icon": "silver"
+  },
+  {
+   "type": "法宝",
+   "anyWord": [
+    "珠",
+    "球"
+   ],
+   "icon": "pearl"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "瓶"
+   ],
+   "icon": "bottle"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "丹",
+    "丸"
+   ],
+   "icon": "pill"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "符",
+    "箓"
+   ],
+   "icon": "talisman"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "液",
+    "露",
+    "水",
+    "浆",
+    "髓",
+    "汁"
+   ],
+   "icon": "elixir"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "膏",
+    "散",
+    "粉"
+   ],
+   "icon": "salve"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "香囊"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "香"
+   ],
+   "icon": "incense"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "茶"
+   ],
+   "icon": "tea"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "酒"
+   ],
+   "icon": "wine"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "肉"
+   ],
+   "icon": "meat"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "饼",
+    "粮",
+    "糕",
+    "馒头",
+    "包子",
+    "糖",
+    "膳",
+    "饭",
+    "汤",
+    "粥"
+   ],
+   "icon": "ration"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "果",
+    "桃",
+    "枣"
+   ],
+   "icon": "fruit"
+  },
+  {
+   "type": "消耗品",
+   "anyWord": [
+    "草",
+    "药",
+    "参",
+    "芝"
+   ],
+   "icon": "herb"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "灵石"
+   ],
+   "icon": "spirit-stone"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "瓶"
+   ],
+   "icon": "bottle"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "妖丹",
+    "内丹",
+    "兽丹",
+    "晶核",
+    "兽核"
+   ],
+   "icon": "core"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "羽",
+    "翎"
+   ],
+   "icon": "feather"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "骨",
+    "角",
+    "牙",
+    "爪",
+    "甲壳",
+    "壳"
+   ],
+   "icon": "bone"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "鳞"
+   ],
+   "icon": "scale"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "卵",
+    "蛋"
+   ],
+   "icon": "egg"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "种子",
+    "灵种",
+    "籽"
+   ],
+   "icon": "seed"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "肉"
+   ],
+   "icon": "meat"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "皮",
+    "毛",
+    "革"
+   ],
+   "icon": "hide"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "晶",
+    "玉",
+    "珀",
+    "琉璃",
+    "髓",
+    "珍珠",
+    "珊瑚"
+   ],
+   "icon": "crystal"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "花",
+    "莲",
+    "兰"
+   ],
+   "icon": "flower"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "果",
+    "实",
+    "桃"
+   ],
+   "icon": "fruit"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "草",
+    "参",
+    "芝",
+    "藤",
+    "叶",
+    "根",
+    "药",
+    "渣"
+   ],
+   "icon": "herb"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "木",
+    "竹",
+    "枝",
+    "桑"
+   ],
+   "icon": "wood"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "丝",
+    "线",
+    "绳",
+    "布",
+    "绸",
+    "缎",
+    "帛"
+   ],
+   "icon": "thread"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "液",
+    "露",
+    "血",
+    "胆",
+    "毒",
+    "涎"
+   ],
+   "icon": "elixir"
+  },
+  {
+   "type": "材料",
+   "anyWord": [
+    "矿",
+    "铁",
+    "铜",
+    "金",
+    "银",
+    "锡",
+    "砂",
+    "石",
+    "精",
+    "傀儡",
+    "残片",
+    "管"
+   ],
+   "icon": "ore"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "傀儡"
+   ],
+   "icon": "puppet"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "钥",
+    "匙"
+   ],
+   "icon": "key"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "地图",
+    "舆图"
+   ],
+   "icon": "map"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "信",
+    "函",
+    "帖",
+    "诏",
+    "契"
+   ],
+   "icon": "letter"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "令",
+    "牌",
+    "印记",
+    "符节"
+   ],
+   "icon": "token"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "羽",
+    "翎"
+   ],
+   "icon": "feather"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "鳞"
+   ],
+   "icon": "scale"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "卵",
+    "蛋"
+   ],
+   "icon": "egg"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "皮"
+   ],
+   "icon": "hide"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "骨",
+    "角",
+    "牙"
+   ],
+   "icon": "bone"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "佩",
+    "玉"
+   ],
+   "icon": "pendant"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "袋",
+    "囊"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "符",
+    "箓"
+   ],
+   "icon": "talisman"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "简"
+   ],
+   "icon": "jade-slip"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "经",
+    "书",
+    "篇",
+    "卷",
+    "方",
+    "录",
+    "谱",
+    "心得",
+    "残本",
+    "开物",
+    "初解"
+   ],
+   "icon": "book"
+  },
+  {
+   "type": "重要物品",
+   "anyWord": [
+    "图"
+   ],
+   "icon": "map"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "钱",
+    "银两",
+    "银子",
+    "铜板",
+    "金子"
+   ],
+   "icon": "silver"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "包袱",
+    "包裹",
+    "行李",
+    "布囊"
+   ],
+   "icon": "bundle"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "袋",
+    "囊",
+    "荷包"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "笔",
+    "砚",
+    "墨"
+   ],
+   "icon": "brush"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "书",
+    "册",
+    "杂记",
+    "方子",
+    "酒方",
+    "谱",
+    "帖"
+   ],
+   "icon": "book"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "钥"
+   ],
+   "icon": "key"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "信"
+   ],
+   "icon": "letter"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "牌",
+    "令"
+   ],
+   "icon": "token"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "符纸",
+    "符"
+   ],
+   "icon": "talisman"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "锄",
+    "铲",
+    "镰"
+   ],
+   "icon": "hoe"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "锤",
+    "斧"
+   ],
+   "icon": "hammer"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "罗盘"
+   ],
+   "icon": "compass"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "灯",
+    "烛"
+   ],
+   "icon": "lamp"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "琴"
+   ],
+   "icon": "qin"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "笛",
+    "箫"
+   ],
+   "icon": "flute"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "面具"
+   ],
+   "icon": "mask"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "种子",
+    "籽"
+   ],
+   "icon": "seed"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "卵",
+    "蛋"
+   ],
+   "icon": "egg"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "香囊"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "香"
+   ],
+   "icon": "incense"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "葫芦"
+   ],
+   "icon": "gourd"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "瓶"
+   ],
+   "icon": "bottle"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "茶"
+   ],
+   "icon": "tea"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "酒"
+   ],
+   "icon": "wine"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "帕",
+    "布",
+    "巾"
+   ],
+   "icon": "thread"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "篮",
+    "篓",
+    "筐"
+   ],
+   "icon": "basket"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "箱",
+    "盒"
+   ],
+   "icon": "bundle"
+  },
+  {
+   "type": "其他物品",
+   "anyWord": [
+    "算盘"
+   ],
+   "icon": "abacus"
+  },
+  {
+   "anyWord": [
+    "灵石"
+   ],
+   "icon": "spirit-stone"
+  },
+  {
+   "anyWord": [
+    "飞剑"
+   ],
+   "icon": "flying-sword"
+  },
+  {
+   "anyWord": [
+    "剑"
+   ],
+   "icon": "sword"
+  },
+  {
+   "anyWord": [
+    "刀"
+   ],
+   "icon": "saber"
+  },
+  {
+   "anyWord": [
+    "枪",
+    "矛"
+   ],
+   "icon": "spear"
+  },
+  {
+   "anyWord": [
+    "弓"
+   ],
+   "icon": "bow"
+  },
+  {
+   "anyWord": [
+    "袍",
+    "衣",
+    "衫"
+   ],
+   "icon": "robe"
+  },
+  {
+   "anyWord": [
+    "甲",
+    "铠"
+   ],
+   "icon": "soft-armor"
+  },
+  {
+   "anyWord": [
+    "玉简"
+   ],
+   "icon": "jade-slip"
+  },
+  {
+   "anyWord": [
+    "诀",
+    "功法",
+    "秘籍",
+    "残卷",
+    "残篇"
+   ],
+   "icon": "scroll"
+  },
+  {
+   "anyWord": [
+    "丹",
+    "丸"
+   ],
+   "icon": "pill"
+  },
+  {
+   "anyWord": [
+    "符",
+    "箓"
+   ],
+   "icon": "talisman"
+  },
+  {
+   "anyWord": [
+    "瓶"
+   ],
+   "icon": "bottle"
+  },
+  {
+   "anyWord": [
+    "饼",
+    "粮",
+    "糖"
+   ],
+   "icon": "ration"
+  },
+  {
+   "anyWord": [
+    "酒"
+   ],
+   "icon": "wine"
+  },
+  {
+   "anyWord": [
+    "茶"
+   ],
+   "icon": "tea"
+  },
+  {
+   "anyWord": [
+    "香炉",
+    "线香",
+    "檀香",
+    "熏香"
+   ],
+   "icon": "incense"
+  },
+  {
+   "anyWord": [
+    "卵",
+    "蛋"
+   ],
+   "icon": "egg"
+  },
+  {
+   "anyWord": [
+    "种子",
+    "灵种"
+   ],
+   "icon": "seed"
+  },
+  {
+   "anyWord": [
+    "灯",
+    "烛"
+   ],
+   "icon": "lamp"
+  },
+  {
+   "anyWord": [
+    "琴"
+   ],
+   "icon": "qin"
+  },
+  {
+   "anyWord": [
+    "笛",
+    "箫"
+   ],
+   "icon": "flute"
+  },
+  {
+   "anyWord": [
+    "面具"
+   ],
+   "icon": "mask"
+  },
+  {
+   "anyWord": [
+    "罗盘"
+   ],
+   "icon": "compass"
+  },
+  {
+   "anyWord": [
+    "鳞"
+   ],
+   "icon": "scale"
+  },
+  {
+   "anyWord": [
+    "肉"
+   ],
+   "icon": "meat"
+  },
+  {
+   "anyWord": [
+    "草",
+    "参",
+    "芝"
+   ],
+   "icon": "herb"
+  },
+  {
+   "anyWord": [
+    "花"
+   ],
+   "icon": "flower"
+  },
+  {
+   "anyWord": [
+    "果"
+   ],
+   "icon": "fruit"
+  },
+  {
+   "anyWord": [
+    "矿",
+    "铁"
+   ],
+   "icon": "ore"
+  },
+  {
+   "anyWord": [
+    "令",
+    "牌"
+   ],
+   "icon": "token"
+  },
+  {
+   "anyWord": [
+    "袋",
+    "囊"
+   ],
+   "icon": "pouch"
+  },
+  {
+   "anyWord": [
+    "书",
+    "经",
+    "册"
+   ],
+   "icon": "book"
+  }
+ ]
+}

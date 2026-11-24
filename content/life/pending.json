@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "description": "待发生的事（玩法设计第十一节「节奏」，执行计划第 15、17 项）：导演挂起的钩子，每件带一个由头，由头到了就开成一场戏。由头只认 triggers 里的五种，值分别是日期（0001-03-15）、地图地点、境界、钟（编号或名字）、人物（编号或名字）。导演挂的同时最多 limit 件（初值）。钟满时引擎自己放进一件由头是 now 的事，现在就发生，不算在导演的件数里。线头（第九批，threads.cjs）的事由头是 thread，值是线头的编号：只由线头放进来，有时辰的线头主角到了那里、时辰到了就开戏，没有时辰的只由「接着办」接上；不算在导演的件数里，也不照日子过期，线头过了时辰自己作罢（threads.json）。",
+  "limit": 6,
+  "triggers": {
+    "date": "到了日子",
+    "place": "到了某地",
+    "realm": "到了某个境界",
+    "clock": "钟满",
+    "person": "见到某人"
+  },
+  "notes": "以下几项是事情发生时用的（apps/engine/life/pending.cjs）：order 是同时有几件到了时先发哪种由头（now 最先）；causes 是年谱行和这一拍提示词里写的由头，先说是什么引出来的，再说这件事；origins 是开出的戏的来由（scene.json 的 origins），按这件事是谁挂的（from），人物的诀别、重逢另算；lapse 是过了 expires 那天还没发生的事作罢时的年谱行：谁占了先（人物的事写那个人，其余按 from），事取种子开头的几个字；ahead 是指令预览里说这件事会先来的那一行；present 是人物挂的事里那个人在场的几种（来访、求助、相邀、护法、重逢、反目）：事情发生时开出的戏里有他，不在场上、只在传记里的，开戏时回到场上（死了的不回来，他死时这几种事一并作罢）。",
+  "order": ["now", "thread", "date", "clock", "person", "place", "realm"],
+  "causes": {
+    "clock": "「{钟}」满了：{事}",
+    "place": "在{地}：{事}",
+    "realm": "到了{境界}：{事}",
+    "person": "见到{人}：{事}",
+    "default": "{事}"
+  },
+  "origins": {
+    "from": {
+      "director": "director",
+      "clock": "clock",
+      "fight": "interrupt",
+      "fortune": "fortune",
+      "saga": "calendar",
+      "people": "visit",
+      "thread": "thread"
+    },
+    "peopleEvents": {
+      "诀别": "friend_death",
+      "重逢": "friend_reunion"
+    },
+    "default": "director"
+  },
+  "lapse": {
+    "words": 20,
+    "who": {
+      "saga": "别家的修士",
+      "director": "旁人",
+      "fortune": "别的散修",
+      "default": "旁人"
+    }
+  },
+  "ahead": "先来的是这件事：{由头}。这一下开成一场戏，这个指令先不做。",
+  "present": ["来访", "求助", "相邀", "护法", "重逢", "反目"]
+}

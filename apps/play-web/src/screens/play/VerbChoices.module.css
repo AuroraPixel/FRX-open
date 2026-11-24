@@ -1,0 +1,77 @@
+/* A command's choices: the question in small gold words, the command's note, a row each choice at least
+   52 px tall with the command's character in a diamond and the choice in brush. Phones: as tall as its rows. */
+.ask {
+  margin: 0;
+  font: 600 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+
+.note {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.choices {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--s-6) var(--s-4);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.choice:hover,
+.choice:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.choice b {
+  font: 400 var(--fs-20)/1.2 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.d {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.d::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: var(--hair) solid var(--line);
+  background: var(--tint);
+  transform: rotate(45deg);
+}
+
+.d > span {
+  position: relative;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  section.sheet,
+  section.sheet[data-stop] {
+    height: auto;
+    max-height: 60dvh;
+  }
+}

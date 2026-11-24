@@ -1,0 +1,120 @@
+{
+ "id": "kit-room",
+ "family": "dongfu",
+ "name": "屋舍",
+ "layout": "room",
+ "ground": 4.0,
+ "base": {
+  "kind": "shop",
+  "indoor": true,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36],
+    "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]
+   },
+   "read": {
+    "wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36],
+    "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]
+   },
+   "sheet": {
+    "wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34],
+    "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]
+   },
+   "cult": {
+    "wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33],
+    "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]
+   },
+   "close": {
+    "wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34],
+    "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]
+   },
+   "cine1": {
+    "wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40],
+    "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]
+   },
+   "cine2": {
+    "wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40],
+    "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear"
+  ],
+  "ambience": {
+   "night": "amb.insects",
+   "dawn": "amb.wind",
+   "day": "amb.wind",
+   "dusk": "amb.wind"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "none"
+  },
+  "protagonist": {
+   "pose": "stand"
+  },
+  "hours": {
+   "dawn": {
+    "exposure": 0.8
+   },
+   "day": {
+    "exposure": 0.74,
+    "tint": [2.1, 2.0, 1.9]
+   },
+   "dusk": {
+    "exposure": 1.0
+   }
+  }
+ },
+ "room": {
+  "wallZ": -11,
+  "furniture": {
+   "z": [-4, -2.5],
+   "at": [0.66, 0.8]
+  },
+  "plaque": [0.15, 0.13, 0.17, 0.11, 0.19]
+ },
+ "elements": [
+  {"id": "wall-hut", "file": "wall-hut.webp", "role": "wall", "px": [2172, 724], "bytes": [175644, 53776], "v": "b9648888", "height": 0, "foot": 0.77, "width": 40, "shade": 1.8, "tags": ["hut", "rustic", "field"], "need": ["hut", "tent", "workshop"], "keep": [[0.58, 0.7, 0.14, 0.52]], "lights": [[0.64, 0.33]]},
+  {"id": "wall-dorm", "file": "wall-dorm.webp", "role": "wall", "px": [2172, 724], "bytes": [199972, 62798], "v": "7b38e1f2", "height": 0, "foot": 0.76, "width": 40, "shade": 1.8, "tags": ["dormitory", "bunks"], "need": ["dormitory"], "keep": [[0.76, 0.85, 0.07, 0.27]], "lights": [[0.8, 0.17]]},
+  {"id": "wall-storeroom", "file": "wall-storeroom.webp", "role": "wall", "px": [2172, 724], "bytes": [188312, 55870], "v": "7d0b5619", "height": 0, "foot": 0.8, "width": 40, "shade": 1.8, "tags": ["storeroom", "rustic"], "need": ["storeroom"], "weight": 3, "keep": [[0.79, 0.88, 0.05, 0.28], [0.27, 0.34, 0.1, 0.62], [0.55, 0.66, 0.15, 0.48]], "lights": [[0.835, 0.15]]},
+  {"id": "wall-cellar", "file": "wall-cellar.webp", "role": "wall", "px": [2172, 724], "bytes": [238950, 73596], "v": "922c0069", "height": 0, "foot": 0.745, "width": 40, "shade": 1.2, "tags": ["cellar", "jars"], "need": ["cellar"], "weight": 3, "keep": [[0.07, 0.21, 0.18, 0.74]], "lights": [[0.17, 0.32]]},
+  {"id": "wall-room", "file": "wall-room.webp", "role": "wall", "px": [2172, 724], "bytes": [175676, 53204], "v": "85c61179", "height": 0, "foot": 0.795, "width": 40, "shade": 1.8, "tags": ["room"], "need": ["room"], "weight": 2, "keep": [[0.555, 0.735, 0.08, 0.57], [0.755, 0.83, 0.17, 0.72]], "lights": [[0.645, 0.3]]},
+  {"id": "wall-inn", "file": "wall-inn.webp", "role": "wall", "px": [2172, 724], "bytes": [142678, 44932], "v": "ef27a139", "height": 0, "foot": 0.785, "width": 40, "shade": 1.8, "tags": ["room", "inn", "tavern", "teahouse"], "need": ["inn", "tavern", "teahouse"], "weight": 3, "keep": [[0.24, 0.38, 0.14, 0.55], [0.385, 0.435, 0.22, 0.56]], "lights": [[0.31, 0.3]]},
+  {"id": "wall-study", "file": "wall-study.webp", "role": "wall", "px": [2172, 724], "bytes": [148952, 46850], "v": "9b293307", "height": 0, "foot": 0.76, "width": 40, "shade": 1.8, "tags": ["study", "books"], "need": ["study"], "keep": [[0.25, 0.41, 0.1, 0.6], [0.43, 0.49, 0.17, 0.6]], "lights": [[0.33, 0.35]]},
+  {"id": "wall-alchemy", "file": "wall-alchemy.webp", "role": "wall", "px": [2172, 724], "bytes": [174726, 54540], "v": "746242ab", "height": 0, "foot": 0.77, "width": 40, "shade": 1.8, "tags": ["alchemy_room", "furnace", "medicine"], "need": ["alchemy_room", "workshop"], "keep": [[0.29, 0.4, 0.32, 0.54], [0.55, 0.66, 0.32, 0.54], [0.76, 0.86, 0.09, 0.32]], "lights": [[0.81, 0.2]]},
+  {"id": "wall-cell", "file": "wall-cell.webp", "role": "wall", "px": [2172, 724], "bytes": [220110, 65594], "v": "a7fdfc81", "height": 0, "foot": 0.78, "width": 40, "shade": 1.8, "tags": ["cell", "bars"], "need": ["cell"], "weight": 3, "keep": [[0.75, 0.84, 0.1, 0.32]], "lights": [[0.8, 0.2]]},
+  {"id": "plaque-board", "file": "plaque-board.webp", "role": "subject", "px": [977, 308], "bytes": [118094, 34474], "v": "965c405f", "height": 1.4, "foot": 1.0, "plaque": {"box": [0.1, 0.15, 0.9, 0.85], "ink": "gold"}, "tags": ["hut", "dormitory", "cell", "room", "rustic"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.007, 0.986], "crown": 0.025},
+  {"id": "plaque-black", "file": "plaque-black.webp", "role": "subject", "px": [997, 306], "bytes": [62166, 19236], "v": "39720047", "height": 1.4, "foot": 1.0, "plaque": {"box": [0.08, 0.15, 0.92, 0.85], "ink": "gold"}, "tags": ["study", "alchemy_room", "workshop"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.036, 0.967], "crown": 0.025},
+  {"id": "bunks", "file": "bunks.webp", "role": "unit", "px": [1955, 517], "bytes": [324146, 89312], "v": "9c16b275", "height": 2.2, "foot": 0.95, "tags": ["dormitory", "bunks"], "need": ["dormitory"], "mask": "36e76e7feffffffffffffffffffffffffaf5", "body": [0.012, 0.988], "crown": 0.0},
+  {"id": "bookcase", "file": "bookcase.webp", "role": "unit", "px": [961, 1298], "bytes": [362094, 106744], "v": "4124bfcb", "height": 6.0, "foot": 0.97, "tags": ["study", "books"], "need": ["study"], "mask": "3fcfffffffffffffffffffffffffffffffff", "body": [0.059, 0.94], "crown": 0.0},
+  {"id": "cabinet", "file": "cabinet.webp", "role": "unit", "px": [1259, 1110], "bytes": [436468, 122816], "v": "e566c64f", "height": 5.4, "foot": 0.97, "tags": ["alchemy_room", "cabinets", "medicine"], "need": ["alchemy_room", "study"], "mask": "188fffffffffffffffffffffffffffffffff", "body": [0.039, 0.956], "crown": 0.0},
+  {"id": "furnace", "file": "furnace.webp", "role": "unit", "px": [936, 1079], "bytes": [270850, 82634], "v": "79d37cd4", "height": 5.0, "foot": 0.96, "tags": ["alchemy_room", "furnace"], "need": ["alchemy_room", "workshop"], "weight": 1.6, "mask": "0600e07fc3fc3fc7fc3f83f83feffffffe0e", "body": [0.013, 0.952], "crown": 0.0},
+  {"id": "bars", "file": "bars.webp", "role": "unit", "px": [991, 1388], "bytes": [359558, 98384], "v": "07df2b1e", "height": 5.6, "foot": 0.97, "tags": ["cell", "bars"], "need": ["cell"], "mask": "f0f7fe7fe7fe7fe7fe7fe7fe7fe7fe7fefff", "body": [0.06, 0.937], "crown": 0.025},
+  {"id": "desk", "file": "desk.webp", "role": "unit", "px": [1402, 691], "bytes": [241912, 74360], "v": "16d638fc", "height": 2.4, "foot": 0.95, "tags": ["study", "books", "hut"], "need": ["study", "room", "hut"], "mask": "60000420475cffffffffffffffffffffffff", "body": [0.017, 0.982], "crown": 0.0},
+  {"id": "stove", "file": "stove.webp", "role": "unit", "px": [672, 727], "bytes": [149238, 42320], "v": "04591be5", "height": 2.6, "foot": 0.95, "tags": ["hut", "alchemy_room", "workshop"], "need": ["hut", "alchemy_room", "workshop"], "mask": "0f00fc1f83fc7fefff7ff7ff7ffffffff7fe", "body": [0.046, 0.955], "crown": 0.0},
+  {"id": "woodpile", "file": "woodpile.webp", "role": "unit", "px": [1100, 500], "bytes": [257048, 75488], "v": "8a3289dc", "height": 2.6, "foot": 0.95, "tags": ["storeroom"], "need": ["storeroom"], "mask": "fffffffffffffffffffffffffffffffff7e0", "body": [0.019, 0.976], "crown": 0.0},
+  {"id": "sacks", "file": "sacks.webp", "role": "unit", "px": [1100, 638], "bytes": [203448, 60090], "v": "58ddca87", "height": 2.9, "foot": 0.95, "tags": ["storeroom", "workshop"], "need": ["storeroom", "workshop"], "mask": "0060061861fe3fe7fe7feffeffffffffffff", "body": [0.014, 0.976], "crown": 0.0},
+  {"id": "vats", "file": "vats.webp", "role": "unit", "px": [1100, 484], "bytes": [159540, 48212], "v": "32ba9244", "height": 3.8, "foot": 0.93, "tags": ["cellar", "jars"], "need": ["cellar"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.041, 0.963], "crown": 0.0},
+  {"id": "bed-curtain", "file": "bed-curtain.webp", "role": "unit", "px": [998, 998], "bytes": [279786, 85504], "v": "eb50cb17", "height": 4.0, "foot": 0.97, "tags": ["room", "inn"], "need": ["room"], "mask": "8f1ffffffffff0fe07ffffffffffffffffff", "body": [0.027, 0.974], "crown": 0.0},
+  {"id": "bed", "file": "bed.webp", "role": "furniture", "px": [923, 469], "bytes": [148972, 41652], "v": "9e0f54bd", "height": 1.6, "foot": 0.95, "tags": ["hut", "dormitory", "room", "cell"], "need": ["hut", "dormitory", "room", "cell"], "mask": "03c43e7feffffffffffffffffffffffff801"},
+  {"id": "table", "file": "table.webp", "role": "furniture", "px": [673, 660], "bytes": [147734, 43784], "v": "30920ca1", "height": 2.0, "foot": 0.95, "tags": ["hut", "study", "room", "workshop"], "need": ["hut", "study", "room", "workshop", "alchemy_room"], "mask": "7fe7fffffffeffee06ffeffeffeffefff5fa"},
+  {"id": "water-jar", "file": "water-jar.webp", "role": "prop", "px": [799, 579], "bytes": [109588, 33884], "v": "8d5fe69b", "height": 1.6, "foot": 0.95, "tags": ["hut", "dormitory", "room", "workshop", "storeroom"], "mask": "0780fc0fc1fc1fe1fe1fe0fe0fe0ff0ff07e"},
+  {"id": "room-table", "file": "room-table.webp", "role": "prop", "px": [800, 613], "bytes": [113594, 37536], "v": "70771cbf", "height": 2.4, "foot": 0.96, "tags": ["room", "inn", "hut"], "need": ["room", "hut", "dormitory"], "mask": "0600600f01f81f81f8ffff9fb0df9ffdff9f"},
+  {"id": "washstand", "file": "washstand.webp", "role": "prop", "px": [758, 782], "bytes": [126956, 45024], "v": "bca0f352", "height": 2.95, "foot": 0.97, "tags": ["room", "inn"], "need": ["room"], "mask": "0bd0ff0fe0fe0fe0fa0fe0fe0fe0fe0fe0ff"},
+  {"id": "name-screen", "file": "name-screen.webp", "role": "prop", "px": [1377, 778], "bytes": [204608, 61990], "v": "3d709c74", "height": 1.2, "foot": 0.97, "plaque": {"box": [0.16, 0.13, 0.84, 0.65], "ink": "dark"}, "only": "name", "tone": 0.7, "avoid": ["storeroom", "cellar"], "mask": "7fe7fe7fe7fe7fefffffffffffffffffffff"},
+  {"id": "column", "file": "column.webp", "role": "near", "px": [385, 1774], "bytes": [165150, 51640], "v": "dbb4465e", "height": 13.0, "foot": 0.978, "hold": [0.4, 0.978], "mask": "7f87f87fc7fc7f87f07f87fe7ff7fe7fcffc"},
+  {"id": "jars", "file": "jars.webp", "role": "near", "px": [733, 675], "bytes": [159894, 47948], "v": "f57d4ea3", "height": 2.6, "foot": 0.967, "hold": [0.3, 0.967], "tags": ["rustic", "hut", "dormitory", "storeroom", "cellar", "jars"], "weight": 0.8, "mask": "3c07c0fe0fe0ffeffffff7ff7ff7ff7fe1be"},
+  {"id": "lantern", "file": "lantern.webp", "role": "hang", "px": [308, 875], "bytes": [76958, 25066], "v": "b88d7ae3", "height": 3.2, "foot": 0.66, "mask": "0600603fc7fe7fe7ff7fe1fc060060060060"}
+ ]
+}

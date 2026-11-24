@@ -1,0 +1,56 @@
+/* The desktop row of diamonds: bottom right, 20 px from the right and 22 from the bottom, 18 px
+   apart (spec 四). The floating labels sit above their diamonds here, so the row stays tight. */
+.rail {
+  position: absolute;
+  z-index: var(--z-ui);
+  right: max(var(--s-18), env(safe-area-inset-right, 0px));
+  bottom: calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  justify-items: end;
+  gap: var(--s-22);
+}
+
+.row {
+  display: flex;
+  gap: var(--s-18);
+}
+
+.row > button {
+  gap: 0;
+}
+
+/* 更多's row is never wider than the row under it (six diamonds): a save of the cultivation life's ten
+   take two lines, the full one next to the row under it, so an open panel covers the whole rail and no
+   diamond peeks out at its left edge */
+.more {
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+  row-gap: var(--s-22);
+  max-width: calc(6 * 34px + 5 * var(--s-18));
+}
+
+.row > button > span:last-child {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--s-6));
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+/* the chosen diamond keeps its label hidden until pointed at, like the rest */
+.rail .row > button[data-label='hover'][aria-pressed='true'] > span:last-child {
+  opacity: 0;
+}
+
+.rail .row > button[data-label='hover']:is(:hover, :focus-visible) > span:last-child {
+  opacity: 1;
+}
+
+/* the phone's navigation grid: four columns of a diamond and two characters */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-12) var(--s-8);
+  justify-items: center;
+  padding: var(--s-4) 0 var(--s-8);
+}

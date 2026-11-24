@@ -1,0 +1,126 @@
+/* 下一关 (the mock-up's .fx-gate): the 关 in a 44 px diamond, the gate's name, one line of small words. */
+.gate {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  width: 100%;
+  min-height: 56px;
+  margin: var(--s-4) 0 var(--s-8);
+  padding: var(--s-10) var(--s-12) var(--s-10) var(--s-8);
+  border: 0;
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  text-align: left;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+  transition: background-color var(--d-focus);
+}
+
+.gate:hover,
+.gate[data-hover],
+.gate:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), var(--tint) 70%);
+}
+
+.gate:focus-visible {
+  outline-offset: -2px;
+}
+
+.kind {
+  flex: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.kind::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: var(--hair) solid var(--line);
+  background: var(--tint);
+  transform: rotate(45deg);
+}
+
+.kind > span {
+  position: relative;
+}
+
+.words {
+  flex: 1;
+  min-width: 0;
+}
+
+.words strong {
+  display: block;
+  font: 700 var(--fs-14h)/1.5 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--ink);
+}
+
+.words small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1em;
+  font: 400 var(--fs-12)/1.7 var(--f-ui);
+  color: var(--soft);
+}
+
+.words small b {
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.words small b[data-tone='good'] {
+  color: var(--jade);
+}
+
+/* what is missing, and odds under three in ten: cinnabar letters this small do not reach 4.5:1 on the card,
+   so they are ink, underlined in cinnabar (as the settings' errors are ink with a cinnabar rule) */
+.words small b[data-tone='poor'],
+.words small u {
+  color: var(--ink);
+  text-decoration: underline 2px var(--cin);
+  text-underline-offset: 4px;
+}
+
+/* what holds the way up besides 修为: a line of its own after a small cinnabar diamond */
+.blocked {
+  display: block;
+  margin-top: 2px;
+  font: 400 var(--fs-12)/1.6 var(--f-serif);
+  font-style: normal;
+  color: var(--text);
+}
+
+.blocked::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 var(--s-8) 2px 0;
+  background: var(--cin);
+  transform: rotate(45deg);
+}
+
+/* 入秘境 (RealmGate) while the realm is closed: the card only says when it opens, and is not pressed; open
+   but barred, its diamond is faded and its reason stands on the line under the name */
+.gate[data-closed],
+.gate[data-closed]:hover {
+  background: var(--tint);
+  cursor: default;
+}
+
+.gate[data-closed] .kind,
+.gate[aria-disabled='true'] .kind {
+  color: var(--soft);
+}
+
+.gate[data-closed] .kind::before,
+.gate[aria-disabled='true'] .kind::before {
+  border-style: dashed;
+}

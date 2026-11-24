@@ -1,0 +1,80 @@
+/* The book page's text: Song type, two-character indent, justified, wide leading (spec 一, 四). */
+.para {
+  margin: 0 0 .58em;
+  font: var(--type-body);
+  color: var(--text);
+  text-align: justify;
+  text-indent: 2em;
+  line-break: strict;
+  text-wrap: pretty;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.para[data-live],
+.para[data-settled] {
+  animation: none;
+}
+
+.name {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+.term {
+  color: var(--gold);
+}
+
+.em {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* the diamond at the end of a paragraph still being written */
+.pen {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: var(--s-6);
+  background: var(--gold);
+  transform: rotate(45deg) translateY(-2px);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+
+/* a card, a spoken line and the player's stroke float in whole (spec 五) */
+.card,
+.row,
+.float {
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+/* a notice from the server: 已撤回, 待结算 … */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  margin: .2em 0 .82em;
+  padding: var(--s-8) var(--s-12);
+  border-left: 2px solid var(--line);
+  background: var(--tint);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .06em;
+  color: var(--soft);
+  text-indent: 0;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.notice span {
+  flex: 1;
+}
+
+.notice[data-level='error'] {
+  border-left-color: var(--cin);
+  color: var(--text);
+}

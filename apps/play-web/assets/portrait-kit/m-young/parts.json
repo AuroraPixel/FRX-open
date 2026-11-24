@@ -1,0 +1,633 @@
+{
+ "base": "m-young",
+ "geometry": {
+  "cx": 543,
+  "cy": 348,
+  "chin": 470,
+  "neckA": 484,
+  "neckB": 510,
+  "pivot": [
+   543,
+   494
+  ],
+  "splitA": 500,
+  "splitB": 542,
+  "core": [
+   543,
+   390,
+   60,
+   78
+  ],
+  "neckW": 61,
+  "top": 234,
+  "bottom": 1448
+ },
+ "faces": [
+  {
+   "id": "face-1-1",
+   "label": "剑眉星目，神情冷峻",
+   "reg": {
+    "dx": 0,
+    "dy": -1,
+    "err": 13
+   },
+   "file": "m-young/face-1-1.webp",
+   "x": 447,
+   "y": 231,
+   "w": 193,
+   "h": 280
+  },
+  {
+   "id": "face-1-2",
+   "label": "眉眼温润，含笑，温文尔雅",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-young/face-1-2.webp",
+   "x": 447,
+   "y": 230,
+   "w": 193,
+   "h": 281
+  },
+  {
+   "id": "face-1-3",
+   "label": "相貌平平，毫不起眼，眼神沉静谨慎",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-young/face-1-3.webp",
+   "x": 447,
+   "y": 230,
+   "w": 193,
+   "h": 281
+  },
+  {
+   "id": "face-1-4",
+   "label": "狭长凤眼，薄唇，神情阴鸷",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-young/face-1-4.webp",
+   "x": 447,
+   "y": 230,
+   "w": 193,
+   "h": 281
+  },
+  {
+   "id": "face-1-5",
+   "label": "清秀白净，眉目温和，略显文弱",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-young/face-1-5.webp",
+   "x": 447,
+   "y": 230,
+   "w": 194,
+   "h": 281
+  },
+  {
+   "id": "face-1-6",
+   "label": "嘴角挂着坏笑，眉骨有一道小疤，神情桀骜",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-young/face-1-6.webp",
+   "x": 447,
+   "y": 230,
+   "w": 194,
+   "h": 281
+  },
+  {
+   "id": "face-2-1",
+   "label": "方脸，浓眉，皮肤黝黑，神情憨直",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 18
+   },
+   "file": "m-young/face-2-1.webp",
+   "x": 443,
+   "y": 229,
+   "w": 199,
+   "h": 282
+  },
+  {
+   "id": "face-2-2",
+   "label": "俊美阴柔，桃花眼，似笑非笑",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 15
+   },
+   "file": "m-young/face-2-2.webp",
+   "x": 445,
+   "y": 229,
+   "w": 195,
+   "h": 282
+  },
+  {
+   "id": "face-2-3",
+   "label": "瘦削，颧骨高，眼神警惕",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 16
+   },
+   "file": "m-young/face-2-3.webp",
+   "x": 445,
+   "y": 229,
+   "w": 195,
+   "h": 282
+  },
+  {
+   "id": "face-2-4",
+   "label": "圆脸微胖，笑眯眯",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 17
+   },
+   "file": "m-young/face-2-4.webp",
+   "x": 443,
+   "y": 229,
+   "w": 201,
+   "h": 282
+  },
+  {
+   "id": "face-2-5",
+   "label": "面色苍白，眼下发青，神情冷漠",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 15
+   },
+   "file": "m-young/face-2-5.webp",
+   "x": 445,
+   "y": 229,
+   "w": 195,
+   "h": 282
+  },
+  {
+   "id": "face-2-6",
+   "label": "眼睛明亮，咧嘴大笑，少年意气",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 16
+   },
+   "file": "m-young/face-2-6.webp",
+   "x": 446,
+   "y": 229,
+   "w": 196,
+   "h": 282
+  }
+ ],
+ "hair": [
+  {
+   "id": "hair-1-1",
+   "label": "高束发髻，戴白玉发冠，插玉簪",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.99,
+    "face": 0
+   },
+   "file": "m-young/hair-1-1.webp",
+   "x": 438,
+   "y": 134,
+   "w": 227,
+   "h": 284
+  },
+  {
+   "id": "hair-1-2",
+   "label": "头顶简单的发髻，用青色布带束起",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.991,
+    "face": 0
+   },
+   "file": "m-young/hair-1-2.webp",
+   "x": 437,
+   "y": 178,
+   "w": 253,
+   "h": 240
+  },
+  {
+   "id": "hair-1-3",
+   "label": "高马尾，束黑色发带，额前有几缕碎发",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 6,
+    "dy": 4,
+    "cover": 0.99,
+    "face": 0.004
+   },
+   "file": "m-young/hair-1-3.webp",
+   "x": 426,
+   "y": 130,
+   "w": 279,
+   "h": 425
+  },
+  {
+   "id": "hair-1-4",
+   "label": "道髻，插一支木簪",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.991,
+    "face": 0
+   },
+   "file": "m-young/hair-1-4.webp",
+   "x": 438,
+   "y": 150,
+   "w": 215,
+   "h": 265
+  },
+  {
+   "id": "hair-1-5",
+   "label": "发髻凌乱，几缕碎发垂在额前和鬓边",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 6,
+    "dy": 4,
+    "cover": 0.991,
+    "face": 0.006
+   },
+   "file": "m-young/hair-1-5.webp",
+   "x": 420,
+   "y": 146,
+   "w": 247,
+   "h": 326
+  },
+  {
+   "id": "hair-1-6",
+   "label": "头顶发髻包着青色头巾",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.991,
+    "face": 0
+   },
+   "file": "m-young/hair-1-6.webp",
+   "x": 436,
+   "y": 155,
+   "w": 254,
+   "h": 315
+  },
+  {
+   "id": "hairL-1-1",
+   "label": "长发半束半披，披散到背上，头顶戴一顶银色发冠",
+   "layer": "split",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.989,
+    "face": 0
+   },
+   "file": "m-young/hairL-1-1.webp",
+   "x": 203,
+   "y": 128,
+   "w": 676,
+   "h": 1053
+  },
+  {
+   "id": "hairL-1-2",
+   "label": "长发全部披散到背上，额前系一条黑色抹额",
+   "layer": "split",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "cover": 0.989,
+    "face": 0
+   },
+   "file": "m-young/hairL-1-2.webp",
+   "x": 196,
+   "y": 191,
+   "w": 695,
+   "h": 990
+  }
+ ],
+ "bodies": [
+  {
+   "id": "body-a",
+   "key": "a",
+   "label": "宗门道袍 · 抱拳",
+   "roles": [
+    "宗门弟子"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 12
+   },
+   "file": "m-young/body-a.webp",
+   "x": 206,
+   "y": 466,
+   "w": 671,
+   "h": 982
+  },
+  {
+   "id": "body-b",
+   "key": "b",
+   "label": "月白劲装 · 按剑",
+   "roles": [
+    "剑修",
+    "侠客"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-young/body-b.webp",
+   "x": 173,
+   "y": 466,
+   "w": 756,
+   "h": 982
+  },
+  {
+   "id": "body-c",
+   "key": "c",
+   "label": "青衫 · 折扇",
+   "roles": [
+    "书生",
+    "散修"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-young/body-c.webp",
+   "x": 114,
+   "y": 466,
+   "w": 744,
+   "h": 982
+  },
+  {
+   "id": "body-d",
+   "key": "d",
+   "label": "赤膊 · 抱臂",
+   "roles": [
+    "体修",
+    "武夫"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": -1,
+    "dy": 0,
+    "err": 18
+   },
+   "file": "m-young/body-d.webp",
+   "x": 203,
+   "y": 226,
+   "w": 647,
+   "h": 1222
+  },
+  {
+   "id": "body-e",
+   "key": "e",
+   "label": "丹师袍 · 托玉瓶",
+   "roles": [
+    "丹师"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": -1,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-young/body-e.webp",
+   "x": 163,
+   "y": 466,
+   "w": 796,
+   "h": 982
+  },
+  {
+   "id": "body-f",
+   "key": "f",
+   "label": "黑袍 · 掌心魔气",
+   "roles": [
+    "魔修"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": -1,
+    "dy": 0,
+    "err": 18
+   },
+   "file": "m-young/body-f.webp",
+   "x": 65,
+   "y": 466,
+   "w": 1005,
+   "h": 982
+  },
+  {
+   "id": "body-g",
+   "key": "g",
+   "label": "粗布短打 · 提茶壶",
+   "roles": [
+    "伙计",
+    "平民"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-young/body-g.webp",
+   "x": 197,
+   "y": 466,
+   "w": 710,
+   "h": 982
+  },
+  {
+   "id": "body-h",
+   "key": "h",
+   "label": "灰紫锦袍 · 敲扇",
+   "roles": [
+    "公子",
+    "世家子弟"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 15
+   },
+   "file": "m-young/body-h.webp",
+   "x": 178,
+   "y": 466,
+   "w": 768,
+   "h": 982
+  },
+  {
+   "id": "body-i",
+   "key": "i",
+   "label": "兽皮坎肩 · 缠藤",
+   "roles": [
+    "妖族",
+    "妖修"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-young/body-i.webp",
+   "x": 186,
+   "y": 466,
+   "w": 706,
+   "h": 982
+  },
+  {
+   "id": "body-j",
+   "key": "j",
+   "label": "骨甲黑袍 · 握魔刃",
+   "roles": [
+    "魔修",
+    "魔将"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 16
+   },
+   "file": "m-young/body-j.webp",
+   "x": 139,
+   "y": 466,
+   "w": 771,
+   "h": 982
+  }
+ ],
+ "traits": [
+  {
+   "id": "trait-1-1",
+   "kind": "fox-ears",
+   "label": "狐耳",
+   "layer": "over",
+   "tint": true,
+   "colour": "black",
+   "file": "m-young/trait-1-1.webp",
+   "x": 402,
+   "y": 137,
+   "w": 291,
+   "h": 205
+  },
+  {
+   "id": "trait-1-2",
+   "kind": "horns",
+   "label": "短角",
+   "layer": "over",
+   "tint": false,
+   "colour": "black",
+   "file": "m-young/trait-1-2.webp",
+   "x": 410,
+   "y": 212,
+   "w": 259,
+   "h": 109
+  },
+  {
+   "id": "trait-1-3",
+   "kind": "mark",
+   "label": "妖纹",
+   "layer": "skin",
+   "tint": false,
+   "colour": "black",
+   "file": "m-young/trait-1-3.webp",
+   "x": 438,
+   "y": 231,
+   "w": 217,
+   "h": 130
+  },
+  {
+   "id": "trait-1-4",
+   "kind": "antlers",
+   "label": "鹿角",
+   "layer": "over",
+   "tint": false,
+   "colour": "black",
+   "file": "m-young/trait-1-4.webp",
+   "x": 318,
+   "y": 110,
+   "w": 445,
+   "h": 207
+  },
+  {
+   "id": "trait-1-5",
+   "kind": "scales",
+   "label": "鳞片",
+   "layer": "skin",
+   "tint": false,
+   "colour": "black",
+   "file": "m-young/trait-1-5.webp",
+   "x": 433,
+   "y": 316,
+   "w": 225,
+   "h": 73
+  },
+  {
+   "id": "trait-1-6",
+   "kind": "cat-ears",
+   "label": "猫耳",
+   "layer": "over",
+   "tint": true,
+   "colour": "black",
+   "file": "m-young/trait-1-6.webp",
+   "x": 408,
+   "y": 188,
+   "w": 257,
+   "h": 121
+  },
+  {
+   "id": "tail-1",
+   "kind": "fox-tail",
+   "label": "狐尾",
+   "layer": "back",
+   "tint": true,
+   "colour": "black",
+   "file": "m-young/tail-1.webp",
+   "x": 7,
+   "y": 557,
+   "w": 627,
+   "h": 690
+  }
+ ]
+}

@@ -1,0 +1,81 @@
+.own {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-12);
+  padding: var(--s-10) var(--s-6) 2px;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  overflow-y: auto;
+  padding: var(--s-4) 0 var(--s-6);
+  border: 0;
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: none;
+  color: var(--ink);
+  font: 400 var(--fs-15)/1.5 var(--f-note);
+  letter-spacing: var(--ls-me);
+  transition: border-color var(--d-focus);
+}
+
+.input::placeholder {
+  color: var(--faint);
+  opacity: 1;
+}
+
+.input:focus,
+.input[data-focus] {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+
+.input:disabled {
+  color: var(--faint);
+}
+
+.key {
+  margin-bottom: var(--s-6);
+  padding: var(--s-4) 7px;
+  border: var(--hair) solid var(--line-soft);
+  border-radius: 2px;
+  color: var(--soft);
+  font: 400 var(--fs-11)/1 var(--f-ui);
+  letter-spacing: var(--ls-card);
+}
+
+.send {
+  display: none !important;
+}
+
+/* phones: 16 px so iOS does not zoom in on focus; the send diamond replaces the key cap */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .input {
+    min-height: var(--hit);
+    padding: var(--s-10) 0;
+    font-size: var(--fs-16);
+  }
+  .key {
+    display: none;
+  }
+  .send {
+    display: inline-flex !important;
+  }
+}
+
+/* a finger on a desktop layout (a phone on its side, a tablet): the same 16 px, and the send diamond,
+   there being no Enter key to hand */
+@media (pointer: coarse) {
+  .input {
+    min-height: var(--hit);
+    padding: var(--s-10) 0;
+    font-size: var(--fs-16);
+  }
+  .key {
+    display: none;
+  }
+  .send {
+    display: inline-flex !important;
+  }
+}

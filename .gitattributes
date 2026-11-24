@@ -1,0 +1,4 @@
+# Text always checks out with LF line endings on every platform, overriding any
+# autocrlf rewrite; the engine and tests compare text byte for byte.
+# Binaries are auto-detected and left untouched.
+* text=auto eol=lf

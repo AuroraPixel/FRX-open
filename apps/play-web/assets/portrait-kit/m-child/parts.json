@@ -1,0 +1,325 @@
+{
+ "base": "m-child",
+ "geometry": {
+  "cx": 543,
+  "cy": 359,
+  "chin": 481,
+  "neckA": 495,
+  "neckB": 521,
+  "pivot": [
+   543,
+   505
+  ],
+  "splitA": 511,
+  "splitB": 553,
+  "core": [
+   543,
+   401,
+   60,
+   78
+  ],
+  "neckW": 54,
+  "top": 234,
+  "bottom": 1291
+ },
+ "faces": [
+  {
+   "id": "face-1-1",
+   "label": "虎头虎脑，圆脸，笑出小虎牙",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-child/face-1-1.webp",
+   "x": 429,
+   "y": 229,
+   "w": 228,
+   "h": 293
+  },
+  {
+   "id": "face-1-2",
+   "label": "清秀乖巧，神情安静",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 12
+   },
+   "file": "m-child/face-1-2.webp",
+   "x": 432,
+   "y": 229,
+   "w": 222,
+   "h": 293
+  },
+  {
+   "id": "face-1-3",
+   "label": "脸上沾着一点灰，咧嘴笑，神情调皮",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 10
+   },
+   "file": "m-child/face-1-3.webp",
+   "x": 433,
+   "y": 229,
+   "w": 224,
+   "h": 293
+  },
+  {
+   "id": "face-1-4",
+   "label": "大眼睛，神情怯生生",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 12
+   },
+   "file": "m-child/face-1-4.webp",
+   "x": 432,
+   "y": 230,
+   "w": 222,
+   "h": 292
+  },
+  {
+   "id": "face-1-5",
+   "label": "一本正经，神情像个小大人",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 12
+   },
+   "file": "m-child/face-1-5.webp",
+   "x": 430,
+   "y": 229,
+   "w": 226,
+   "h": 293
+  },
+  {
+   "id": "face-1-6",
+   "label": "瘦小，皮肤黝黑，眼神机灵",
+   "reg": {
+    "dx": 0,
+    "dy": 0,
+    "err": 10
+   },
+   "file": "m-child/face-1-6.webp",
+   "x": 434,
+   "y": 229,
+   "w": 220,
+   "h": 293
+  }
+ ],
+ "hair": [
+  {
+   "id": "hair-1-1",
+   "label": "总角：头顶两侧各扎一个小发髻",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": -2,
+    "cover": 0.989,
+    "face": 0
+   },
+   "file": "m-child/hair-1-1.webp",
+   "x": 397,
+   "y": 217,
+   "w": 297,
+   "h": 195
+  },
+  {
+   "id": "hair-1-2",
+   "label": "头顶扎一撮朝天的小辫子",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": -2,
+    "cover": 0.989,
+    "face": 0
+   },
+   "file": "m-child/hair-1-2.webp",
+   "x": 426,
+   "y": 140,
+   "w": 238,
+   "h": 274
+  },
+  {
+   "id": "hair-1-3",
+   "label": "齐眉刘海的短发",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": -2,
+    "dy": 16,
+    "cover": 0.991,
+    "face": 0.001
+   },
+   "file": "m-child/hair-1-3.webp",
+   "x": 414,
+   "y": 188,
+   "w": 269,
+   "h": 210
+  },
+  {
+   "id": "hair-1-4",
+   "label": "头顶一个小道髻，插一支木簪",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": -2,
+    "cover": 0.986,
+    "face": 0
+   },
+   "file": "m-child/hair-1-4.webp",
+   "x": 426,
+   "y": 158,
+   "w": 239,
+   "h": 256
+  },
+  {
+   "id": "hair-1-6",
+   "label": "头顶扎一个小发髻，系红绳",
+   "layer": "front",
+   "colour": "black",
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": -4,
+    "cover": 0.985,
+    "face": 0
+   },
+   "file": "m-child/hair-1-6.webp",
+   "x": 421,
+   "y": 144,
+   "w": 244,
+   "h": 271
+  }
+ ],
+ "bodies": [
+  {
+   "id": "body-a",
+   "key": "a",
+   "label": "小道袍 · 抱葫芦",
+   "roles": [
+    "道童",
+    "药童"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 11
+   },
+   "file": "m-child/body-a.webp",
+   "x": 271,
+   "y": 473,
+   "w": 513,
+   "h": 827
+  },
+  {
+   "id": "body-b",
+   "key": "b",
+   "label": "补丁短衣 · 糖葫芦",
+   "roles": [
+    "村童",
+    "平民"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-child/body-b.webp",
+   "x": 280,
+   "y": 477,
+   "w": 493,
+   "h": 822
+  },
+  {
+   "id": "body-c",
+   "key": "c",
+   "label": "锦缎小袍 · 木马",
+   "roles": [
+    "少爷"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 11
+   },
+   "file": "m-child/body-c.webp",
+   "x": 305,
+   "y": 477,
+   "w": 477,
+   "h": 821
+  },
+  {
+   "id": "body-d",
+   "key": "d",
+   "label": "青衣书童 · 抱书",
+   "roles": [
+    "书童",
+    "平民"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-child/body-d.webp",
+   "x": 279,
+   "y": 477,
+   "w": 507,
+   "h": 820
+  },
+  {
+   "id": "body-e",
+   "key": "e",
+   "label": "练功短打 · 木剑",
+   "roles": [
+    "武童",
+    "宗门弟子"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 14
+   },
+   "file": "m-child/body-e.webp",
+   "x": 266,
+   "y": 477,
+   "w": 535,
+   "h": 848
+  },
+  {
+   "id": "body-f",
+   "key": "f",
+   "label": "灰色僧衣 · 合十",
+   "roles": [
+    "小沙弥",
+    "僧"
+   ],
+   "fit": {
+    "s": 1,
+    "dx": 0,
+    "dy": 0,
+    "err": 13
+   },
+   "file": "m-child/body-f.webp",
+   "x": 308,
+   "y": 477,
+   "w": 509,
+   "h": 817
+  }
+ ],
+ "traits": []
+}

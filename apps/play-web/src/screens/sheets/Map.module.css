@@ -1,0 +1,379 @@
+/* 地图 (spec 七, 地图): a search line, the tabs, the ink map in a thin frame, the place's detail. */
+.map {
+  display: grid;
+  gap: var(--s-16);
+  min-width: 0;
+}
+
+/* 去处 (the cultivation life): its two pages, 近处 and 地图, under a row of tabs */
+.places {
+  display: grid;
+  align-content: start;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+.search {
+  display: grid;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.searchBox {
+  width: 100%;
+  min-width: 0;
+  padding: var(--s-6) 0;
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  letter-spacing: .06em;
+  transition: border-color var(--d-focus);
+  appearance: none;
+}
+
+.searchBox::placeholder {
+  color: var(--faint);
+}
+
+.searchBox:focus {
+  border-bottom-color: var(--gold);
+}
+
+.searchBox:focus-visible {
+  outline: none;
+}
+
+.searchBox::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.found {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.foundItem {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  width: 100%;
+  min-width: 0;
+  padding: var(--s-8) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+}
+
+.foundItem strong {
+  font: 700 var(--fs-14)/1.4 var(--f-serif);
+  letter-spacing: .1em;
+}
+
+.foundItem span {
+  margin-left: auto;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.foundItem:hover {
+  background: var(--glow-soft);
+}
+
+.none {
+  padding: var(--s-6) var(--s-12);
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.pane {
+  display: grid;
+  gap: var(--s-12);
+  min-width: 0;
+}
+
+/* the map's frame: water is the panel's own tint with faint level lines, land a wash of gold */
+.ink {
+  position: relative;
+  height: min(470px, 56dvh);
+  min-height: 260px;
+  overflow: hidden;
+  border: var(--hair) solid var(--line-soft);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 17px, var(--line-soft) 17px 18px),
+    var(--tint);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ink:active {
+  cursor: grabbing;
+}
+
+.ink:focus-visible {
+  outline-offset: -3px;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+}
+
+.land {
+  fill: var(--glow-soft);
+  stroke: var(--line);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.region {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+  opacity: .5;
+  vector-effect: non-scaling-stroke;
+}
+
+.region[data-on] {
+  stroke-dasharray: none;
+  opacity: .85;
+}
+
+.region[data-off] {
+  opacity: .22;
+}
+
+/* a place: a small diamond; the player's own a larger gold one with a slow glow */
+.diamond {
+  fill: var(--soft);
+  stroke: var(--halo);
+  stroke-width: 1;
+}
+
+/* the whole world in view: places are points, the player's own still a gold diamond */
+.ink[data-whole] .mark:not([data-here]) .diamond {
+  transform: scale(.45);
+  transform-box: fill-box;
+  transform-origin: center;
+  stroke: none;
+}
+
+.mark[data-far] .diamond {
+  fill: var(--faint);
+  opacity: .55;
+}
+
+.mark[data-picked] .diamond {
+  fill: var(--ink);
+}
+
+.mark[data-here] .diamond {
+  fill: var(--gold);
+}
+
+.halo {
+  fill: var(--glow);
+  opacity: .5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: glow 2.2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: .28; transform: scale(.8); }
+  50% { opacity: .6; transform: scale(1.1); }
+}
+
+.ring {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.4;
+}
+
+.cursor {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-dasharray: 3 3;
+}
+
+.terrain {
+  fill: none;
+  stroke: var(--soft);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .75;
+}
+
+/* names on the map: a halo of the background colour keeps them legible over lines and land */
+.name,
+.regionName,
+.areaName {
+  fill: currentColor;
+  stroke: var(--halo);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  pointer-events: none;
+}
+
+.name {
+  color: var(--text);
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .06em;
+}
+
+.hereName {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.mark[data-picked] .name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.regionName {
+  color: var(--ink);
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  letter-spacing: .16em;
+  stroke-width: 4px;
+}
+
+.areaName {
+  color: var(--soft);
+  font: 400 var(--fs-11h)/1 var(--f-serif);
+  letter-spacing: .3em;
+}
+
+/* 近 远 全 at the lower right of the frame */
+.zoom {
+  position: absolute;
+  right: var(--s-10);
+  bottom: var(--s-10);
+  display: grid;
+  gap: var(--s-8);
+}
+
+.distance {
+  margin: 0;
+  color: var(--text);
+}
+
+/* the figure in the line's own serif (its bold cut has the digits): a system font inside the
+   serif line would read as a missing glyph */
+.distance b {
+  font: 700 var(--fs-14)/1 var(--f-serif);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.hereNote {
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.failed {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: var(--s-8) var(--s-12);
+  border-left: 2px solid var(--cin);
+  background: var(--tint);
+  font: var(--type-note);
+  color: var(--text);
+}
+
+.failed span {
+  flex: 1;
+}
+
+/* phones: the sheet is full height (it fills the body, Sheet's fill); the map takes what the search,
+   the tabs and the place's detail leave, so the detail and its 「前往」 are always in sight under it,
+   never below the sheet's edge; 44 px targets (spec 十一) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .map {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+  .pane {
+    grid-template-rows: minmax(180px, 1fr) auto;
+    min-height: 0;
+  }
+  .searchBox {
+    min-height: var(--hit);
+    font-size: var(--fs-16);
+  }
+  .foundItem {
+    min-height: var(--hit);
+  }
+  .ink {
+    height: auto;
+    min-height: 180px;
+  }
+  .zoom {
+    gap: var(--s-12);
+    right: var(--s-12);
+    bottom: var(--s-12);
+  }
+}
+
+/* a phone on its side (the wide side panel, lower than 560 px): the map takes what the search and the
+   tabs leave, and a picked place's detail with its 「前往」 stands beside it, in sight */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  /* the body's height, not its content's: the detail scrolls within it */
+  .map {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    min-height: 0;
+  }
+  .pane {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: start;
+    min-height: 0;
+  }
+  .ink {
+    align-self: stretch;
+    height: auto;
+    min-height: 120px;
+  }
+  /* the detail scrolls in its own column, so the panel never does (which would take the search out of
+     sight); its 「前往」 stands first, in sight however long the words */
+  .pane > :last-child {
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .pane > :last-child > :last-child {
+    order: -1;
+  }
+  /* a low frame: 近 远 全 in a row along its foot */
+  .zoom {
+    grid-auto-flow: column;
+  }
+}
+
+/* a finger on the desktop layout: the search 44 px tall at 16 px, the zoom buttons' touch areas apart */
+@media (pointer: coarse) {
+  .searchBox {
+    min-height: var(--hit);
+    font-size: var(--fs-16);
+  }
+  .foundItem {
+    min-height: var(--hit);
+  }
+  .zoom {
+    gap: var(--s-12);
+  }
+}

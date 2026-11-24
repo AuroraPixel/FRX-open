@@ -1,0 +1,56 @@
+.line {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--s-12);
+  margin: .2em 0 .72em;
+  font: var(--type-body);
+  text-align: left;
+  text-indent: 0;
+}
+
+.head {
+  width: 40px;
+  height: 40px;
+  margin-top: 2px;
+  border: var(--hair) solid var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--tint);
+  background: var(--panel);
+  object-fit: cover;
+}
+
+span.head {
+  display: grid;
+  place-items: center;
+  font: 400 var(--fs-20)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.words {
+  min-width: 0;
+}
+
+.name {
+  display: block;
+  font: var(--type-speaker);
+  letter-spacing: var(--ls-speaker);
+  color: var(--gold);
+}
+
+.name i {
+  margin-left: var(--s-10);
+  font: 400 var(--fs-11h)/1 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .2em;
+  color: var(--faint);
+}
+
+.words p {
+  margin: .08em 0 0;
+  color: var(--say);
+}
+
+.line[data-mine] .name {
+  color: var(--soft);
+}

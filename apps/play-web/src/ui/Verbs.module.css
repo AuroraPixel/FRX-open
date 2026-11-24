@@ -1,0 +1,205 @@
+/* The standing commands (the mock-up's .fx-verbs, .fx-verb): a 30 px diamond turned 45 degrees in a
+   42 px box, a brush character in it, the name in two characters under it. */
+.verbs {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-18);
+  min-width: 0;
+  padding: var(--s-6) 0 var(--s-2);
+}
+
+/* the desktop's row: as many as fit on a line, then the next line */
+.verbs:not([data-spread]) {
+  flex-wrap: wrap;
+  row-gap: var(--s-8);
+}
+
+/* a phone on its side (the desktop's layout on a short screen): one line that scrolls sideways and fades at
+   its end, as the phone's crowded bar does; two lines of commands left the story a sliver above the foot,
+   too little for one of 接下来's longer suggestions */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .verbs:not([data-spread]) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .verbs:not([data-spread])::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* the phone's bar: spread over its width, every button 46 px wide (two characters never wrap); its buttons
+   never widen what holds it (contain), so a bar with more than its width holds goes crowded instead */
+.verbs[data-spread] {
+  justify-content: space-between;
+  gap: var(--s-2);
+  width: 100%;
+  contain: inline-size;
+}
+
+/* more commands than the bar holds: they scroll sideways, fading out at the right, and 自写 and 面板
+   stand at the end after a thin rule */
+.verbs[data-crowded] {
+  gap: 0;
+}
+
+/* the strip's width is what the bar leaves it (contain: its buttons never widen it) */
+.strip {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: var(--s-6);
+  min-width: 0;
+  contain: inline-size;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+  mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+.ends {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-left: var(--s-4);
+  padding-left: var(--s-4);
+  border-left: var(--hair) solid var(--line-soft);
+}
+
+/* why a command cannot be done now, without a tap: a line each reason, the commands named in gold */
+.notes {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notes p {
+  margin: 0;
+  font: 400 var(--fs-12)/1.5 var(--f-serif);
+  color: var(--text);
+  text-shadow: 0 1px 8px var(--halo);
+}
+
+.notes p::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 var(--s-8) 2px var(--s-2);
+  background: var(--cin);
+  transform: rotate(45deg);
+}
+
+.notes b {
+  margin-right: .6em;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.verb {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 46px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.d {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font: 400 var(--fs-20)/1 var(--f-brush);
+  color: var(--ink);
+}
+
+.d::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: var(--hair) solid var(--line);
+  background: var(--panel);
+  transform: rotate(45deg);
+  transition: border-color var(--d-focus), box-shadow var(--d-focus), background-color var(--d-press);
+}
+
+.d > span {
+  position: relative;
+}
+
+.verb em {
+  margin: -1px 0 0 .2em;
+  font: 400 var(--fs-11)/1.3 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .2em;
+  white-space: nowrap;
+  color: var(--soft);
+}
+
+.verb:not(:disabled):not([aria-disabled]):hover .d::before,
+.verb[data-hover] .d::before,
+.verb:focus-visible .d::before {
+  border-color: var(--gold);
+}
+
+.verb:not(:disabled):not([aria-disabled]):active .d::before,
+.verb[data-active] .d::before {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.verb:focus-visible {
+  outline-offset: 2px;
+}
+
+/* the one to do now: gilded */
+.verb[data-main] .d {
+  color: var(--gold);
+}
+
+.verb[data-main] .d::before {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px var(--glow-soft), inset 0 0 8px var(--glow-soft);
+}
+
+.verb[data-main] em {
+  color: var(--gold);
+}
+
+/* not now: faded, the diamond dashed */
+.verb[data-off] .d,
+.verb[data-off] em,
+.verb:disabled .d,
+.verb:disabled em {
+  color: var(--faint);
+}
+
+.verb[data-off] .d::before {
+  border-style: dashed;
+}
+
+.verb:disabled {
+  cursor: default;
+}
+
+.verb:disabled .d::before {
+  border-color: var(--line-soft);
+  box-shadow: none;
+}

@@ -1,0 +1,301 @@
+/* 人物 (spec 七): entries with a round head and a relation seal; a person's page with the half-length
+   portrait, the name plate beside it, the facts, the deeds along a gold line; 改形象 in a tall panel. */
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 60px;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--d-press);
+}
+
+.entry:hover {
+  background: var(--glow-soft);
+}
+
+.words {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.words strong {
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+}
+
+.words span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 400 var(--fs-12h)/1.6 var(--f-serif);
+  color: var(--soft);
+}
+
+.relation {
+  margin-right: var(--s-2);
+}
+
+/* a bonded person: a small gold word after the name */
+.bond {
+  margin-left: var(--s-8);
+  padding: 0 var(--s-4);
+  border: var(--hair) solid var(--line);
+  font: 400 var(--fs-11h)/1.5 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .12em;
+  color: var(--gold);
+  vertical-align: 2px;
+}
+
+/* a person's page */
+.person {
+  display: grid;
+  gap: var(--s-16);
+  min-width: 0;
+}
+
+.back {
+  justify-self: start;
+}
+
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--s-12);
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+/* a flex row of a fixed height: the canvas takes the full height (a grid's auto row would let it grow) */
+.figure {
+  display: flex;
+  justify-content: center;
+  height: 220px;
+  overflow: hidden;
+  /* the figure fades into the panel at its lower edge, as portraits sink into the mist on the stage */
+  -webkit-mask: linear-gradient(180deg, var(--ink) 78%, transparent);
+  mask: linear-gradient(180deg, var(--ink) 78%, transparent);
+}
+
+.figure canvas {
+  height: 100%;
+  width: auto;
+}
+
+/* a beast the people table lists: its bestiary picture, whole, in the figure's box */
+.figure[data-beast] img {
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* the name plate beside the figure, upright as on the stage (spec 四, 名牌) */
+.plate {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: var(--s-8);
+  padding-bottom: var(--s-14);
+  writing-mode: vertical-rl;
+}
+
+.name {
+  margin: 0;
+  font: 400 var(--fs-34)/1.1 var(--f-brush);
+  letter-spacing: .12em;
+  color: var(--ink);
+}
+
+.role {
+  padding-left: var(--s-6);
+  border-left: var(--hair) solid var(--line);
+  font: 700 var(--fs-12h)/1.4 var(--f-serif);
+  letter-spacing: .42em;
+  color: var(--soft);
+}
+
+.plate > span[data-mark] {
+  writing-mode: vertical-rl;
+}
+
+.bondPlate {
+  padding: var(--s-4) 0;
+  border: var(--hair) solid var(--line);
+  font: 400 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--gold);
+}
+
+/* what can be done with a person: 交谈, the bond, 改形象 */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+}
+
+/* 交谈: one line and its two buttons */
+.talk {
+  display: grid;
+  gap: var(--s-8);
+  padding: var(--s-12);
+  border-left: 2px solid var(--gold);
+  background: var(--tint);
+}
+
+.talk label {
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.talkInput {
+  width: 100%;
+  min-height: var(--hit);
+  padding: var(--s-8) 0;
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  background: none;
+  color: var(--ink);
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  outline: none;
+  transition: border-color var(--d-focus);
+}
+
+.talkInput::placeholder {
+  color: var(--faint);
+}
+
+.talkInput:focus {
+  border-bottom-color: var(--gold);
+  box-shadow: 0 1px 0 var(--gold);
+}
+
+.talkActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-10);
+}
+
+/* a finger: 16 px, or iOS zooms the page in on the line (spec 十一) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .talkInput {
+    font-size: var(--fs-16);
+  }
+}
+
+/* the deeds, newest first, along a gold line */
+.deeds {
+  display: grid;
+  gap: var(--s-12);
+  margin: 0;
+  padding: var(--s-2) 0 var(--s-2) var(--s-18);
+  border-left: var(--hair) solid var(--line);
+  list-style: none;
+}
+
+.deeds li {
+  position: relative;
+  display: grid;
+  gap: var(--s-2);
+}
+
+.deeds li::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: calc(-1 * var(--s-18) - 4px);
+  width: 7px;
+  height: 7px;
+  border: var(--hair) solid var(--gold);
+  background: var(--panel-hi);
+  transform: rotate(45deg);
+}
+
+.deeds li:first-child::before {
+  background: var(--gold);
+}
+
+.when {
+  font: 400 var(--fs-12)/1.6 var(--f-serif);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.deeds p,
+.story {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.story {
+  text-indent: 2em;
+  text-align: justify;
+}
+
+.failed {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-10);
+}
+
+.failed p {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+/* 改形象: the figure on top, the rows, the three buttons at the foot */
+.makerFigure {
+  display: flex;
+  justify-content: center;
+  height: 220px;
+  overflow: hidden;
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+.makerFigure canvas {
+  height: 100%;
+  width: auto;
+}
+
+.makerActions {
+  position: sticky;
+  bottom: calc(-1 * var(--s-22));
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-10);
+  margin: 0 calc(-1 * 20px) calc(-1 * var(--s-22));
+  padding: var(--s-12) 20px var(--s-16);
+  border-top: var(--hair) solid var(--line-soft);
+  background: var(--panel-hi);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .actions > button,
+  .talkActions > button {
+    flex: 1;
+    min-height: var(--hit);
+  }
+  .makerFigure {
+    height: min(30dvh, 220px);
+  }
+  .makerActions {
+    bottom: calc(-1 * (var(--s-22) + env(safe-area-inset-bottom, 0px)));
+    margin-bottom: calc(-1 * (var(--s-22) + env(safe-area-inset-bottom, 0px)));
+    padding-bottom: calc(var(--s-16) + env(safe-area-inset-bottom, 0px));
+    gap: var(--s-12);
+  }
+  .makerActions > button {
+    flex: 1;
+  }
+}

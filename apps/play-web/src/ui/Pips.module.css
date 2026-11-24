@@ -1,0 +1,34 @@
+/* A clock's segments (the mock-up's .fx-pips): 8 px diamonds 8 px apart, a gold line round each, the full
+   ones cinnabar with a glow. On an annals line they are 6 px. */
+.pips {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  margin: 0 3px;
+  vertical-align: middle;
+}
+
+.pips i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: var(--hair) solid var(--line);
+  background: var(--halo);
+  transform: rotate(45deg);
+}
+
+.pips i[data-on] {
+  border-color: var(--cin);
+  background: var(--cin);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--cin) 70%, transparent);
+}
+
+.pips[data-small] {
+  gap: var(--s-4);
+}
+
+.pips[data-small] i {
+  width: 6px;
+  height: 6px;
+  box-shadow: none;
+}

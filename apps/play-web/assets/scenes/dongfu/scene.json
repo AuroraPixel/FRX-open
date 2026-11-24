@@ -1,0 +1,44 @@
+{
+  "id": "dongfu",
+  "name": "洞府石室",
+  "kind": "cave",
+  "indoor": true,
+  "key": "key.webp",
+  "eye": [-3.2, 15.5],
+  "sky": {"set": "common", "azimuth": 13, "horizon": 0.17},
+  "layers": [
+    {"type": "card", "file": "wall.webp", "w": 420, "h": 140.0, "x": 4.0, "y": -120, "z": -60, "order": -9.5, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1]},
+    {"type": "card", "file": "wall.webp", "w": 420, "h": 140.0, "x": 4.0, "y": 19.5, "z": -60, "flip": true, "order": -9.5, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1]},
+    {"type": "card", "file": "wall.webp", "w": 42, "h": 14.0, "x": -41.979, "y": 0.36, "z": -8, "flip": true, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [0.36, 2.544]},
+    {"type": "card", "file": "wall.webp", "w": 42, "h": 14.0, "x": 0.021, "y": 0.36, "z": -8, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [0.36, 2.544]},
+    {"type": "card", "file": "wall.webp", "w": 42, "h": 14.0, "x": 42.021, "y": 0.36, "z": -8, "flip": true, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [0.36, 2.544]},
+    {"type": "card", "file": "wall.webp", "w": 126, "h": 60.0, "x": 0.021, "y": 13.16, "z": -7.95, "order": 1.05, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1], "sink": [13.16, 14.36]},
+    {"type": "card", "file": "shelf.webp", "w": 2.595, "h": 3.4, "x": -2.047, "y": 3.85, "z": -4.0, "order": 1.1, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35},
+    {"type": "card", "file": "furnace.webp", "w": 2.102, "h": 2.7, "x": 10.777, "y": 3.85, "z": -3.0, "order": 1.1, "aura": 0.3, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35},
+    {"type": "card", "file": "table.webp", "w": 3.4, "h": 1.739, "x": 4.2, "y": 3.65, "z": 0.2, "order": 1.2, "aura": 0.4, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35},
+    {"type": "card", "file": "pillar.webp", "w": 8.047, "h": 12.0, "x": -3.458, "y": 0.8, "z": 5.0, "order": 2.3, "gain": 0.42, "haze": 0.15, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.8, "mistHaze": 0.0, "mistGain": 0.3},
+    {"type": "card", "file": "stalactites.webp", "w": 4.03, "h": 3.6, "x": 6.542, "y": 8.247, "z": 3.0, "order": 2.4, "gain": 0.42, "haze": 0.15, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.8, "mistHaze": 0.0, "mistGain": 0.3}
+  ],
+  "cameras": {
+    "idle": {"wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36], "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]},
+    "read": {"wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36], "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]},
+    "sheet": {"wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34], "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]},
+    "cult": {"wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33], "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]},
+    "close": {"wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34], "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]},
+    "cine1": {"wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40], "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]},
+    "cine2": {"wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40], "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]}
+  },
+  "anchors": {"player": [4.0, 4.0, 0.6], "aura": [4.0, 4.02, 0.5499999999999999]},
+  "hours": {"dawn": {"exposure": 0.8}, "day": {"exposure": 0.74, "tint": [2.1, 2.0, 1.9]}, "dusk": {"exposure": 1.0}},
+  "weather": ["clear"],
+  "ambience": {"night": "amb.drip", "dawn": "amb.drip", "day": "amb.drip", "dusk": "amb.drip"},
+  "mood": "calm",
+  "floor": {"kind": "none"},
+  "protagonist": {"pose": "sit"},
+  "effects": {
+    "shafts": [
+      {"from": [11.6, 12.1, -8.0], "to": [5.4, 3.9, -1.2], "width": 2.2},
+      {"from": [12.4, 11.6, -8.0], "to": [8.2, 3.9, -2.5], "width": 1.0, "strength": 0.6}
+    ]
+  }
+}

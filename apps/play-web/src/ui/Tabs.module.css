@@ -1,0 +1,72 @@
+/* The weak base line is drawn 3 px above the bottom so the scroller keeps room for the diamonds. */
+.tabs {
+  display: flex;
+  gap: var(--s-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 3px;
+  background: linear-gradient(var(--line-soft), var(--line-soft)) 0 calc(100% - 3px) / 100% 1px no-repeat;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  position: relative;
+  flex: none;
+  min-height: 36px;
+  padding: var(--s-8) var(--s-10) var(--s-10);
+  border: 0;
+  background: none;
+  color: var(--soft);
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  white-space: nowrap;
+  transition: color var(--d-focus);
+}
+
+.tab:hover,
+.tab[data-hover] {
+  color: var(--ink);
+}
+
+.tab:focus-visible,
+.tab[data-focus] {
+  outline-offset: -3px;
+}
+
+/* the chosen tab: a 2 px gold line with a small diamond at each end */
+.tab[aria-selected='true'] {
+  color: var(--ink);
+}
+.rule {
+  position: absolute;
+  left: var(--s-8);
+  right: var(--s-8);
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+}
+.rule b {
+  position: absolute;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+.rule b:first-child {
+  left: -5px;
+}
+.rule b:last-child {
+  right: -5px;
+}
+
+/* phones, and a finger anywhere: tabs 44 px tall to the touch */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .tab {
+    min-height: var(--hit);
+    padding-inline: var(--s-12);
+  }
+}

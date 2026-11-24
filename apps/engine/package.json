@@ -1,0 +1,6 @@
+{
+  "name": "frx-engine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Server-side settlement engine: rules, checks, combat and cultivation"
+}

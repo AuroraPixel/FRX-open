@@ -1,0 +1,115 @@
+{
+ "id": "kit-shanmen",
+ "family": "shanmen",
+ "name": "宗门山门",
+ "layout": "gate",
+ "ground": 4.0,
+ "base": {
+  "kind": "gate",
+  "indoor": false,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36],
+    "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]
+   },
+   "read": {
+    "wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36],
+    "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]
+   },
+   "sheet": {
+    "wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34],
+    "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]
+   },
+   "cult": {
+    "wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33],
+    "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]
+   },
+   "close": {
+    "wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34],
+    "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]
+   },
+   "cine1": {
+    "wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40],
+    "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]
+   },
+   "cine2": {
+    "wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40],
+    "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear",
+   "cloud",
+   "mist",
+   "snow"
+  ],
+  "ambience": {
+   "night": "amb.wind",
+   "dawn": "amb.wind",
+   "day": "amb.wind",
+   "dusk": "amb.wind"
+  },
+  "mood": "solemn",
+  "floor": {
+   "kind": "clouds"
+  },
+  "protagonist": {
+   "pose": "stand"
+  }
+ },
+ "bankRows": [
+  [-9, 1.9, 60],
+  [-16, 2.4, 82],
+  [-25, 2.9, 108],
+  [-37, 3.5, 142],
+  [-53, 4.3, 188],
+  [-74, 5.3, 250],
+  [-102, 6.6, 330],
+  [-140, 8.3, 440],
+  [-192, 10.6, 590],
+  [-238, 12.5, 720]
+ ],
+ "elements": [
+  {"id": "far-peaks", "file": "far-peaks.webp", "role": "far", "px": [2172, 382], "bytes": [181566, 60102], "v": "210d0e35", "height": 0, "foot": 0.8, "top": 0.1, "feature": 0.6},
+  {"id": "far-karst", "file": "far-karst.webp", "role": "far", "px": [2172, 418], "bytes": [197574, 66390], "v": "87ef3bce", "height": 0, "foot": 0.8, "top": 0.09, "feature": 0.6, "tags": ["valley", "mountain", "beast"]},
+  {"id": "far-palace", "file": "far-palace.webp", "role": "far", "px": [2172, 465], "bytes": [218270, 67814], "v": "9ba1e8c8", "height": 0, "foot": 0.8, "top": 0.17, "feature": 0.52, "tags": ["palace", "grand", "temple"]},
+  {"id": "far-cliffs", "file": "far-cliffs.webp", "role": "far", "px": [2172, 430], "bytes": [246030, 75288], "v": "1158bc3b", "height": 0, "foot": 0.82, "top": 0.08, "feature": 0.55, "tags": ["mountain", "sword", "dark"]},
+  {"id": "cloud-bank", "file": "cloud-bank.webp", "role": "bank", "px": [2172, 408], "bytes": [204574, 62318], "v": "b652ffca", "height": 0, "foot": 0},
+  {"id": "gate-stone", "file": "gate-stone.webp", "role": "gate", "px": [1536, 1007], "bytes": [502638, 151360], "v": "83a318c9", "height": 15.0, "foot": 0.63, "whole": true, "plaque": {"box": [0.424, 0.214, 0.576, 0.273], "ink": "dark"}, "tags": ["sect", "sword"], "mask": "0fe7ff7ff7fff9e2966967fe7fe7fe7fe7fe", "body": [0.083, 0.916], "crown": 0.0},
+  {"id": "gate-wood", "file": "gate-wood.webp", "role": "gate", "px": [1409, 963], "bytes": [322228, 96140], "v": "6645c3bc", "height": 9.5, "foot": 0.96, "plaque": {"box": [0.37, 0.272, 0.631, 0.376], "ink": "dark"}, "tags": ["sect", "temple", "beast"], "mask": "0901f85faffffff7fe79e59a59ad9bd9bfff", "body": [0.044, 0.956], "crown": 0.0},
+  {"id": "gate-hall", "file": "gate-hall.webp", "role": "gate", "px": [1425, 908], "bytes": [331852, 104390], "v": "bcc6ec4c", "height": 10.5, "foot": 0.94, "plaque": {"box": [0.344, 0.219, 0.657, 0.329], "ink": "dark"}, "tags": ["palace", "temple", "grand"], "mask": "0903fc3fc5faffffff7fe7fe7fe7fe7fefff", "body": [0.079, 0.919], "crown": 0.0},
+  {"id": "gate-rock", "file": "gate-rock.webp", "role": "gate", "px": [1452, 973], "bytes": [424556, 122194], "v": "db43542a", "height": 10.0, "foot": 0.94, "plaque": {"box": [0.335, 0.22, 0.676, 0.33], "ink": "dark"}, "tags": ["valley", "mountain", "beast", "dark"], "mask": "30430e3fe7ff7fe70e60e60ef0ff0ff0ffff", "body": [0.021, 0.981], "crown": 0.0},
+  {"id": "gate-tower", "file": "gate-tower.webp", "role": "gate", "px": [1258, 988], "bytes": [318034, 103702], "v": "18b2fcce", "height": 12.0, "foot": 0.99, "plaque": {"box": [0.36, 0.2, 0.645, 0.28], "ink": "dark"}, "tags": ["palace", "grand", "sect"], "mask": "0903fc3fc7fe7fe7fe7fe7fe7fefffffffff", "body": [0.005, 0.995], "crown": 0.0},
+  {"id": "gate-moon", "file": "gate-moon.webp", "role": "gate", "px": [1734, 855], "bytes": [327432, 105644], "v": "41d5b229", "height": 9.0, "foot": 0.985, "plaque": {"box": [0.36, 0.25, 0.64, 0.36], "ink": "dark"}, "tags": ["grace", "valley", "sect"], "mask": "0901f81f8dfbfffffff9ff9ff9ff9ff9ffff", "body": [0.014, 0.986], "crown": 0.0},
+  {"id": "hall", "file": "hall.webp", "role": "backdrop", "px": [1530, 991], "bytes": [430586, 128152], "v": "1b36282f", "height": 17.0, "foot": 0.95, "tags": ["palace", "sect", "grand"], "mask": "0f03fc3fc7fe3fc3fc7fe7fefffffffff7fe"},
+  {"id": "pagoda", "file": "pagoda.webp", "role": "backdrop", "px": [1072, 1402], "bytes": [362380, 115900], "v": "78f40a39", "height": 23.0, "foot": 0.95, "tags": ["temple", "sect", "sword"], "mask": "0000f00f00f00f01f81f87f8ffe7fefff7fe"},
+  {"id": "pavilions", "file": "pavilions.webp", "role": "backdrop", "px": [1504, 983], "bytes": [487230, 143804], "v": "c5c9cb87", "height": 17.0, "foot": 0.97, "tags": ["valley", "mountain", "beast", "sect"], "mask": "00c03e07e37e33e7feffefff7ff7ff7fe1fc"},
+  {"id": "palace-peak", "file": "palace-peak.webp", "role": "backdrop", "px": [1661, 932], "bytes": [446150, 136148], "v": "7380c8a7", "height": 26.0, "foot": 0.85, "tags": ["palace", "grand", "grace", "sect"], "mask": "0000600f03fc7fe7fe7ffffffffffffff3fc"},
+  {"id": "stairs-jade", "file": "stairs-jade.webp", "role": "ground", "px": [1690, 650], "bytes": [225234, 78194], "v": "14021904", "height": 9.2, "foot": 0, "top": 0.15, "tags": ["sect", "palace", "grand", "temple"], "weight": 1.2},
+  {"id": "stairs-rough", "file": "stairs-rough.webp", "role": "ground", "px": [1674, 603], "bytes": [293252, 82096], "v": "ff55933b", "height": 8.6, "foot": 0, "top": 0.1, "tags": ["valley", "mountain", "dark", "beast"]},
+  {"id": "terrace", "file": "terrace.webp", "role": "ground", "px": [2172, 422], "bytes": [299966, 90700], "v": "177408e6", "height": 6.4, "foot": 0, "top": 0.31, "tags": ["palace", "temple", "grand"], "weight": 0.8},
+  {"id": "pine", "file": "pine.webp", "role": "near", "px": [1536, 1012], "bytes": [427980, 132610], "v": "61c1410e", "height": 7.5, "foot": 0.97, "hold": [0.25, 0.97], "mask": "0f01fc3fe7ffffffe4300700e00e00e00f00"},
+  {"id": "pine-lean", "file": "pine-lean.webp", "role": "near", "px": [1530, 1018], "bytes": [486636, 153294], "v": "b0dcb515", "height": 8.0, "foot": 0.94, "hold": [0.8, 0.94], "mask": "0781fc3fcffeffffff07c00e00700f00f01f"},
+  {"id": "cranes", "file": "cranes.webp", "role": "prop", "px": [786, 818], "bytes": [193040, 64506], "v": "8819f021", "height": 4.0, "foot": 0.92, "depths": ["mid", "near"], "tags": ["beast", "mountain", "valley"], "weight": 0.8, "mask": "0400400c81dc3fc3b82a85fe7fffff7ff7fe"},
+  {"id": "burner", "file": "burner.webp", "role": "prop", "px": [643, 813], "bytes": [169574, 52466], "v": "dffd4a78", "height": 3.6, "foot": 0.93, "depths": ["mid"], "tags": ["temple", "sect", "fire"], "mask": "0001000604f2ffbffffff7fe7fe3fc36c3fc"},
+  {"id": "stele", "file": "stele.webp", "role": "prop", "px": [613, 1000], "bytes": [192800, 55964], "v": "cfa0c1c6", "height": 5.2, "foot": 0.95, "depths": ["mid"], "tags": ["sect", "sword", "palace"], "weight": 0.8, "mask": "0f03fc7fe3fc1f81f83fc3fc3fc7feffffff"},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [1298, 826], "bytes": [282244, 86938], "v": "18011947", "height": 2.6, "foot": 0.97, "plaque": {"box": [0.205, 0.425, 0.76, 0.735], "ink": "dark"}, "only": "name", "mask": "03c3fc3fe7fe7fe7fe7ffffefff7ffffffff"},
+  {"id": "lantern", "file": "lantern.webp", "role": "prop", "px": [455, 824], "bytes": [94854, 29164], "v": "270bf3d4", "height": 3.6, "foot": 0.944, "depths": ["mid"], "pair": true, "tags": ["temple", "palace", "sect"], "mask": "060060fff7fe1f81f81f80f01f83fc3fc3fe"},
+  {"id": "qilin", "file": "qilin.webp", "role": "prop", "px": [569, 801], "bytes": [150732, 47862], "v": "00e3dbe0", "height": 4.0, "foot": 0.934, "depths": ["mid"], "pair": true, "tags": ["sect", "palace", "grand"], "weight": 1.2, "mask": "0503f07f03f43fe3ff3ff7ffffeffeffeffe"},
+  {"id": "banner", "file": "banner.webp", "role": "prop", "px": [524, 859], "bytes": [72038, 25466], "v": "f593c8be", "height": 9.0, "foot": 0.942, "depths": ["mid"], "pair": true, "tags": ["sect", "sword", "dark"], "mask": "200f803c03c03c03e02f02fc27e600700f00"},
+  {"id": "rocks", "file": "rocks.webp", "role": "prop", "px": [798, 750], "bytes": [229916, 74886], "v": "79368431", "height": 5.5, "foot": 0.92, "depths": ["mid", "near"], "tags": ["mountain", "valley", "beast"], "mask": "0300781fe0ff1f01fc3fe7feffeffffff7ff"},
+  {"id": "bell", "file": "bell.webp", "role": "prop", "px": [808, 819], "bytes": [183846, 59520], "v": "23d38305", "height": 5.0, "foot": 0.95, "depths": ["mid"], "tags": ["temple", "sect"], "weight": 0.7, "mask": "10cbfdfff7fe7ff37e3f63f63fe7fe70e70e"},
+  {"id": "bamboo", "file": "bamboo.webp", "role": "prop", "px": [838, 877], "bytes": [365770, 111858], "v": "8a55a21f", "height": 7.0, "foot": 0.93, "depths": ["near", "mid"], "tags": ["valley", "beast", "temple"], "weight": 0.8, "mask": "0603f83fe7fc3ff7fe7fc3fc1f01f03f83fc"},
+  {"id": "plum", "file": "plum.webp", "role": "prop", "px": [863, 844], "bytes": [269368, 88808], "v": "dad8bb73", "height": 6.5, "foot": 0.92, "depths": ["near", "mid"], "tags": ["temple", "palace", "cold"], "weight": 0.8, "mask": "0000201383f00fc7de3fc0fc1e03f03fc3fc"}
+ ]
+}

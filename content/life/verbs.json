@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "description": "修仙人生的常驻指令（玩法设计第四节、第七节；执行计划第 12 项）：底栏上每个指令的字和名字，修炼速度新加的两项（契合、加成），调息用哪种休整。引擎的 apps/engine/life/verbs.cjs 和 speed.cjs 照这张表读；数都是初值。",
+  "verbs": {
+    "cultivate": { "glyph": "修", "label": "修炼" },
+    "rest": { "glyph": "息", "label": "调息" },
+    "wait": { "glyph": "候", "label": "静候" },
+    "ask": { "glyph": "探", "label": "打探" },
+    "job": { "glyph": "告", "label": "差事" },
+    "trade": { "glyph": "市", "label": "买卖" }
+  },
+  "main": "cultivate",
+  "where": {
+    "notes": "只在某些地方能用的指令（玩法设计第四节「在哪能用」，执行计划第 27 项）：venues 是 content/life/places.json 的处所，kinds 是地点的种类，此地有一样对上就能用、就列在底栏上；不在这里的指令处处能用。打探、差事、买卖这几个指令做出来以后照这里列出、照这里拒；炼制（craft）在哪做看是哪门手艺，写在 content/life/crafts.json。",
+    "ask": { "venues": ["茶肆"], "kinds": ["坊市", "宗门"] },
+    "job": { "venues": ["告示", "执事堂"] },
+    "trade": { "venues": ["店铺", "当铺", "黑市", "拍卖行"] }
+  },
+  "cultivate": {
+    "affinity": {
+      "mismatch": 0.7,
+      "elements": "金木水火土雷风冰暗光",
+      "every": { "五行": "金木水火土" },
+      "notes": "契合：主修功法写明了属性（木属性、火系；五行算五种都有），灵根也写明了五行，两边一样都不沾，修炼速度乘 mismatch；哪一边没写就不算。天赋里有契合（affinity）这一样效果的（content/life/traits.json：五行轮转、万法熔炉、三千大道；天赋记在主角的备注里）免去这一条。"
+    },
+    "bonus": {
+      "min": -0.3,
+      "max": 0.5,
+      "notes": "加成池：根基、悟得、天赋、丹毒这些后天的来路相加，合计封在 min 到 max 之间，每日修为乘（1 + 加成）。"
+    },
+    "pace": { "凡人": 1, "炼气": 0.3, "筑基": 0.15, "结丹": 0.3, "元婴": 0.5, "higher": 0.5, "notes": "修仙人生里各个大境界修炼的快慢（数值平衡，执行计划第 50 项之后）：每一步要的日数是 content/cultivation.json 的 stepDays 除以这里的数，修炼、压境和人物的修炼都照这个日数算；凡人这一步（引气入体）照旧。结丹由 0.22 改成 0.3（数值平衡第二轮）：照「接下来」走的散修在灵气寻常的地方修结丹，还要挣齐四阶功法和结婴的丹，0.22 时多半到不了结婴就坐化。旧玩法不读这张表。数都是初值。" }
+  },
+  "rest": {
+    "kind": "打坐",
+    "hours": { "min": 1, "max": 12 },
+    "labels": { "血量": "气血", "法力": "法力" },
+    "notes": "调息照 content/combat.json 的 recovery 里 kind 那一种回复，每次 1 到 12 小时。labels 是年谱里的叫法，次序也照它。"
+  }
+}

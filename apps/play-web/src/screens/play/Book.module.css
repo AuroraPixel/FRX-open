@@ -1,0 +1,533 @@
+/* The book page (spec 四): 46 px from the left, 116 from the top, 22 from the bottom, 588 wide (the
+   settings' 行宽 may make it a line narrower or wider). No frame of its own: the stage softens and
+   darkens the picture under it (the veil). */
+.book {
+  position: absolute;
+  z-index: var(--z-ui);
+  left: max(var(--s-46), env(safe-area-inset-left, 0px));
+  top: 116px;
+  bottom: calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+  width: var(--read-measure, 588px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+/* A finger on a desktop layout (a phone on its side, a tablet held upright) with a panel over part of the
+   page: the page waits behind it, faded and not pressable (inert), until the panel closes */
+.book[data-held] {
+  opacity: .4;
+  transition: opacity var(--d-focus);
+}
+
+/* By day the picture's vignette darkens the corner the book stands in; a light wash of the halo
+   colour keeps the faintest captions at 4.5:1. It fades out on every side, so it reads as light on
+   the picture and never as a frame. Nights need none. (Masks take their alpha from an opaque token.) */
+:global(:root[data-light='day']) .book::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-46)) calc(-1 * var(--s-46)) calc(-1 * var(--s-22)) calc(-1 * var(--s-46));
+  background: var(--halo);
+  opacity: .9;
+  pointer-events: none;
+  -webkit-mask-image:
+    linear-gradient(90deg, var(--page) 78%, transparent),
+    linear-gradient(180deg, transparent, var(--page) 60px, var(--page) calc(100% - 40px), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, var(--page) 78%, transparent),
+    linear-gradient(180deg, transparent, var(--page) 60px, var(--page) calc(100% - 40px), transparent);
+  mask-composite: intersect;
+}
+
+/* ---- the head: 第三十七回, the place, the day; a gold rule under it ---- */
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-14);
+  padding: 0 var(--s-4) var(--s-10);
+  border-bottom: var(--hair) solid var(--line);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.hui {
+  flex: none;
+  font: var(--type-hui);
+  letter-spacing: var(--ls-hui);
+  color: var(--gold);
+}
+
+.ti {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font: var(--type-title);
+  letter-spacing: var(--ls-title);
+  color: var(--ink);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* a title's middle dot, which the brush's cut does not have */
+.dot {
+  font-family: var(--f-serif);
+}
+
+.when {
+  flex: none;
+  margin-left: auto;
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--soft);
+}
+
+.face {
+  display: none;
+}
+
+/* ---- the text: only this part scrolls ---- */
+.text {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+  min-height: 0;
+  display: grid;
+}
+
+/* the room under the text is the faded stretch's height: the last lines of a turn can be scrolled
+   out of the fade, where they can be read and where following the text can bring them */
+.body > div {
+  padding: var(--s-14) var(--s-22) var(--fade, 0px) var(--s-4);
+  overflow-anchor: none;
+}
+
+.pages {
+  display: grid;
+  /* A long streamed word must not widen every turn and push Cancel off screen. */
+  grid-template-columns: minmax(0, 1fr);
+  overflow-wrap: anywhere;
+}
+
+.earlier {
+  position: absolute;
+  top: var(--s-6);
+  left: 50%;
+  translate: -50% 0;
+  padding: 0 var(--s-12);
+  background: var(--panel-hi);
+}
+
+/* a turn, and the rule over it: 第 N 回 above a short gold line with a diamond, 「⋯」 at the right */
+.turn {
+  min-width: 0;
+  position: relative;
+}
+
+.rule {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-6);
+  padding: var(--s-6) 0 var(--s-16);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.ruleNo {
+  font: var(--type-hui);
+  letter-spacing: var(--ls-hui);
+  margin-right: calc(-1 * var(--ls-hui));
+  color: var(--gold);
+}
+
+.ruleLine {
+  position: relative;
+  width: 132px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 30%, var(--line) 70%, transparent);
+}
+
+.ruleLine::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 3px);
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.ruleMenu {
+  position: absolute;
+  right: 0;
+  top: var(--s-2);
+  opacity: 0;
+  transition: opacity var(--d-focus);
+}
+
+.turn:hover .ruleMenu,
+.ruleMenu:focus-within,
+.ruleMenu[data-open] {
+  opacity: 1;
+}
+
+/* 「⋯」 is set in Song: the brush font has no such mark */
+.ruleMenu .more {
+  font-family: var(--f-serif);
+}
+
+/* the page of a turn: the one being read fills the text area at least, so its top can rest at the top,
+   with a little room under the book's head */
+.current > .page {
+  min-height: var(--book-h, 0px);
+  padding-top: var(--s-14);
+}
+
+.rows {
+  -webkit-touch-callout: none;
+}
+
+/* The cultivation life's days (screens/play/life.tsx). A turn of them is no taller than its annals line:
+   brought up, the strand above it stays in view. A run of them reads as one strand: after the first, a
+   turn has no chapter rule of its own (its 「⋯」 shows at the right of its line when hovered or focused;
+   on phones a long press opens its menu) and the line joins the one above; all but the last leave out
+   their cards, which their lines already say. */
+.turn[data-annal].current > .page {
+  min-height: 0;
+}
+
+/* the life's book (item 38): a turn is no 回, its rule has no number but keeps the number's room (the
+   「⋯」 stands in it) */
+.turn[data-book] > .rule {
+  min-height: calc(var(--s-6) + 12px + var(--s-6) + 1px + var(--s-16));
+  align-content: end;
+}
+
+.turn[data-joined] > .rule {
+  height: 0;
+  min-height: 0;
+  padding: 0;
+}
+
+.turn[data-joined] > .rule > .ruleNo,
+.turn[data-joined] > .rule > .ruleLine {
+  display: none;
+}
+
+.turn[data-joined] .ruleMenu {
+  top: calc(-1 * var(--s-4));
+}
+
+.turn[data-joined] > .page {
+  padding-top: 0;
+}
+
+.turn[data-joined] [data-annals] {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.turn[data-joined] [data-annals] > li {
+  padding-right: var(--s-36);
+}
+
+.turn[data-folded] [data-annals] {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.turn[data-folded] [data-card] {
+  display: none;
+}
+
+.end {
+  display: block;
+  height: 1px;
+}
+
+/* ---- what follows the turn being read ---- */
+.waiting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  margin: 0 0 var(--s-12);
+}
+
+.stop {
+  margin-left: auto;
+}
+
+/* a model error at the end of the text: what happened, 重试 and 改写行动 (spec 五, 各种状态) */
+.failure {
+  display: grid;
+  gap: var(--s-10);
+  margin: .2em 0 1em;
+  padding: var(--s-10) var(--s-14) var(--s-12);
+  border-block: var(--hair) solid var(--line);
+  border-left: 2px solid var(--cin);
+  background: var(--panel-hi);
+  font: 400 var(--fs-14)/1.7 var(--f-serif);
+  color: var(--text);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.failure p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+}
+
+/* 待结算: the text has come, the settlement has not; 继续结算 in the foot's place */
+.pending {
+  display: grid;
+  gap: var(--s-10);
+  padding: var(--s-12) var(--s-14);
+  border-block: var(--hair) solid var(--line);
+  background: var(--panel-hi);
+  font: 400 var(--fs-14)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.pending p {
+  margin: 0;
+}
+
+/* phones: the options follow the text, inside the scroll */
+.inline {
+  margin: var(--s-4) 0 var(--s-16);
+}
+
+/* ---- floating chips over the end of the text: 新的内容 ↓, 抉择 · 3 ↓ ---- */
+.floats {
+  position: absolute;
+  left: 0;
+  right: var(--s-14);
+  bottom: var(--s-10);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.float {
+  position: relative;
+  pointer-events: auto;
+  height: 28px;
+  padding: 0 var(--s-14);
+  border: var(--hair) solid var(--line);
+  background: var(--panel-hi);
+  color: var(--gold);
+  font: 400 var(--fs-13)/1 var(--f-serif);
+  letter-spacing: .12em;
+  animation: global(float-up) var(--d-focus) var(--ease) both;
+}
+
+.float:hover {
+  background: var(--glow-soft);
+}
+
+/* ---- the foot: options, chips, the player's own line ---- */
+.foot {
+  display: grid;
+  gap: var(--s-6);
+  padding: var(--s-6) var(--s-4) 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+  padding: var(--s-6) var(--s-6) 0;
+}
+
+/* narrow desktops: the page is min(588 px, 52vw) wide */
+@media (max-width: 1099px) {
+  .book {
+    width: min(var(--read-measure, 588px), 52vw);
+  }
+}
+
+/* A phone on its side narrower than about 770 px (the desktop layouts only): the line would run under
+   the row of diamonds at the lower right (six of 34 px, 18 apart, 18 from the edge). It stops 12 px
+   short of them; the story and the options above reach the page's full width. */
+@media (min-width: 760px) and (max-width: 1099px), (max-width: 759px) and (min-aspect-ratio: 131/100) {
+  .foot > :last-child {
+    margin-right: max(
+      0px,
+      calc(max(var(--s-46), env(safe-area-inset-left, 0px)) + 52vw + var(--s-12) - 100vw + max(var(--s-18), env(safe-area-inset-right, 0px)) + 294px)
+    );
+  }
+}
+
+/* short screens: the page starts at 84 px (spec 四, 矮屏) */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .book {
+    top: 84px;
+  }
+
+  /* and in the cultivation life the story is 16 px, unless the player chose a size (--read-chosen, set with
+     it). The story's font is resolved again here, where its size changes: resolved on :root it kept :root's
+     17 px, and the 16 px never took (the documents pass, #14). A novel's save keeps its 17 px as it always
+     had it (saves without the life look as they did) */
+  :global(main[data-life]) .book {
+    --read-size: var(--read-chosen, var(--fs-16));
+    --type-body: 400 var(--read-size)/var(--read-leading) var(--f-serif);
+  }
+}
+
+/* phones (spec 十一): the page spans the width under the picture, half open at 41% of the height or
+   fully open under the status bar; it ends on the bottom bar, which follows the keyboard */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .book {
+    left: max(var(--s-16), env(safe-area-inset-left, 0px));
+    right: max(var(--s-16), env(safe-area-inset-right, 0px));
+    width: auto;
+    top: 41dvh;
+    bottom: calc(var(--bar-h, 56px) + var(--kb, 0px));
+    transition: top var(--d-rise) var(--ease);
+  }
+  [data-dock='full'] .book {
+    top: calc(var(--book-full-top, 96px) + env(safe-area-inset-top, 0px));
+  }
+  .head {
+    align-items: center;
+    min-height: var(--hit);
+    padding: var(--s-6) var(--s-4) var(--s-8);
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+  }
+  .head:focus-visible {
+    outline-offset: -2px;
+  }
+  .when {
+    display: none;
+  }
+  [data-dock='full'] .face {
+    display: block;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border: var(--hair) solid var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--tint);
+    background: var(--panel);
+    object-fit: cover;
+  }
+  .body > div {
+    padding: var(--s-12) var(--s-14) var(--fade, 0px) 2px;
+  }
+  .rule {
+    padding-bottom: var(--s-12);
+  }
+  /* no hover on phones: the 「⋯」 is always there, with a target a little over 44 px */
+  .ruleMenu {
+    opacity: 1;
+    right: calc(-1 * var(--s-4));
+  }
+  /* except on a line of the annals joined to the one above: a long press on it opens its menu, and
+     the strand stays a strand */
+  .turn[data-joined] .ruleMenu {
+    display: none;
+  }
+  .turn[data-joined] [data-annals] > li {
+    padding-right: 0;
+  }
+  .ruleMenu .more::after {
+    inset: -7px;
+  }
+  /* 28 px with its border, so 9 px above and below make 44 */
+  .float::after {
+    content: '';
+    position: absolute;
+    inset: -9px 0;
+  }
+}
+
+/* a finger on the desktop layouts (a phone on its side, a tablet): the floating chip and the line answer
+   a touch 44 px tall, as on phones */
+@media (pointer: coarse) {
+  .float::after {
+    content: '';
+    position: absolute;
+    inset: -9px 0;
+  }
+  .ruleMenu .more::after {
+    inset: -7px;
+  }
+}
+
+/* ---- the cultivation life's book (章回, gameplay plan item 38): the volume under way at the head's
+   right (the mock-up's .fx-vol), a button that opens the contents. It lies over the head's own row, not
+   in it: a phone's drag on the head never takes it, and the head keeps room for it at its right. ---- */
+.book[data-volume] > .head,
+.book[data-volume] > .volume {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.book[data-volume] > .text {
+  grid-row: 2;
+}
+
+.book[data-volume] > .foot {
+  grid-row: 3;
+}
+
+.book[data-volume] > .head {
+  padding-right: calc(var(--s-4) + 64px);
+}
+
+.volume {
+  position: relative;
+  z-index: 1;
+  justify-self: end;
+  align-self: end;
+  margin: 0 calc(var(--s-4) - .3em) calc(var(--s-10) + 3px) 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--gold);
+  text-shadow: 0 1px 10px var(--halo);
+  cursor: pointer;
+  transition: color var(--d-focus);
+}
+
+/* a target a little larger than the two characters */
+.volume::after {
+  content: '';
+  position: absolute;
+  inset: -10px -8px;
+}
+
+.volume:hover {
+  color: var(--ink);
+}
+
+.volume:focus-visible {
+  outline: var(--hair) solid var(--gold);
+  outline-offset: 4px;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .volume {
+    align-self: center;
+    margin-bottom: 0;
+  }
+}
+
+/* a touch target of 44 px around the label wherever a finger presses it: upright phones, and a phone on its
+   side or a tablet, which take the desktop layouts */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .volume::after {
+    inset: calc((1em - var(--hit)) / 2) -12px;
+  }
+}

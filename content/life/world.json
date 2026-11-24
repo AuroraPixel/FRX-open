@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "description": "世界因子和难度在新玩法里各管什么（玩法设计第九节「世界因子」，执行计划第 47 项）。factors 是建角时选的十个世界因子（content/creation.json 的 WORLD_FACTORS，开场日志「世界规则变动」里方括号的名字，mechanics.worldFactorsOf 读出），每个一组钩子（hooks），引擎在对应的规则里读：price 店里的价目乘 factor（kinds 是成品的那几类、classes 是图鉴的那几类）；shopDrop 店里不卖 kinds 那几类里效果有 words 的、阶高过 above 的；danger 野外遭遇的对手升 up 阶（遭遇表的阶）；fortune 月结奇遇掷中的几率乘 factor；pool 主修功法的名字、描述、效果里有 method 的字时，修炼的加成池加 value；mindLoss 撞上 classes 那几类对手（邪修、傀儡这些诡异的东西）时心境减 value，掉到当前大境界的门槛以下时状态栏挂上 status；elementDamage elements 那几系的术法出手伤害乘 factor；craft crafts 那几门技艺的检定加 value；contest 采集（verbs）多一道和别人抢的检定（check 那种检定、tier 那一档），抢输了所得乘 factor；lootAdd 打倒的对手掉落时另有 chance% 多一样 goods 里的东西；check 主角是女子时 kinds 那几种检定加 female，是男子时加 male（人物表 1 列竖线后面写的性别）。text 是这个因子在新玩法里的全部效果，有几条（写着「未做」的）眼下只有文字。「灵气断绝」的修炼减半和「全民修仙」的最低炼气一层照旧由现有的代码管（content/cultivation.json worldFactors），这里不重复。difficulties 是 content/creation.json 的七档难度在新玩法里各管什么：interrupts 过日子被打扰的几率乘这个数，prices 店里的价目乘这个数，finish 补刀（输了被打到底）只在 finish 为真的那一档（极限模式）有，别的档补刀的对手改成 loss 那一种后果。存档没记难度的按 difficulty。数都是初值；apps/engine/life/world.cjs 读这份文件。",
+  "factors": {
+    "灵气断绝": {
+      "text": "修炼减半（已有）；灵石、丹药的价目翻倍；店里不卖一阶以上的回复类丹药",
+      "hooks": [
+        {
+          "type": "price",
+          "kinds": [
+            "丹"
+          ],
+          "classes": [
+            "灵石"
+          ],
+          "factor": 2
+        },
+        {
+          "type": "shopDrop",
+          "kinds": [
+            "丹"
+          ],
+          "words": [
+            "恢复"
+          ],
+          "above": "一阶"
+        }
+      ]
+    },
+    "妖兽主宰": {
+      "text": "野外的危险升一等；人族的城镇少一半开门（未做）",
+      "hooks": [
+        {
+          "type": "danger",
+          "up": 1
+        }
+      ]
+    },
+    "洞天破碎": {
+      "text": "每段赶路有 5% 遇上空间乱流、做一次受伤检定（未做）；奇遇掷中的机会加倍",
+      "hooks": [
+        {
+          "type": "fortune",
+          "factor": 2
+        }
+      ]
+    },
+    "血月当空": {
+      "text": "魔道功法修炼 +30%，进加成池；魔修的心结不减冲关的修正（未做）",
+      "hooks": [
+        {
+          "type": "pool",
+          "method": [
+            "魔",
+            "血",
+            "煞",
+            "鬼"
+          ],
+          "value": 0.3
+        }
+      ]
+    },
+    "诡异复苏": {
+      "text": "遇上诡异的事减心境；心境掉到门槛以下挂「畸变」",
+      "hooks": [
+        {
+          "type": "mindLoss",
+          "classes": [
+            "evil",
+            "puppet"
+          ],
+          "value": 2,
+          "status": "畸变"
+        }
+      ]
+    },
+    "极寒末世": {
+      "text": "野外不自然回复气血和法力（未做）；火、冰两系技能伤害 +20%",
+      "hooks": [
+        {
+          "type": "elementDamage",
+          "elements": [
+            "火",
+            "冰"
+          ],
+          "factor": 1.2
+        }
+      ]
+    },
+    "科技修仙": {
+      "text": "货单里多一类灵能器械和傀儡（未做）；炼器的成品率加一档",
+      "hooks": [
+        {
+          "type": "craft",
+          "crafts": [
+            "炼器"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "全民修仙": {
+      "text": "最低炼气一层（已有）；采集多一道和别人抢的检定，差事的那一道未做",
+      "hooks": [
+        {
+          "type": "contest",
+          "verbs": [
+            "gather"
+          ],
+          "check": "探查",
+          "tier": "中",
+          "factor": 0.5
+        }
+      ]
+    },
+    "诸神黄昏": {
+      "text": "战利品表里多一类带诅咒的神器碎片",
+      "hooks": [
+        {
+          "type": "lootAdd",
+          "goods": [
+            "残破神器碎片"
+          ],
+          "chance": 15
+        }
+      ]
+    },
+    "女性为尊": {
+      "text": "建角时的魅力增减（原文）；女子交涉、欺瞒占便宜，男子吃亏；掌权的人物按这条生成（未做）",
+      "hooks": [
+        {
+          "type": "check",
+          "kinds": [
+            "交涉",
+            "欺瞒"
+          ],
+          "female": 1,
+          "male": -1
+        }
+      ]
+    }
+  },
+  "difficulty": "普通",
+  "loss": "escape",
+  "difficulties": {
+    "无限火力": {
+      "interrupts": 0.5,
+      "prices": 0.8,
+      "finish": false
+    },
+    "爽文男主": {
+      "interrupts": 0.5,
+      "prices": 0.8,
+      "finish": false
+    },
+    "简单": {
+      "interrupts": 0.75,
+      "prices": 0.9,
+      "finish": false
+    },
+    "普通": {
+      "interrupts": 1,
+      "prices": 1,
+      "finish": false
+    },
+    "困难": {
+      "interrupts": 1.25,
+      "prices": 1.1,
+      "finish": false
+    },
+    "极限模式": {
+      "interrupts": 1.25,
+      "prices": 1.2,
+      "finish": true
+    },
+    "草根修行": {
+      "interrupts": 1.5,
+      "prices": 1.2,
+      "finish": false
+    }
+  }
+}

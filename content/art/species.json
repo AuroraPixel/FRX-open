@@ -1,0 +1,288 @@
+{
+ "rules": [
+  {
+   "anyWord": [
+    "啼魂"
+   ],
+   "species": "cat"
+  },
+  {
+   "anyWord": [
+    "九婴"
+   ],
+   "species": "snake"
+  },
+  {
+   "anyWord": [
+    "麒麟",
+    "麟"
+   ],
+   "species": "deer"
+  },
+  {
+   "anyWord": [
+    "饕餮",
+    "夜叉"
+   ],
+   "species": "fiend"
+  },
+  {
+   "anyWord": [
+    "傀儡",
+    "石人",
+    "石族",
+    "人偶",
+    "机关",
+    "石像"
+   ],
+   "species": "golem"
+  },
+  {
+   "anyWord": [
+    "蛟",
+    "龙",
+    "螭",
+    "虬"
+   ],
+   "species": "jiao"
+  },
+  {
+   "anyWord": [
+    "蟒",
+    "蛇",
+    "虺",
+    "蚺"
+   ],
+   "species": "snake"
+  },
+  {
+   "anyWord": [
+    "鹏",
+    "鲲"
+   ],
+   "species": "roc"
+  },
+  {
+   "anyWord": [
+    "鹤",
+    "鹭",
+    "凤",
+    "凰",
+    "鸾"
+   ],
+   "species": "crane"
+  },
+  {
+   "anyWord": [
+    "鹰",
+    "雕",
+    "隼",
+    "鹫"
+   ],
+   "species": "eagle"
+  },
+  {
+   "anyWord": [
+    "鸦",
+    "鸟",
+    "禽",
+    "雀",
+    "鸡"
+   ],
+   "species": "crow"
+  },
+  {
+   "anyWord": [
+    "蝠"
+   ],
+   "species": "bat"
+  },
+  {
+   "anyWord": [
+    "狐"
+   ],
+   "species": "fox"
+  },
+  {
+   "anyWord": [
+    "狼",
+    "犬",
+    "狗",
+    "獒",
+    "豺",
+    "狈"
+   ],
+   "species": "wolf"
+  },
+  {
+   "anyWord": [
+    "虎",
+    "彪",
+    "狮",
+    "狻猊"
+   ],
+   "species": "tiger"
+  },
+  {
+   "anyWord": [
+    "豹",
+    "猞猁"
+   ],
+   "species": "leopard"
+  },
+  {
+   "anyWord": [
+    "熊",
+    "罴"
+   ],
+   "species": "bear"
+  },
+  {
+   "anyWord": [
+    "猫",
+    "狸"
+   ],
+   "species": "cat"
+  },
+  {
+   "anyWord": [
+    "猿",
+    "猴",
+    "猱",
+    "狒",
+    "猩"
+   ],
+   "species": "ape"
+  },
+  {
+   "anyWord": [
+    "鹿",
+    "麋",
+    "獐"
+   ],
+   "species": "deer"
+  },
+  {
+   "anyWord": [
+    "牛",
+    "犀",
+    "兕"
+   ],
+   "species": "ox"
+  },
+  {
+   "anyWord": [
+    "马",
+    "驹",
+    "骥"
+   ],
+   "species": "horse"
+  },
+  {
+   "anyWord": [
+    "猪",
+    "彘",
+    "豕"
+   ],
+   "species": "boar"
+  },
+  {
+   "anyWord": [
+    "鼠"
+   ],
+   "species": "rat"
+  },
+  {
+   "anyWord": [
+    "龟",
+    "鳖",
+    "鳌",
+    "玄武"
+   ],
+   "species": "turtle"
+  },
+  {
+   "anyWord": [
+    "鲤",
+    "鱼",
+    "鲨",
+    "鲸"
+   ],
+   "species": "carp"
+  },
+  {
+   "anyWord": [
+    "蟾",
+    "蛙",
+    "蜍"
+   ],
+   "species": "toad"
+  },
+  {
+   "anyWord": [
+    "蝎"
+   ],
+   "species": "scorpion"
+  },
+  {
+   "anyWord": [
+    "蛛"
+   ],
+   "species": "spider"
+  },
+  {
+   "anyWord": [
+    "蜈蚣",
+    "蚣"
+   ],
+   "species": "centipede"
+  },
+  {
+   "anyWord": [
+    "虫",
+    "蛊",
+    "蚕",
+    "蜂",
+    "蚁",
+    "蝗",
+    "螟",
+    "蜉蝣"
+   ],
+   "species": "insect"
+  },
+  {
+   "anyWord": [
+    "树",
+    "藤",
+    "木精",
+    "花妖",
+    "草木",
+    "蕈",
+    "木族"
+   ],
+   "species": "treant"
+  },
+  {
+   "anyWord": [
+    "骨",
+    "尸",
+    "骷髅",
+    "僵",
+    "鬼",
+    "魂",
+    "阴灵"
+   ],
+   "species": "skeleton"
+  },
+  {
+   "anyWord": [
+    "魔",
+    "邪",
+    "煞",
+    "凶兽",
+    "血"
+   ],
+   "species": "fiend"
+  }
+ ]
+}

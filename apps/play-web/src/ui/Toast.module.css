@@ -1,0 +1,65 @@
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  min-height: 44px;
+  padding: var(--s-8) var(--s-16);
+  border-block: var(--hair) solid var(--line);
+  background: var(--panel-hi);
+  color: var(--ink);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .06em;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.text {
+  flex: 1;
+}
+
+.toast[data-live] {
+  animation:
+    global(float-up) var(--d-float) var(--ease) both,
+    global(fade-out) var(--d-float) ease 2.3s forwards;
+}
+
+.toast[data-kind='error'] {
+  border-left: 2px solid var(--cin);
+}
+
+/* the small cross that puts the toast away, as on an action chip (spec 三, 行动签) */
+.close {
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: calc(-1 * var(--s-6));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--soft);
+}
+
+.close svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.close:hover,
+.close[data-hover] {
+  color: var(--cin);
+}
+
+/* phones, and wherever a finger points (tablets, phones on their side): the small cross is a 44 px target */
+@media (max-width: 759px), (pointer: coarse) {
+  .close::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+  }
+}

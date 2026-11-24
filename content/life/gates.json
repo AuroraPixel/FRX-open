@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "description": "修仙人生的五道关和根基（玩法设计第七节「冲关」；执行计划第 22 项）。关以要进的大境界为名；requires 是硬条件，prepares 是能备的几样。成算沿用现有的检定：content/cultivation.json 的 breakthrough（按灵根定的难度、气运和神识的档位、辅助丹药最多两枚）和 content/checks.json 的骰子与四种结果，再加 odds 这三项；数值平衡（执行计划第 50 项之后）改了几样，只在修仙人生里：神识照所在境界的常数算（sense），每道关再难几点（gates 的 harder），丹药每枚加 odds.pill，失败折寿、起瓶颈（failure），引气入体默认稳固（gates 的 foundation），没写上限的功法到它那一阶的境界为止（apps/engine/life/gate.cjs 的 capOf）。根基每样一分，管三件事：破境时属性成长取区间的哪一段、新境界的修炼加成、悟得保不保底一条稀有的。修为满了关口没开时修炼是压境打磨（polishLabel），底栏那一格和预览写上准备单还缺的（lacking 后面接准备单的 missing）。apps/engine/life/gate.cjs 读这份文件。带「初值」的数在实玩里调。",
+  "gates": {
+    "炼气": { "name": "引气入体", "requires": ["full", "root", "technique"], "mind": 0, "prepares": [], "harder": 0, "foundation": 1 },
+    "筑基": { "name": "筑基", "requires": ["full", "technique", "cap", "mind"], "mind": 30, "prepares": ["aids", "protector", "aura", "polish"], "harder": 3 },
+    "结丹": { "name": "结丹", "requires": ["full", "technique", "cap", "mind"], "mind": 100, "prepares": ["aids", "protector", "aura", "polish"], "harder": 3 },
+    "元婴": { "name": "结婴", "requires": ["full", "technique", "cap", "mind"], "mind": 300, "prepares": ["aids", "protector", "aura", "polish"], "harder": 1 },
+    "化神": { "name": "化神", "requires": ["full", "technique", "cap", "mind", "chance"], "mind": 800, "prepares": ["aids", "protector", "aura", "polish"], "harder": 1 }
+  },
+  "gatesNote": "每道关的 harder 是它在修仙人生里比旧规则（content/cultivation.json 按灵根定的难度）再难几点；foundation 是这一关白给的根基分（引气入体什么都备不了，默认稳固，压境还能往上加）。数值平衡（执行计划第 50 项之后）的初值。",
+  "beyond": "此路未开",
+  "polishLabel": "打磨",
+  "lacking": "冲关还差：",
+  "spentReady": "冲关的条件都齐了，该冲关了",
+  "labels": {
+    "full": "修为",
+    "root": "灵根",
+    "technique": "功法",
+    "cap": "功法上限",
+    "mind": "心境",
+    "chance": "大机缘",
+    "aids": "丹药",
+    "protector": "护法",
+    "aura": "灵地",
+    "polish": "压境",
+    "knots": "心结",
+    "bottleneck": "瓶颈"
+  },
+  "mind": {
+    "open": true,
+    "label": "未开",
+    "half": 0.5,
+    "sources": {
+      "close": { "小": 2, "中": 5, "大": 12 },
+      "place": 1,
+      "region": 3,
+      "knot": 8,
+      "chapter": 10,
+      "talk": { "大成功": 3, "成功": 2, "失败": 1, "大失败": 1 }
+    },
+    "talk": { "favour": "友善", "kind": "交涉", "tier": "易", "title": "与{人}论道" },
+    "note": "心境（阅历，玩法设计第七节「心境」；执行计划第 36 项）是 frxPlay.mind，只涨不跌。每道关的 mind 是进那个大境界要的心境（所有者定的初值）：心境没到当前大境界的，修炼乘 half；没到下一道关的，不能冲关，准备单上这条硬条件写差多少。sources 是来路：一场戏收场按分量（close）；头一回到一个地图地点（place）、头一回到一片地域（region：地图上的 sub_region，没有就是 main_region）；了结一桩心结（knot，第 40 项）；个人主线完成一章（chapter）；论道（talk）按交涉的结果加，同一个人每年一次。除了收场，每样只加一次，记在 frxPlay.minded。论道是一张交涉的卡：好感到 talk.favour 的人在场、今年还没和他论过道时，引擎多给这一张。open 为 false 时心境这条硬条件写 label，算作齐（第 36 项之前的样子）。"
+  },
+  "odds": {
+    "aura": { "tier": "浓", "bonus": 1 },
+    "protector": { "favour": "信赖", "bonus": 1 },
+    "knots": { "each": -1, "most": -3 },
+    "pill": { "bonus": 2 },
+    "note": "成算里新加的三项（初值）：在灵气「浓」的地方 +1；有人护法 +1（在场、好感到「信赖」、境界不低于主角）；每桩心结 −1，最多 −3。pill 是这一关的丹药每枚加几点（旧规则 +3），仍是最多计两枚（数值平衡的初值）"
+  },
+  "sense": {
+    "stat": "神识",
+    "steps": [[0.5, 1], [1, 2], [2, 3]],
+    "note": "神识这一项不照旧规则的档位（content/checks.json modifierBands，是绝对数，神识每进一个大境界涨十倍，越往上越好冲），照所在境界的常数算：神识除以这一境界属性区间的上限（content/combat.json baselines），到 steps 的哪一档就加几点，不到第一档是 0。气运不随境界涨，照旧规则的档位。人物冲关也照这样算。数值平衡的初值。"
+  },
+  "failure": {
+    "lifespan": { "失败": 0.01, "大失败": 0.03 },
+    "bottleneck": { "each": -1, "most": -3 },
+    "note": "冲关失败，旧规则的代价照旧（修为退到七十、大失败四十，三十或九十日不能再冲），另外：折寿，按所在境界的寿元（content/cultivation.json lifespan）乘 lifespan 记的比例，取整；瓶颈，这一关每败一次，下一次的骰子减 each，最多减到 most，这一关过了、或者这一次服了这一关的丹药、或者这一关记下了机缘（frxPlay.gates 的 chance）就清掉，记在 frxPlay.gates 这一关的 failed。数值平衡的初值。"
+  },
+  "foundation": {
+    "mindAbove": 0.5,
+    "polish": { "perPoint": 0.15, "most": 2 },
+    "grades": [
+      { "name": "虚浮", "from": 0, "growth": "low", "speed": 0 },
+      { "name": "稳固", "from": 3, "growth": "mid", "speed": 0.05 },
+      { "name": "圆满", "from": 5, "growth": "high", "speed": 0.1 }
+    ],
+    "note": "根基每样一分：这一关许用的丹药用满了；在灵气「浓」的地方；有人护法；心境高出门槛 mindAbove 以上；没有心结；压境（修为满了之后接着打磨，每多修这一步日数的 perPoint 加一分，最多 most 分）。零到两分虚浮，三四分稳固，五分以上圆满。growth 是破境时属性成长取现有区间的下、中、上三分之一；speed 进新境界的修炼加成池（初值）"
+  },
+  "chance": {
+    "note": "机缘（玩法设计第七节；执行计划第 50 项的修补）：frxPlay.gates.<关>.chance 记下这一关的机缘，化神要它才算齐（requires 里的 chance），哪一关记下了都清掉这一关的瓶颈。两条来路：一场戏里故事明明白白给了（引擎的 chance 操作，回合线的工具在模型写到时调它，写明是什么机缘，最多 reasonMax 个字）；元婴的主角奇遇收场时也可能掷到（content/life/rewards.json 的 fortune.close.chance）。在戏外给、给过了再给、过了最后一关都拒掉，拒的话在下面。",
+    "reasonMax": 40,
+    "outside": "机缘要在一场戏里给",
+    "unsaid": "机缘要写明是什么",
+    "had": "冲击{关}的机缘已经有了",
+    "beyond": "再往上没有关了"
+  }
+}

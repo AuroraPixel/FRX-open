@@ -1,0 +1,78 @@
+/* 阵法: where the player is, the arrays laid there as rows (a row at least 52 px: the array's name, its tier,
+   its power, its stones and its ground in small words; one laid badly underlined in cinnabar), 布阵, and the
+   teleport array's links as the shop's rows (the price at the right). */
+.arrays {
+  display: grid;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+.here {
+  margin: 0;
+  font: var(--type-note);
+  letter-spacing: .06em;
+  color: var(--soft);
+}
+
+.here b {
+  margin-right: .6em;
+  font-weight: 600;
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  min-height: 52px;
+  padding: var(--s-6) var(--s-2);
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.what {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.row .what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.row .what b {
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.row[data-weak] .what small {
+  text-decoration: underline var(--cin);
+  text-underline-offset: 3px;
+}
+
+.broken {
+  margin: 0;
+  padding-left: var(--s-10);
+  border-left: 2px solid var(--cin);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+  margin-top: var(--s-8);
+}
+
+.actions > button {
+  min-height: 44px;
+}

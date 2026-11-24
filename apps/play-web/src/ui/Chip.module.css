@@ -1,0 +1,55 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  height: 28px;
+  padding: 0 var(--s-4) 0 var(--s-10);
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  font: 400 var(--fs-13)/1 var(--f-serif);
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.remove {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--soft);
+}
+
+.remove svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.remove:hover,
+.remove[data-hover] {
+  color: var(--cin);
+}
+
+/* phones, and a finger anywhere: the small cross is a 44 px target */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .remove::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+  }
+}

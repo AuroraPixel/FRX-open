@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "description": "疑点（玩法设计第十一节「故事」，执行计划第 26 项）。导演的伏笔（data.frxDirector 里带编号的那些，F1、F2……）在修仙人生里显示成疑点：导演推演时为每条伏笔写一句给玩家看的话和去哪查（WRITE_PLAN_LIFE 的 leads：line 不许说出真相，where 是地方或人），服务端交给引擎的 director 操作，记进 frxPlay.leads，并记下它是哪一章里写的。模型在一场戏里用 prove_lead 查实一条：引擎核对这条疑点在、还没查实、这场戏里有过一次成功的检定（一张卡掷出成功或大成功）。导演回收了的伏笔也算查实（是剧情里揭开的）。一章的疑点都查实了，引擎往 frxPlay.pending 里放一场揭晓（由头是 now，种子照 reveal.seed 写），一章一次。line 至多 lineMost 字，where 至多 whereMost 字；最多记 most 条，多了先去掉最早查实的。数都是初值。",
+  "lineMost": 40,
+  "whereMost": 20,
+  "most": 12,
+  "reveal": { "seed": "「{章}」的疑点都查实了：{疑点}。真相到了揭晓的时候。", "joiner": "；" },
+  "refused": {
+    "none": "没有{编号}这条疑点",
+    "proven": "「{疑点}」已经查实了",
+    "scene": "不在一场戏里，查实不了疑点",
+    "check": "这场戏里还没有一次成功的检定，查实不了疑点"
+  }
+}

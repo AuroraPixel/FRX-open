@@ -1,0 +1,118 @@
+/* The button is the 1 px gold border, its ::before layer is the fill: both cut by clip-path, so the
+   cut corners keep their border. The wrapper carries the glow, which the clip-path would cut off. */
+.wrap {
+  display: block;
+}
+
+.act {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-14);
+  width: 100%;
+  min-height: 56px;
+  padding: 11px var(--s-16) 11px var(--s-14);
+  border: 0;
+  background: var(--line);
+  color: var(--ink);
+  text-align: left;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+.act::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -2;
+  background: linear-gradient(90deg, var(--panel-hi), var(--panel));
+  clip-path: polygon(11.5px 0, 100% 0, 100% calc(100% - 11.5px), calc(100% - 11.5px) 100%, 0 100%, 0 11.5px);
+}
+
+/* the sweep of light on hover */
+.act::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 30%, var(--sweep) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform var(--d-sweep);
+}
+.act:hover::after,
+.act:focus-visible::after,
+.act[data-hover]::after {
+  transform: translateX(120%);
+}
+
+.act:active::before,
+.act[data-active]::before {
+  background: linear-gradient(90deg, var(--glow-soft), var(--panel));
+}
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-left: var(--s-4);
+  border: var(--hair) solid var(--gold);
+  color: var(--gold);
+  transform: rotate(45deg);
+}
+.key i {
+  font: 400 var(--fs-15)/1 var(--f-brush);
+  font-style: normal;
+  transform: rotate(-45deg);
+}
+
+.words strong {
+  display: block;
+  font: 600 var(--fs-16)/1.3 var(--f-serif);
+  letter-spacing: var(--ls-name);
+}
+.words small {
+  display: block;
+  font: 400 var(--fs-12)/1.45 var(--f-ui);
+  color: var(--soft);
+}
+
+/* the one that matters glows: the gold border breathes */
+.wrap[data-hot] {
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.wrap[data-hot] .act {
+  background: var(--gold);
+}
+.wrap[data-hot] .key {
+  background: var(--gold);
+  color: var(--bg);
+}
+/* the gold behind the translucent fill dims the grey note; it reads in ink instead */
+.wrap[data-hot] .words small {
+  color: var(--ink);
+}
+
+.act[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+.act[aria-disabled='true'] strong {
+  color: var(--faint);
+}
+.act[aria-disabled='true'] .key {
+  border-color: var(--line-soft);
+  color: var(--faint);
+}
+
+@keyframes pulse {
+  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+  50% { filter: drop-shadow(0 0 10px var(--glow)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap[data-hot] {
+    animation: none;
+  }
+}

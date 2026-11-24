@@ -1,0 +1,127 @@
+{
+ "id": "kit-dadian",
+ "family": "dadian",
+ "name": "宗门大殿",
+ "layout": "room",
+ "ground": 4.0,
+ "base": {
+  "kind": "hall",
+  "indoor": true,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36],
+    "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]
+   },
+   "read": {
+    "wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36],
+    "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]
+   },
+   "sheet": {
+    "wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34],
+    "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]
+   },
+   "cult": {
+    "wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33],
+    "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]
+   },
+   "close": {
+    "wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34],
+    "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]
+   },
+   "cine1": {
+    "wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40],
+    "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]
+   },
+   "cine2": {
+    "wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40],
+    "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear"
+  ],
+  "ambience": {
+   "night": "amb.wind",
+   "dawn": "amb.wind",
+   "day": "amb.wind",
+   "dusk": "amb.wind"
+  },
+  "mood": "solemn",
+  "floor": {
+   "kind": "none"
+  },
+  "protagonist": {
+   "pose": "stand"
+  },
+  "hours": {
+   "dawn": {
+    "exposure": 0.8
+   },
+   "day": {
+    "exposure": 0.74,
+    "tint": [2.1, 2.0, 1.9]
+   },
+   "dusk": {
+    "exposure": 1.0
+   }
+  }
+ },
+ "room": {
+  "wallZ": -12,
+  "furniture": {
+   "z": [-5.5, -4.5],
+   "at": [0.55, 0.66]
+  },
+  "plaque": [0.12, 0.1, 0.14, 0.09, 0.16]
+ },
+ "elements": [
+  {"id": "wall-lattice", "file": "wall-lattice.webp", "role": "wall", "px": [2172, 724], "bytes": [343978, 108142], "v": "d217336e", "height": 0, "foot": 0.79, "width": 40, "shade": 2.0, "tags": ["sect", "palace", "grand", "sword", "grace"], "weight": 1.2, "avoid": ["bandit_hall"], "lights": [[0.5, 0.4], [0.25, 0.4], [0.75, 0.4]]},
+  {"id": "wall-stone", "file": "wall-stone.webp", "role": "wall", "px": [2172, 724], "bytes": [135354, 40104], "v": "abd07815", "height": 0, "foot": 0.8, "width": 40, "shade": 2.0, "tags": ["mountain", "valley", "dark", "beast", "sword"], "avoid": ["grace", "bandit_hall"], "lights": [[0.5, 0.11], [0.36, 0.11], [0.645, 0.11], [0.215, 0.11], [0.79, 0.11]]},
+  {"id": "wall-clan", "file": "wall-clan.webp", "role": "wall", "px": [2172, 724], "bytes": [183530, 57772], "v": "0c6254cc", "height": 0, "foot": 0.8, "width": 40, "shade": 2.0, "tags": ["tingyuan", "clan", "manor", "city", "capital"], "avoid": ["temple", "buddhist", "bandit_hall", "shanmen"], "lights": [[0.5, 0.25], [0.3, 0.25], [0.7, 0.25]]},
+  {"id": "wall-temple", "file": "wall-temple.webp", "role": "wall", "px": [2172, 724], "bytes": [193264, 55322], "v": "6784595e", "height": 0, "foot": 0.82, "width": 40, "shade": 2.0, "tags": ["simiao", "temple", "buddhist"], "avoid": ["clan", "manor", "bandit_hall"], "need": ["simiao", "buddhist", "temple"], "weight": 3, "lights": [[0.55, 0.09], [0.33, 0.09], [0.75, 0.09]]},
+  {"id": "plaque-dragon", "file": "plaque-dragon.webp", "role": "subject", "px": [1023, 390], "bytes": [88668, 30598], "v": "b9540442", "height": 1.6, "foot": 1.0, "plaque": {"box": [0.12, 0.31, 0.89, 0.79], "ink": "gold"}, "tags": ["sect", "palace", "grand", "clan", "manor", "sword", "dark"], "weight": 1.2, "mask": "0f0bfdffffffffffffffffffffffffffff07", "body": [0.029, 0.971], "crown": 0.0},
+  {"id": "plaque-blue", "file": "plaque-blue.webp", "role": "subject", "px": [1016, 383], "bytes": [72604, 24528], "v": "be1dbae2", "height": 1.6, "foot": 1.0, "plaque": {"box": [0.12, 0.31, 0.89, 0.78], "ink": "gold"}, "tags": ["temple", "buddhist", "grace", "valley", "mountain"], "mask": "0f09f9ffffffffffffffffffffffffffff07", "body": [0.025, 0.979], "crown": 0.0},
+  {"id": "wall-bandit", "file": "wall-bandit.webp", "role": "wall", "px": [2172, 724], "bytes": [220540, 63156], "v": "d8ee04d7", "height": 0, "foot": 0.77, "width": 44, "shade": 1.2, "tags": ["bandit_hall", "dark", "tense"], "need": ["bandit_hall"], "weight": 3, "keep": [[0.87, 0.96, 0.08, 0.3]], "lights": [[0.91, 0.18]]},
+  {"id": "dais-tiger", "file": "dais-tiger.webp", "role": "unit", "px": [1445, 1020], "bytes": [432818, 120002], "v": "0a74256f", "height": 6.6, "foot": 0.97, "only": "hero", "tags": ["bandit_hall"], "need": ["bandit_hall"], "mask": "0f01f87fe7fe7fe7fefffffffffffffff3fc", "body": [0.04, 0.961], "crown": 0.0},
+  {"id": "weapon-rack", "file": "weapon-rack.webp", "role": "unit", "px": [744, 826], "bytes": [153050, 52434], "v": "dc27e875", "height": 4.4, "foot": 0.95, "tags": ["bandit_hall", "weapons"], "need": ["bandit_hall", "weapons"], "mask": "0203643f42b46b6ffffff6b6eb7ffffffe07", "body": [0.032, 0.97], "crown": 0.0},
+  {"id": "brazier", "file": "brazier.webp", "role": "furniture", "px": [645, 553], "bytes": [92882, 30744], "v": "98953e2b", "height": 1.8, "foot": 0.95, "tags": ["bandit_hall", "torches"], "need": ["bandit_hall", "torches"], "mask": "c03dfbffffff7fe7fe3fc3fc36c36c3fc070"},
+  {"id": "wall-bandit-cave", "file": "wall-bandit-cave.webp", "role": "wall", "px": [2172, 724], "bytes": [220072, 66726], "v": "d0432e71", "height": 0, "foot": 0.8, "width": 44, "shade": 1.2, "tags": ["bandit_hall", "dark", "tense", "mountain", "cave"], "need": ["bandit_hall"], "weight": 3, "keep": [[0.85, 0.94, 0.03, 0.5]], "lights": [[0.9, 0.12]]},
+  {"id": "dais-bear", "file": "dais-bear.webp", "role": "unit", "px": [1234, 985], "bytes": [298236, 89982], "v": "10500144", "height": 6.6, "foot": 0.965, "only": "hero", "tags": ["bandit_hall"], "need": ["bandit_hall"], "mask": "10830e30e36c7fc5f81fc7feffffffffffff", "body": [0.025, 0.979], "crown": 0.0},
+  {"id": "bow-rack", "file": "bow-rack.webp", "role": "unit", "px": [816, 701], "bytes": [160798, 55220], "v": "518c0945", "height": 3.5, "foot": 0.95, "tags": ["bandit_hall", "weapons"], "need": ["bandit_hall"], "mask": "0783ff3ce3be3fe3ca3223fa3fe3fe707707", "body": [0.135, 0.975], "crown": 0.0},
+  {"id": "bandit-table", "file": "bandit-table.webp", "role": "prop", "px": [863, 581], "bytes": [127488, 40772], "v": "82b1b43a", "height": 2.7, "foot": 0.95, "tags": ["bandit_hall"], "need": ["bandit_hall"], "mask": "01801c19c7fefffffffff7fe7fe606fff402"},
+  {"id": "bandit-post", "file": "bandit-post.webp", "role": "near", "px": [658, 1774], "bytes": [321688, 97430], "v": "7791a2bf", "height": 13.0, "foot": 0.95, "hold": [0.45, 0.95], "tags": ["bandit_hall"], "need": ["bandit_hall"], "weight": 3, "mask": "ffe3f83ff7ff7ff3f33f83f83f83f8ffcffc"},
+  {"id": "dais-throne", "file": "dais-throne.webp", "role": "unit", "px": [1400, 900], "bytes": [255036, 84618], "v": "940eb205", "height": 7.0, "foot": 0.974, "only": "hero", "tags": ["sect", "palace", "grand", "mountain", "valley", "beast", "temple"], "avoid": ["dark", "sword", "grace", "bandit_hall"], "weight": 1.2, "mask": "0f01f87fe7fe7fe7fe7fefffffffffffffff", "body": [0.022, 0.978], "crown": 0.0},
+  {"id": "dais-shrine", "file": "dais-shrine.webp", "role": "unit", "px": [1254, 1048], "bytes": [296166, 103816], "v": "669a9167", "height": 7.0, "foot": 0.974, "only": "hero", "tags": ["tingyuan", "clan", "manor"], "avoid": ["temple", "buddhist", "bandit_hall", "shanmen"], "mask": "0f07feffffffffffffffffffffffffffffff", "body": [0.037, 0.963], "crown": 0.0},
+  {"id": "dais-buddha", "file": "dais-buddha.webp", "role": "unit", "px": [1115, 1050], "bytes": [285672, 89054], "v": "c3e1f02b", "height": 7.4, "foot": 0.985, "only": "hero", "tags": ["simiao", "buddhist"], "avoid": ["clan", "manor", "bandit_hall"], "need": ["simiao", "buddhist"], "mask": "0f00f01f81f81f81f81f83fc3fcfff606606", "body": [0.108, 0.891], "crown": 0.0},
+  {"id": "dais-altar", "file": "dais-altar.webp", "role": "unit", "px": [1388, 1027], "bytes": [299466, 93706], "v": "1c6a0eb8", "height": 7.0, "foot": 0.978, "only": "hero", "tags": ["dark"], "avoid": ["temple", "buddhist", "grace", "bandit_hall"], "mask": "0f01f87fe7fe7fe7feffffffffffffffffff", "body": [0.014, 0.986], "crown": 0.0},
+  {"id": "dais-sword", "file": "dais-sword.webp", "role": "unit", "px": [1400, 939], "bytes": [207646, 63166], "v": "e36082b1", "height": 6.8, "foot": 0.972, "only": "hero", "tags": ["sword", "sect"], "avoid": ["temple", "buddhist", "grace", "dark", "clan", "manor", "bandit_hall"], "weight": 0.7, "mask": "0f01f83fc3fc3fc3fc3fc3fc7fefffffffff", "body": [0.011, 0.987], "crown": 0.0},
+  {"id": "dais-jade", "file": "dais-jade.webp", "role": "unit", "px": [1394, 915], "bytes": [308634, 95972], "v": "725241ac", "height": 7.0, "foot": 0.968, "only": "hero", "tags": ["grace", "palace"], "avoid": ["dark", "sword", "clan", "manor", "bandit_hall"], "tone": 0.4, "mask": "0e01f87fe7fe7fe7fe7fe7feffffffffe7fe", "body": [0.06, 0.933], "crown": 0.0},
+  {"id": "bookcase", "file": "bookcase.webp", "role": "unit", "px": [1100, 811], "bytes": [245134, 76320], "v": "a087dc02", "height": 5.2, "foot": 0.932, "tags": ["sect", "clan", "hall", "temple"], "avoid": ["bandit_hall"], "mask": "0f0ffffffffffffffffffffffffffffffd0b", "body": [0.031, 0.967], "crown": 0.0},
+  {"id": "banners", "file": "banners.webp", "role": "unit", "px": [686, 1100], "bytes": [134502, 46118], "v": "7ff9d6d6", "height": 7.0, "foot": 0.984, "tags": ["sect", "sword", "dark", "palace"], "mask": "0607fe7fe7fe7fe7fe7fe7fe7fe79e79e606", "body": [0.08, 0.931], "crown": 0.0},
+  {"id": "drum", "file": "drum.webp", "role": "unit", "px": [729, 875], "bytes": [197818, 57532], "v": "1f71ab8d", "height": 4.4, "foot": 0.967, "tags": ["temple", "buddhist", "sect", "beast"], "avoid": ["bandit_hall"], "mask": "0001f03f87f87f87fc7fc7f87f87f87fc7fc", "body": [0.063, 0.819], "crown": 0.1},
+  {"id": "bell", "file": "bell.webp", "role": "unit", "px": [859, 871], "bytes": [236552, 71088], "v": "45a348a8", "height": 4.6, "foot": 0.969, "tags": ["temple", "buddhist", "sect"], "avoid": ["bandit_hall"], "mask": "0603fc7fe7fc3fc3fc3fc3fc3fc7fc70e7fe", "body": [0.092, 0.889], "crown": 0.025},
+  {"id": "screen", "file": "screen.webp", "role": "unit", "px": [1100, 743], "bytes": [234582, 68060], "v": "0136902e", "height": 4.6, "foot": 0.977, "tags": ["clan", "manor", "grace", "palace"], "avoid": ["bandit_hall"], "mask": "0f0fffffffffffffffffffffffffffffffef", "body": [0.015, 0.985], "crown": 0.0},
+  {"id": "lamp-tree", "file": "lamp-tree.webp", "role": "unit", "px": [619, 1100], "bytes": [163454, 56334], "v": "6f7b79f2", "height": 6.0, "foot": 0.984, "tags": ["palace", "grand", "temple", "sect"], "avoid": ["bandit_hall"], "mask": "0600f03fc76e7fefff7fe0600600f01f81f8", "body": [0.281, 0.725], "crown": 0.0},
+  {"id": "burner", "file": "burner.webp", "role": "furniture", "px": [433, 720], "bytes": [82158, 28180], "v": "257e6489", "height": 2.4, "foot": 0.968, "tags": ["temple", "sect", "buddhist"], "weight": 1.2, "avoid": ["bandit_hall"], "mask": "00000401c030010060dfbfff7fe7fe3fc3fe"},
+  {"id": "ding", "file": "ding.webp", "role": "furniture", "px": [723, 738], "bytes": [157676, 49932], "v": "6c26a57d", "height": 2.6, "foot": 0.938, "tags": ["sect", "dark", "palace", "grand", "clan"], "avoid": ["bandit_hall"], "mask": "060060cfbfffffffff7fe7fe7fe36c7fe3fc"},
+  {"id": "cushions", "file": "cushions.webp", "role": "prop", "px": [900, 226], "bytes": [70570, 25092], "v": "01352262", "height": 0.75, "foot": 0.88, "tags": ["temple", "buddhist", "sect"], "avoid": ["bandit_hall"], "mask": "6667ffffffffffffffffffffffffff666000"},
+  {"id": "low-table", "file": "low-table.webp", "role": "prop", "px": [868, 407], "bytes": [98760, 30568], "v": "e2841edd", "height": 1.2, "foot": 0.93, "tags": ["clan", "manor", "grace"], "avoid": ["bandit_hall"], "mask": "0101b87fe7feffffffffffffef7ffffffc03"},
+  {"id": "crane", "file": "crane.webp", "role": "prop", "px": [411, 843], "bytes": [89288, 30562], "v": "1abb6d7c", "height": 2.6, "foot": 0.972, "tags": ["temple", "sect", "grace", "palace"], "avoid": ["bandit_hall"], "mask": "00207f0600180f81f03e03601fc7ffffeffe"},
+  {"id": "candles", "file": "candles.webp", "role": "prop", "px": [380, 855], "bytes": [75862, 26056], "v": "737ac1ea", "height": 2.6, "foot": 0.978, "tags": ["temple", "buddhist", "clan", "dark"], "avoid": ["bandit_hall"], "mask": "0600f0462fff3fc0600600600600f03fc3fc"},
+  {"id": "bonsai", "file": "bonsai.webp", "role": "prop", "px": [762, 744], "bytes": [197710, 61256], "v": "09a72d39", "height": 1.9, "foot": 0.968, "tags": ["manor", "clan", "grace", "valley", "mountain"], "avoid": ["bandit_hall"], "mask": "0380fc1fc3dfff80f83fc3fc3fc7fe3fe7fe"},
+  {"id": "name-screen", "file": "name-screen.webp", "role": "prop", "px": [900, 508], "bytes": [99418, 32856], "v": "60a8f084", "height": 1.2, "foot": 0.97, "plaque": {"box": [0.16, 0.13, 0.84, 0.65], "ink": "dark"}, "only": "name", "tone": 0.7, "mask": "7fe7fe7fe7fe7fefffffffffffffffffffff"},
+  {"id": "column", "file": "column.webp", "role": "near", "px": [439, 887], "bytes": [100650, 30644], "v": "1af287be", "height": 13.0, "foot": 0.963, "hold": [0.53, 0.963], "avoid": ["bandit_hall"], "mask": "3ff3fe3fc3fc1fe3fc7fcffcffc7f83f81f8"},
+  {"id": "lantern", "file": "lantern.webp", "role": "hang", "px": [326, 1100], "bytes": [62642, 20898], "v": "06535f28", "height": 3.6, "foot": 0.52, "mask": "0200200f0fff3fc3fc0f0060060060060060"},
+  {"id": "valance", "file": "valance.webp", "role": "hang", "px": [2172, 549], "bytes": [249260, 84180], "v": "3643d16e", "height": 7.6, "foot": 0.71, "mask": "ffffffffffffffffffdfbdeb969801801001"}
+ ]
+}

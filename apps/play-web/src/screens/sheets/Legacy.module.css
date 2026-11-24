@@ -1,0 +1,240 @@
+/* 传承: who died (a seal-red 逝, the name in brush), the old acquaintances' words as quotations, the heirs
+   as rows to pick (the picked one gilded), a new heir's portrait, name, gender and root, the last word,
+   and 定下传人. A row is 56 px tall at least on phones. */
+.legacy {
+  display: grid;
+  gap: var(--s-16);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+}
+
+.head h3 {
+  margin: 0;
+  font: 400 var(--fs-22)/1.3 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.head h3 small {
+  margin-left: var(--s-8);
+  font: 400 var(--fs-15)/1 var(--f-brush);
+  color: var(--text);
+}
+
+.head p {
+  margin: 2px 0 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.seal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-seal);
+  background: var(--cin) var(--tex-seal) center / cover;
+  font: 400 var(--fs-24)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--seal-ink);
+}
+
+/* the eulogies: each a quotation over the speaker's name */
+.eulogies {
+  display: grid;
+  gap: var(--s-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eulogies li {
+  display: grid;
+  gap: 2px;
+  padding: var(--s-8) var(--s-12);
+  border-left: 2px solid var(--line);
+  background: var(--tint);
+}
+
+.eulogies q {
+  font: 400 var(--fs-14)/1.8 var(--f-serif);
+  color: var(--ink);
+  quotes: '「' '」';
+}
+
+.eulogies cite {
+  justify-self: end;
+  font: var(--type-note);
+  font-style: normal;
+  color: var(--soft);
+}
+
+.heirs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.heir {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--s-8) var(--s-6) var(--s-8) var(--s-2);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.heir:hover,
+.heir:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.heir[aria-checked='true'] {
+  background: var(--tint);
+  box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: var(--hair) solid var(--gold);
+  border-radius: var(--r-seal);
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+}
+
+.heir[aria-checked='true'] .mark {
+  border-width: 2px;
+}
+
+.what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.what b {
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.what small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* a new heir: the half-length portrait beside the name, the gender and the root */
+.fresh {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: var(--s-14);
+  align-items: start;
+  padding: var(--s-12);
+  border-left: var(--hair) solid var(--line);
+  background: var(--tint);
+}
+
+.figure {
+  display: grid;
+  gap: var(--s-8);
+  justify-items: center;
+}
+
+.figure > :first-child {
+  width: 120px;
+  height: 150px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr);
+  gap: var(--s-10);
+  align-items: center;
+}
+
+.fields label,
+.label {
+  font: var(--type-note);
+  letter-spacing: .14em;
+  color: var(--soft);
+}
+
+.input,
+.words {
+  width: 100%;
+  min-height: var(--hit);
+  padding: var(--s-6) var(--s-10);
+  border: var(--hair) solid var(--line);
+  background: transparent;
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+/* phones, and a finger on the desktop layouts (a phone on its side, a tablet): 16 px keeps the browser
+   from zooming in on the field */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .input,
+  .words {
+    font-size: max(16px, var(--fs-15));
+  }
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--cin);
+}
+
+.words {
+  resize: vertical;
+}
+
+.toggle {
+  display: flex;
+  gap: var(--s-8);
+}
+
+.toggle button {
+  min-width: var(--hit);
+  min-height: var(--hit);
+  border: var(--hair) dashed var(--line-soft);
+  background: none;
+  font: 400 var(--fs-16)/1 var(--f-brush);
+  color: var(--soft);
+}
+
+.toggle button[aria-checked='true'] {
+  border: var(--hair) solid var(--gold);
+  background: var(--tint);
+  color: var(--gold);
+}
+
+.root {
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-12) var(--s-16);
+}
+
+@media (max-width: 420px) {
+  .fresh {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,31 @@
+# The build context is a whitelist (plan item 72): the files the image is built from and nothing
+# else. Docs, tests, tools and the art originals under them, env files, local data and .git never
+# reach the Docker daemon, whatever else lies in the checkout. tests/test_image.py checks it.
+*
+!LICENSE
+!THIRD-PARTY-NOTICES.md
+!pyproject.toml
+!uv.lock
+!apps/api/frx
+!apps/engine
+!apps/play-web
+!content
+
+# Inside those: nothing installed, built, cached, local or original.
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+**/.env
+**/.env.*
+**/*.map
+**/raw
+apps/play-web/dist
+apps/play-web/dist-*
+apps/play-web/tests
+
+# Kept in the repository, not served: the asset ledger (a record of where each picture came
+# from) and the parts library's own viewer page and script (the interface has its own port).
+apps/play-web/assets/ledger.json
+apps/play-web/assets/portrait-kit/index.html
+apps/play-web/assets/portrait-kit/kit.js

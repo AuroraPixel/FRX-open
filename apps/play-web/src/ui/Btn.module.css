@@ -1,0 +1,59 @@
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px var(--s-18);
+  border: var(--hair) solid var(--gold);
+  background: none;
+  color: var(--gold);
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-btn);
+  white-space: nowrap;
+  transition: background-color var(--d-focus);
+}
+
+.btn:hover,
+.btn[data-hover] {
+  background: var(--glow-soft);
+}
+
+.btn:active,
+.btn[data-active] {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.btn[data-variant='solid'] {
+  background: var(--gold);
+  color: var(--bg);
+}
+.btn[data-variant='solid']:hover,
+.btn[data-variant='solid'][data-hover] {
+  box-shadow: 0 0 14px var(--glow);
+}
+
+.btn[data-variant='danger'] {
+  border-color: var(--cin);
+  color: var(--cin);
+}
+
+.btn:disabled {
+  cursor: default;
+  border-color: var(--line-soft);
+  background: none;
+  color: var(--faint);
+  box-shadow: none;
+}
+
+/* phones, and a finger anywhere: the touch target grows to 44 px tall without changing the look */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .btn {
+    min-width: var(--hit);
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: -8px 0;
+  }
+}

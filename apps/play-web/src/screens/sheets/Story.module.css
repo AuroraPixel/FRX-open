@@ -1,0 +1,193 @@
+/* The story of the cultivation life in the 任务 panel (the mock-up story-mainline-phone.jpg): the
+   storyline's name in gold brush over its hook, on a tinted block under a gold rule; 这一章 a card with a
+   gold rule at the left, a condition a row with its 齐 or 缺; 疑点, 因果 and 心结 a row each, at least
+   48 px tall, a seal at the left and a dashed rule under it. */
+.storyName {
+  margin: 0;
+  font: 400 var(--fs-27)/1.2 var(--f-brush);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.hook {
+  margin: 0 0 var(--s-6);
+  font: 400 var(--fs-14)/1.8 var(--f-serif);
+  color: var(--text);
+}
+
+.review {
+  flex: none;
+  color: var(--soft);
+  font: var(--type-note);
+}
+
+.chapter {
+  display: grid;
+  gap: var(--s-6);
+  padding: var(--s-14) var(--s-16) var(--s-16);
+  border-left: 2px solid var(--gold);
+  background: var(--tint);
+}
+
+.chapter > strong {
+  font: 700 var(--fs-16)/1.4 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.goal {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.chapter ul {
+  display: grid;
+  gap: var(--s-8);
+  margin: var(--s-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  min-height: 32px;
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.chapter li > span:not([data-mark]) {
+  flex: 1;
+  min-width: 0;
+}
+
+.chapter li > b {
+  flex: none;
+  font: 600 var(--fs-13)/1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.next {
+  font: var(--type-note);
+  font-style: normal;
+  letter-spacing: .1em;
+  color: var(--soft);
+}
+
+.part {
+  display: grid;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.note {
+  margin: 0 0 var(--s-4);
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rows li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  min-height: 48px;
+  padding: var(--s-8) 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  font: 400 var(--fs-14)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.what b {
+  margin-right: .7em;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+
+.what small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.rows li[data-settled] .what {
+  color: var(--soft);
+}
+
+.where,
+.proven,
+.due,
+.done,
+.broken {
+  flex: none;
+  max-width: 7.5em;
+  font: 400 var(--fs-13)/1.4 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .08em;
+  text-align: right;
+}
+
+/* where to look: gold words on a dotted line, as the mock-up writes them */
+.where {
+  padding-bottom: 2px;
+  border-bottom: var(--hair) dotted var(--gold);
+  color: var(--gold);
+}
+
+.proven {
+  color: var(--jade);
+}
+
+.due {
+  color: var(--soft);
+}
+
+.done {
+  color: var(--soft);
+}
+
+/* a promise broken: ink words over a cinnabar line (cinnabar words this small miss 4.5:1) */
+.broken {
+  color: var(--ink);
+  text-decoration: underline 2px var(--cin);
+  text-underline-offset: 3px;
+}
+
+/* a seal: 30 px, one brush character; cinnabar, a gold frame, or dashed and faint (缺, a settled entry) */
+.seal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: var(--hair) solid var(--gold);
+  border-radius: var(--r-seal);
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.seal[data-tone='cin'] {
+  border-color: transparent;
+  background: var(--cin) var(--tex-seal) center / cover;
+  color: var(--seal-ink);
+}
+
+.seal[data-tone='faint'] {
+  border-style: dashed;
+  border-color: var(--line);
+  color: var(--soft);
+}

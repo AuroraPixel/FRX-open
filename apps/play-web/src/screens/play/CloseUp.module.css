@@ -1,0 +1,137 @@
+/* The close-up sits over everything but notices and dialogs; its own words have the halo. */
+.closeUp {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-cine);
+  cursor: pointer;
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.closeUp:focus-visible {
+  outline: none;
+}
+
+/* black bars of 11% of the height slide in above and below (spec 六) */
+.barTop,
+.barBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 11%;
+  background: var(--bar);
+  animation: bar-in var(--d-bars) var(--ease) both;
+}
+.barTop {
+  top: 0;
+  --from: -100%;
+}
+.barBottom {
+  bottom: 0;
+  --from: 100%;
+}
+
+@keyframes bar-in {
+  from { transform: translateY(var(--from)); }
+  to { transform: none; }
+}
+
+.closeUp[data-leaving] .barTop,
+.closeUp[data-leaving] .barBottom {
+  animation: bar-out var(--d-bars) var(--ease) both;
+}
+
+@keyframes bar-out {
+  from { transform: none; }
+  to { transform: translateY(var(--from)); }
+}
+
+/* the vertical name at 11% from the left and 17% from the top; the role and the seal to its left */
+.title {
+  position: absolute;
+  left: 11%;
+  top: 17%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: var(--s-18);
+  animation: global(float-up) var(--d-float) var(--ease) .35s both;
+}
+
+.name {
+  margin: 0;
+  writing-mode: vertical-rl;
+  font: var(--type-meet);
+  /* spec 六 sizes a name of two or three characters; a longer one (茶摊伙计, 独眼散修) stands smaller, so its
+     column ends above the line at 63% instead of running into it (item 73's walkthrough) */
+  font-size: min(var(--meet-size), calc(42vh / (var(--chars, 3) * 1.04)));
+  letter-spacing: .04em;
+  color: var(--foil);
+  text-shadow: 0 0 34px var(--glow), 0 1px 10px var(--halo);
+}
+
+.role {
+  writing-mode: vertical-rl;
+  padding-right: var(--s-12);
+  border-right: var(--hair) solid var(--line);
+  font: 700 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .42em;
+  color: var(--ink);
+}
+
+.seal {
+  margin-top: var(--s-4);
+}
+
+/* the first line at the lower left: a short gold rule above, the place and hour below */
+.words {
+  position: absolute;
+  left: 11%;
+  top: 63%;
+  width: min(600px, 44%);
+  margin: 0;
+  animation: global(float-up) var(--d-float) var(--ease) .55s both;
+}
+
+.words::before {
+  content: '';
+  display: block;
+  width: 54px;
+  height: 1px;
+  margin-bottom: var(--s-18);
+  background: var(--gold);
+}
+
+.line {
+  margin: 0;
+  font: var(--type-meet-line);
+  color: var(--say);
+}
+
+.where {
+  margin-top: var(--s-12);
+  font: 400 var(--fs-12)/1.5 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--text);
+}
+
+.closeUp[data-leaving] .title,
+.closeUp[data-leaving] .words {
+  animation: global(fade-out) var(--d-bars) ease both;
+}
+
+/* phones: the name at the top left, the line across the lower third. The words stand on the picture:
+   the stage's veil softens and darkens it where they are (the play screen sets it for the close-up). */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .title {
+    left: max(var(--s-22), env(safe-area-inset-left, 0px));
+    top: calc(11% + var(--s-22));
+    gap: var(--s-12);
+  }
+  .words {
+    left: var(--s-22);
+    right: var(--s-22);
+    top: auto;
+    bottom: calc(11% + var(--s-28));
+    width: auto;
+  }
+}

@@ -1,0 +1,172 @@
+/* Left of the portrait, 178 px from the top, at about 65% of the width (spec 四). */
+.plate {
+  position: absolute;
+  z-index: var(--z-ui);
+  top: 178px;
+  left: 65%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: var(--s-12);
+  pointer-events: none;
+  text-shadow: 0 1px 10px var(--halo);
+  animation: global(fade-in) var(--d-float) ease both;
+}
+
+/* the plate stands on the bright sky: a soft halo behind it keeps the role and the seal readable */
+.plate::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-28)) calc(-1 * var(--s-36));
+  background: radial-gradient(closest-side, var(--halo), transparent);
+  opacity: .8;
+}
+
+.name {
+  writing-mode: vertical-rl;
+  font: 400 var(--fs-40)/1.15 var(--f-brush);
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+
+.role {
+  position: relative;
+  writing-mode: vertical-rl;
+  padding: var(--s-4) var(--s-10) var(--s-4) 0;
+  border-right: var(--hair) solid var(--line);
+  font: 700 var(--fs-12h)/1.6 var(--f-serif);
+  letter-spacing: .42em;
+  color: var(--soft);
+}
+
+/* the role is the plate's faintest words, and the glow is weakest at the ends of a long one: a strip of
+   the halo colour behind it, full under the words and fading out past them, keeps it at 4.5:1 in a dark
+   hall by day (大殿 3.3:1, 店铺 2.8:1 without it). (Masks take their alpha from an opaque token.) */
+.role::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-18)) calc(-1 * var(--s-10)) calc(-1 * var(--s-18)) calc(-1 * var(--s-14));
+  background: var(--halo);
+  opacity: .72;
+  pointer-events: none;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, var(--page) var(--s-14), var(--page) calc(100% - var(--s-10)), transparent),
+    linear-gradient(180deg, transparent, var(--page) var(--s-18), var(--page) calc(100% - var(--s-18)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent, var(--page) var(--s-14), var(--page) calc(100% - var(--s-10)), transparent),
+    linear-gradient(180deg, transparent, var(--page) var(--s-18), var(--page) calc(100% - var(--s-18)), transparent);
+  mask-composite: intersect;
+}
+
+.seal {
+  margin-top: var(--s-4);
+}
+
+/* a foe's intent and tags (the mock-up's .fx-intent, .fx-tags): under the plate, read across */
+.fight {
+  display: grid;
+  justify-items: end;
+  gap: var(--s-6);
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+}
+
+.under {
+  position: absolute;
+  top: calc(100% + var(--s-10));
+  right: 0;
+}
+
+/* the intent stands on the bright sky, out of the plate's own halo: a soft strip of the halo colour */
+.intent {
+  margin: 0;
+  padding: 1px var(--s-6) 1px var(--s-8);
+  background: var(--halo);
+  box-shadow: 0 0 var(--s-10) var(--s-4) var(--halo);
+  font: 400 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--soft);
+  text-shadow: 0 1px 5px var(--halo);
+}
+
+.intent b {
+  margin: 0 .35em 0 .3em;
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--cin);
+}
+
+.intent[data-hidden] b {
+  color: var(--soft);
+}
+
+.tags {
+  display: flex;
+  gap: var(--s-6);
+  margin: 0;
+}
+
+.tag {
+  padding: 3px 7px 3px var(--s-8);
+  border: var(--hair) solid var(--line);
+  background: var(--halo);
+  font: 400 var(--fs-11)/1.2 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.tag[data-sharp] {
+  border-color: color-mix(in srgb, var(--cin) 60%, transparent);
+  color: var(--cin);
+}
+
+/* narrow desktops: the portrait stands further right, so does the plate */
+@media (min-width: 760px) and (max-width: 1099px), (max-width: 759px) and (min-aspect-ratio: 131/100) {
+  .plate {
+    left: 62%;
+  }
+}
+
+/* short screens (a phone on its side): a foe's plate stands higher, its name smaller and its role left out
+   (the tags say its state), so its intent and tags stay above the panels' gems */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .plate[data-fight] {
+    top: calc(88px + env(safe-area-inset-top, 0px));
+  }
+  .plate[data-fight] .name {
+    font-size: var(--fs-27);
+  }
+  .plate[data-fight] .role {
+    display: none;
+  }
+  .plate[data-fight] .tags {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+/* phones: the narrow plate, 14 px from the left, under the status bar, and under the pressure clocks of the
+   cultivation life when there are any (Clocks.tsx measures them: --clocks-h) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .plate {
+    top: calc(104px + env(safe-area-inset-top, 0px) + var(--clocks-h, 0px));
+    left: max(var(--s-14), env(safe-area-inset-left, 0px));
+    gap: var(--s-8);
+  }
+  .name {
+    font-size: var(--fs-26);
+  }
+  .role {
+    display: none;
+  }
+  /* beside the narrow plate, at its top: under it the book would cover it */
+  .under {
+    top: 0;
+    right: auto;
+    left: calc(100% + var(--s-10));
+    justify-items: start;
+  }
+}

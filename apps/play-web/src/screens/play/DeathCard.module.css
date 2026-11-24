@@ -1,0 +1,52 @@
+/* The death card: the card family's gold lines and tint (spec 三, 卡片), a seal at its left, the
+   stamp 终 at its right, and the way back to the opening under its words. */
+.card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-14);
+  margin: .6em 0 .82em;
+  padding: var(--s-12) var(--s-12) var(--s-12) var(--s-10);
+  border-block: var(--hair) solid var(--line);
+  background: var(--tint);
+  text-align: left;
+  text-indent: 0;
+}
+
+.body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.body strong {
+  font: var(--type-card-title);
+  letter-spacing: var(--ls-card);
+  color: var(--ink);
+}
+
+.line {
+  font: var(--type-card);
+  color: var(--text);
+}
+
+.count {
+  font: var(--type-note);
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+}
+
+.actions {
+  display: flex;
+  padding-top: var(--s-8);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .card {
+    gap: var(--s-10);
+    padding: var(--s-10) var(--s-8) var(--s-10) var(--s-6);
+  }
+  .actions {
+    padding-top: var(--s-12);
+  }
+}

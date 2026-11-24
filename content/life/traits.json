@@ -1,0 +1,1415 @@
+{
+  "version": 1,
+  "description": "天赋的效果（玩法设计第七节「悟得」末段，执行计划第 48 项）：content/creation.json 的 148 条天赋，按名字各配上引擎读得懂的效果，用悟得的那套写法（content/life/perks.json 的 effect：type 加几个数），一条天赋可以有几样。天赋自己的文字和加属性的那部分在建角的文件里，这里不动它们，建角的对照样本不变；这里的效果也都不碰人物表的属性列（许诺属性成长的，像鸿蒙金榜，只当文字）。kinds 是认得的类型：live 的现在就有规则读（写的是读它的模块），item 的等那一项做出来再读，在那之前不起作用。only「文字」是实在落不到规则上的，只当说明给模型看，不超过三成。apps/engine/life/traits.cjs 读这份文件；数都是初值。",
+  "checks": [
+    "交涉",
+    "欺瞒",
+    "探查",
+    "潜行",
+    "脱身",
+    "硬闯",
+    "施术",
+    "搏运",
+    "强攻",
+    "用物",
+    "买卖",
+    "静观"
+  ],
+  "crafts": [
+    "炼丹",
+    "炼器",
+    "制符",
+    "布阵",
+    "驭兽"
+  ],
+  "kinds": {
+    "bonus": {
+      "live": "speed",
+      "notes": "修炼的加成池（content/life/verbs.json 的 cultivate.bonus 封顶）：value 是比例；when 是 night（夜里）、day（白天）、hurt（身上带着伤病：状态不是「一切正常」，或内伤未愈）；method 是主修功法的字（魔、佛）；placeKinds 是地点的种类"
+    },
+    "checkBonus": {
+      "live": "actions",
+      "notes": "kinds 里这几种检定的修正加 value（遭遇的探查也算）"
+    },
+    "tierDown": {
+      "live": "actions",
+      "notes": "kinds 里这几种检定降 steps 档；when night 只在夜里"
+    },
+    "insight": {
+      "live": "actions",
+      "notes": "kinds 里这几种行动卡多看到对方的态度"
+    },
+    "hitBonus": {
+      "live": "fight",
+      "notes": "斗法里命中加 value：when firstStrike 只在先手的第一手，hurt 带伤时；placeKinds 是地点的种类；weapon 是兵器名字里的字；unarmed 是空手"
+    },
+    "poisonCap": {
+      "live": "poison",
+      "notes": "丹毒的上限加 value"
+    },
+    "toxin": {
+      "live": "poison",
+      "notes": "每枚丹药加的丹毒乘 factor（四舍五入）"
+    },
+    "fortune": {
+      "live": "rewards",
+      "notes": "月结奇遇的几率加 value 个百分点（不低于零）"
+    },
+    "gather": {
+      "live": "rewards",
+      "notes": "采集得的 classes 那几类，份数乘 1 + value（四舍五入）"
+    },
+    "gateOdds": {
+      "live": "gate",
+      "notes": "冲关的修正加 value"
+    },
+    "knotCap": {
+      "live": "gate",
+      "notes": "心结让冲关减的修正，封底少减 value（content/life/gates.json 的 odds.knots.most）"
+    },
+    "affinity": {
+      "live": "speed",
+      "notes": "功法和灵根的五行不契合时不减速（契合）"
+    },
+    "craft": {
+      "live": "crafts",
+      "notes": "kinds（炼丹、炼器、制符、布阵、驭兽）这几门技艺的检定加 value（第 42 项的炼制）"
+    },
+    "trade": {
+      "item": 35,
+      "notes": "买的时候便宜 value 的比例；第 35 项「买卖」读它"
+    },
+    "appraise": {
+      "item": 35,
+      "notes": "看得到货的真实品阶和底价（悟得「识货」那一种）；第 35 项读它"
+    },
+    "guard": {
+      "item": 33,
+      "notes": "斗法里受的伤乘 1 − value（element 只对那一行的法术）；斗法的护体（第 33、34 项的装备特性一起做）时读它"
+    },
+    "spell": {
+      "item": 33,
+      "notes": "法术：value 是威力的比例（element 那一行的、words 名字里有这些字的），cost 是耗法力的比例，heal 是疗伤法术的比例；斗法的法术那边读它"
+    },
+    "rest": {
+      "item": 45,
+      "notes": "调息、养伤回复得快 value 的比例；洞府（第 45 项）改调息时一起读它"
+    },
+    "learn": {
+      "live": "crafts",
+      "notes": "技艺的熟练度长得快 value 的比例（第 42 项：做成一炉记 1 + value）；功法的领悟以后也读它"
+    }
+  },
+  "traits": {
+    "手脚笨拙": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "潜行"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "体弱多病": {
+      "effects": [
+        {
+          "type": "toxin",
+          "factor": 1.2
+        }
+      ]
+    },
+    "丢三落四": {
+      "effects": [
+        {
+          "type": "learn",
+          "value": -0.1
+        }
+      ]
+    },
+    "天生倒霉": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": -1
+        }
+      ]
+    },
+    "路痴": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "探查"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "贪杯": {
+      "only": "文字"
+    },
+    "贪吃": {
+      "only": "文字"
+    },
+    "嗜睡": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": -0.03
+        }
+      ]
+    },
+    "话痨": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "欺瞒"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "守财奴": {
+      "effects": [
+        {
+          "type": "trade",
+          "value": 0.05
+        }
+      ]
+    },
+    "洁癖": {
+      "only": "文字"
+    },
+    "夜猫子": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.1,
+          "when": "night"
+        },
+        {
+          "type": "bonus",
+          "value": -0.1,
+          "when": "day"
+        }
+      ]
+    },
+    "悲观主义": {
+      "effects": [
+        {
+          "type": "gateOdds",
+          "value": -1
+        }
+      ]
+    },
+    "好奇宝宝": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "探查"
+          ]
+        }
+      ]
+    },
+    "赌徒": {
+      "only": "文字"
+    },
+    "惧高": {
+      "only": "文字"
+    },
+    "旱鸭子": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": -3,
+          "placeKinds": [
+            "海域"
+          ]
+        }
+      ]
+    },
+    "脸盲": {
+      "only": "文字"
+    },
+    "慢郎中": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹",
+            "炼器"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "直肠子": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "欺瞒"
+          ],
+          "value": -2
+        }
+      ]
+    },
+    "胆小如鼠": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "脱身"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "书呆子": {
+      "effects": [
+        {
+          "type": "learn",
+          "value": 0.05
+        }
+      ]
+    },
+    "疑心病": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": -1
+        },
+        {
+          "type": "insight",
+          "kinds": [
+            "交涉"
+          ]
+        }
+      ]
+    },
+    "挑食": {
+      "only": "文字"
+    },
+    "畏虫": {
+      "only": "文字"
+    },
+    "体格健壮": {
+      "effects": [
+        {
+          "type": "toxin",
+          "factor": 0.9
+        }
+      ]
+    },
+    "过目不忘": {
+      "effects": [
+        {
+          "type": "learn",
+          "value": 0.1
+        }
+      ]
+    },
+    "飞毛腿": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "脱身"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "能言善辩": {
+      "effects": [
+        {
+          "type": "trade",
+          "value": 0.05
+        },
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "水性良好": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1,
+          "placeKinds": [
+            "海域"
+          ]
+        }
+      ]
+    },
+    "巧手": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹",
+            "炼器",
+            "制符"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "药农之子": {
+      "effects": [
+        {
+          "type": "gather",
+          "classes": [
+            "灵草"
+          ],
+          "value": 0.2
+        }
+      ]
+    },
+    "猎户之子": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1,
+          "weapon": [
+            "弓",
+            "弩"
+          ]
+        }
+      ]
+    },
+    "铁匠学徒": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼器"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "拳师": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1,
+          "unarmed": true
+        }
+      ]
+    },
+    "第六感": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "探查"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "精神饱满": {
+      "effects": [
+        {
+          "type": "rest",
+          "value": 0.2
+        }
+      ]
+    },
+    "心思缜密": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "探查"
+          ]
+        }
+      ]
+    },
+    "老实人": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": 1
+        },
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "欺瞒"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "抗毒体质": {
+      "effects": [
+        {
+          "type": "toxin",
+          "factor": 0.8
+        }
+      ]
+    },
+    "耐寒": {
+      "effects": [
+        {
+          "type": "guard",
+          "element": "冰",
+          "value": 0.2
+        }
+      ]
+    },
+    "耐热": {
+      "effects": [
+        {
+          "type": "guard",
+          "element": "火",
+          "value": 0.2
+        }
+      ]
+    },
+    "恢复力": {
+      "effects": [
+        {
+          "type": "rest",
+          "value": 0.5
+        }
+      ]
+    },
+    "节俭": {
+      "effects": [
+        {
+          "type": "trade",
+          "value": 0.03
+        }
+      ]
+    },
+    "灵根增幅": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.05
+        }
+      ]
+    },
+    "武学爱好者": {
+      "effects": [
+        {
+          "type": "learn",
+          "value": 0.1
+        }
+      ]
+    },
+    "乐天派": {
+      "effects": [
+        {
+          "type": "knotCap",
+          "value": 1
+        }
+      ]
+    },
+    "商贾之子": {
+      "effects": [
+        {
+          "type": "trade",
+          "value": 0.1
+        }
+      ]
+    },
+    "酒鬼之子": {
+      "only": "文字"
+    },
+    "绘画学徒": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "制符"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "丹道初解": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "御风而行": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "脱身"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "天生神力": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1
+        }
+      ]
+    },
+    "五行亲和": {
+      "effects": [
+        {
+          "type": "spell",
+          "cost": -0.05
+        }
+      ]
+    },
+    "炼器学徒": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼器"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "符道学徒": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "制符"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "阵法爱好者": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "布阵"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "灵视": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "探查"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "兽语者": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "驭兽"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "冰肌": {
+      "effects": [
+        {
+          "type": "guard",
+          "element": "冰",
+          "value": 0.3
+        }
+      ]
+    },
+    "火灵体": {
+      "effects": [
+        {
+          "type": "spell",
+          "element": "火",
+          "value": 0.1
+        }
+      ]
+    },
+    "厚土之体": {
+      "effects": [
+        {
+          "type": "guard",
+          "value": 0.05
+        }
+      ]
+    },
+    "金锐之骨": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1
+        }
+      ]
+    },
+    "听风者": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "探查"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "杀气凛然": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "强攻"
+          ],
+          "value": 1
+        },
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "寻宝嗅觉": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": 2
+        }
+      ]
+    },
+    "一心二用": {
+      "only": "文字"
+    },
+    "经脉粗壮": {
+      "effects": [
+        {
+          "type": "poisonCap",
+          "value": 10
+        }
+      ]
+    },
+    "破妄之眼": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "交涉",
+            "欺瞒"
+          ]
+        }
+      ]
+    },
+    "小有气运": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": 1
+        }
+      ]
+    },
+    "愈合之血": {
+      "effects": [
+        {
+          "type": "rest",
+          "value": 0.2
+        }
+      ]
+    },
+    "毒师之徒": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "御兽天赋": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "驭兽"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "木秀于林": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.1
+        }
+      ]
+    },
+    "雷灵体": {
+      "effects": [
+        {
+          "type": "spell",
+          "element": "雷",
+          "value": 0.1
+        }
+      ]
+    },
+    "剑术奇才": {
+      "effects": [
+        {
+          "type": "spell",
+          "words": [
+            "剑"
+          ],
+          "value": 0.1
+        }
+      ]
+    },
+    "天生灵体": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.15
+        }
+      ]
+    },
+    "不动如山": {
+      "effects": [
+        {
+          "type": "guard",
+          "value": 0.05
+        }
+      ]
+    },
+    "鬼影迷踪": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 2,
+          "when": "firstStrike"
+        },
+        {
+          "type": "tierDown",
+          "kinds": [
+            "潜行"
+          ],
+          "steps": 1
+        }
+      ]
+    },
+    "百毒不侵": {
+      "effects": [
+        {
+          "type": "toxin",
+          "factor": 0.5
+        }
+      ]
+    },
+    "阵法天才": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "布阵"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "丹道宗师": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "炼器大师": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼器"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "蛟龙血脉": {
+      "effects": [
+        {
+          "type": "spell",
+          "element": "水",
+          "value": 0.2
+        }
+      ]
+    },
+    "七窍玲珑心": {
+      "effects": [
+        {
+          "type": "learn",
+          "value": 0.5
+        }
+      ]
+    },
+    "剑心通明": {
+      "effects": [
+        {
+          "type": "knotCap",
+          "value": 3
+        },
+        {
+          "type": "spell",
+          "words": [
+            "剑"
+          ],
+          "value": 0.1
+        }
+      ]
+    },
+    "掌中雷霆": {
+      "effects": [
+        {
+          "type": "spell",
+          "element": "雷",
+          "value": 0.25
+        }
+      ]
+    },
+    "缩地成寸": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "脱身"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "琉璃玉身": {
+      "effects": [
+        {
+          "type": "guard",
+          "value": 0.1
+        }
+      ]
+    },
+    "魂魄强大": {
+      "effects": [
+        {
+          "type": "knotCap",
+          "value": 1
+        }
+      ]
+    },
+    "魅力超凡": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    "大气运者": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": 5
+        }
+      ]
+    },
+    "五行轮转": {
+      "effects": [
+        {
+          "type": "affinity"
+        }
+      ]
+    },
+    "魔心": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 1.0,
+          "method": [
+            "魔"
+          ]
+        },
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": -1
+        }
+      ]
+    },
+    "佛骨": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 1.0,
+          "method": [
+            "佛"
+          ]
+        }
+      ]
+    },
+    "人皇血统": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "药鼎之躯": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹"
+          ],
+          "value": 1
+        },
+        {
+          "type": "toxin",
+          "factor": 0.8
+        }
+      ]
+    },
+    "饕餮血脉": {
+      "only": "文字"
+    },
+    "天生帅才": {
+      "only": "文字"
+    },
+    "苦修士": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.2,
+          "when": "hurt"
+        },
+        {
+          "type": "hitBonus",
+          "value": 1,
+          "when": "hurt"
+        }
+      ]
+    },
+    "天命之子": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": 5
+        },
+        {
+          "type": "gateOdds",
+          "value": 1
+        }
+      ]
+    },
+    "一介武夫": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 1
+        }
+      ]
+    },
+    "法道宗师": {
+      "effects": [
+        {
+          "type": "spell",
+          "value": 0.2
+        }
+      ]
+    },
+    "长生血脉": {
+      "only": "文字"
+    },
+    "先天道胎": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.5
+        },
+        {
+          "type": "gateOdds",
+          "value": 2
+        }
+      ]
+    },
+    "万兽之王": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "驭兽"
+          ],
+          "value": 5
+        },
+        {
+          "type": "hitBonus",
+          "value": -2
+        }
+      ]
+    },
+    "傀儡师": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼器"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    "蛊术师": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉"
+          ],
+          "value": -2
+        }
+      ]
+    },
+    "医者仁心": {
+      "effects": [
+        {
+          "type": "spell",
+          "heal": 1.0
+        }
+      ]
+    },
+    "灾星降世": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": -3
+        }
+      ]
+    },
+    "破法之瞳": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "欺瞒"
+          ]
+        }
+      ]
+    },
+    "不灭金身": {
+      "effects": [
+        {
+          "type": "guard",
+          "value": 0.5
+        },
+        {
+          "type": "bonus",
+          "value": -0.2
+        }
+      ]
+    },
+    "凤凰血脉": {
+      "effects": [
+        {
+          "type": "guard",
+          "element": "火",
+          "value": 1.0
+        }
+      ]
+    },
+    "魅魔之体": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "交涉",
+            "欺瞒"
+          ],
+          "value": 5
+        }
+      ]
+    },
+    "元素圣体": {
+      "only": "文字"
+    },
+    "太上忘情": {
+      "effects": [
+        {
+          "type": "knotCap",
+          "value": 3
+        }
+      ]
+    },
+    "因果之线": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "交涉",
+            "欺瞒",
+            "探查",
+            "潜行",
+            "脱身",
+            "硬闯",
+            "施术",
+            "搏运",
+            "强攻",
+            "用物",
+            "买卖",
+            "静观"
+          ]
+        }
+      ]
+    },
+    "窃天者": {
+      "only": "文字"
+    },
+    "天魔转世": {
+      "only": "文字"
+    },
+    "器灵共生": {
+      "only": "文字"
+    },
+    "画中仙": {
+      "only": "文字"
+    },
+    "剑骨": {
+      "effects": [
+        {
+          "type": "hitBonus",
+          "value": 2,
+          "unarmed": true
+        }
+      ]
+    },
+    "入梦者": {
+      "effects": [
+        {
+          "type": "insight",
+          "kinds": [
+            "交涉"
+          ]
+        }
+      ]
+    },
+    "天煞孤星": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 0.15
+        }
+      ]
+    },
+    "轮回者": {
+      "only": "文字"
+    },
+    "噬魂之主": {
+      "only": "文字"
+    },
+    "道法自然": {
+      "effects": [
+        {
+          "type": "craft",
+          "kinds": [
+            "炼丹",
+            "炼器",
+            "制符"
+          ],
+          "value": 2
+        },
+        {
+          "type": "gather",
+          "classes": [
+            "灵草"
+          ],
+          "value": 0.2
+        }
+      ]
+    },
+    "世界之子": {
+      "effects": [
+        {
+          "type": "fortune",
+          "value": 3
+        }
+      ]
+    },
+    "晷砂匣": {
+      "effects": [
+        {
+          "type": "gather",
+          "classes": [
+            "灵草"
+          ],
+          "value": 0.5
+        }
+      ]
+    },
+    "鸿蒙金榜": {
+      "only": "文字"
+    },
+    "与道合真": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": 1.0
+        }
+      ]
+    },
+    "言出法随": {
+      "only": "文字"
+    },
+    "剧本篡改者": {
+      "only": "文字"
+    },
+    "观测者": {
+      "effects": [
+        {
+          "type": "appraise"
+        },
+        {
+          "type": "insight",
+          "kinds": [
+            "交涉",
+            "欺瞒",
+            "探查",
+            "潜行",
+            "脱身",
+            "硬闯",
+            "施术",
+            "搏运",
+            "强攻",
+            "用物",
+            "买卖",
+            "静观"
+          ]
+        }
+      ]
+    },
+    "唯一神性": {
+      "only": "文字"
+    },
+    "虚空行者": {
+      "effects": [
+        {
+          "type": "checkBonus",
+          "kinds": [
+            "脱身"
+          ],
+          "value": 3
+        }
+      ]
+    },
+    "万法熔炉": {
+      "effects": [
+        {
+          "type": "affinity"
+        }
+      ]
+    },
+    "创世血脉": {
+      "only": "文字"
+    },
+    "终焉魔体": {
+      "only": "文字"
+    },
+    "无限剑制": {
+      "only": "文字"
+    },
+    "系统": {
+      "only": "文字"
+    },
+    "万界之商": {
+      "effects": [
+        {
+          "type": "trade",
+          "value": 0.5
+        }
+      ]
+    },
+    "暗影君王": {
+      "only": "文字"
+    },
+    "盘古遗泽": {
+      "only": "文字"
+    },
+    "三千大道": {
+      "effects": [
+        {
+          "type": "affinity"
+        }
+      ]
+    },
+    "纳米核心": {
+      "effects": [
+        {
+          "type": "guard",
+          "value": 0.5
+        }
+      ]
+    },
+    "道法摹写者": {
+      "only": "文字"
+    },
+    "洪荒之体": {
+      "effects": [
+        {
+          "type": "bonus",
+          "value": -0.1
+        },
+        {
+          "type": "guard",
+          "value": 0.2
+        }
+      ]
+    }
+  }
+}

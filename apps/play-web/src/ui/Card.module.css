@@ -1,0 +1,75 @@
+/* Checks, clashes and receipts share one card: gold lines above and below, no side borders. */
+.card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-14);
+  margin: .2em 0 .82em;
+  padding: 9px var(--s-12) 9px var(--s-10);
+  border-block: var(--hair) solid var(--line);
+  background: var(--tint);
+  text-align: left;
+  text-indent: 0;
+}
+
+.body {
+  min-width: 0;
+}
+
+.body strong {
+  display: block;
+  font: var(--type-card-title);
+  letter-spacing: var(--ls-card);
+  color: var(--ink);
+}
+
+.whole {
+  white-space: nowrap;
+}
+
+.calc,
+.line {
+  display: block;
+  font: var(--type-card);
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+}
+
+.calc {
+  letter-spacing: .04em;
+}
+
+.calc b,
+.line b {
+  margin: 0 1px;
+  font: 700 var(--fs-14h)/1 var(--f-serif);
+  color: var(--ink);
+}
+
+/* 「│ 难度 8」 */
+.calc em {
+  margin-left: var(--s-14);
+  padding-left: var(--s-14);
+  border-left: var(--hair) solid var(--line-soft);
+  font-style: normal;
+  color: var(--soft);
+}
+
+/* a narrow card breaks the sum between its terms, never inside 「难度 8」 or 「神识 3」 */
+.calc em,
+.calc span {
+  white-space: nowrap;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .card {
+    gap: var(--s-10);
+    padding: var(--s-8) var(--s-8) var(--s-8) var(--s-6);
+  }
+  .calc em {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}

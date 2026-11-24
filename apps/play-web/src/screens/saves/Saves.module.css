@@ -1,0 +1,300 @@
+/* 存档 (spec 七): list entries in the language of the list items (spec 三, 列表项) with a round head;
+   the page is a framed column over the softened scene on desktops and the whole window on phones. */
+.page {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ui);
+  display: grid;
+  /* one row the window's height: the frame's height resolves against it, never against its own content */
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  padding: var(--s-46) var(--s-28);
+}
+
+.frame {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(760px, 100%);
+  max-height: 100%;
+  min-height: min(560px, 100%);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  padding: var(--s-18) var(--s-22) var(--s-14);
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+.title {
+  margin: 0;
+  font: var(--type-sheet-title);
+  color: var(--ink);
+}
+
+.count {
+  margin-left: auto;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-16) var(--s-22) var(--s-22);
+}
+
+.saves {
+  display: grid;
+  align-content: start;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+.tops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+}
+
+.list {
+  display: grid;
+  gap: var(--s-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+/* the entry: a 2 px line on the left, the tinted surface, the head, the words, ⋯ at the right */
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  transition: background-color var(--d-press);
+}
+
+.entry:hover {
+  background: var(--glow-soft);
+}
+
+.entry[data-current] {
+  border-left-color: var(--gold);
+}
+
+/* a faint paper grain on the entries, where the paper texture helps the list read as pages */
+.entry::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--tex-paper) 0 0 / 256px;
+  opacity: .035;
+  pointer-events: none;
+}
+:global(:root[data-light='day']) .entry::before {
+  opacity: .22;
+  mix-blend-mode: multiply;
+}
+
+.load {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-14);
+  min-width: 0;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-align: left;
+}
+
+.words {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name {
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.who {
+  font: 400 var(--fs-13)/1.5 var(--f-serif);
+  color: var(--gold);
+  letter-spacing: .06em;
+}
+
+.where,
+.when {
+  font: 400 var(--fs-12h)/1.6 var(--f-serif);
+  color: var(--soft);
+}
+
+.when {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.flag {
+  margin-left: var(--s-8);
+  font-style: normal;
+  color: var(--gold);
+}
+
+/* the current one's brush mark at the top right, as list items carry their state */
+.glyph {
+  position: absolute;
+  top: 9px;
+  right: 58px;
+  font: 400 var(--fs-15)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+  pointer-events: none;
+}
+
+.more {
+  margin: 0 var(--s-12) 0 var(--s-4);
+}
+
+/* 「⋯」 is set in Song: the brush font has no such mark */
+.entry .more {
+  font-family: var(--f-serif);
+}
+
+/* what opens under an entry: its actions, on the frame's own ground so the cinnabar 删除 reads */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-10);
+  margin-left: 2px;
+  padding: var(--s-12) var(--s-14);
+  border-left: var(--hair) solid var(--line);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+/* 删除 in cinnabar needs the frame's dark ground under it, not the picture showing through */
+.actions > button[data-variant='danger'] {
+  background: var(--panel);
+}
+
+.note,
+.aside {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.aside {
+  margin: var(--s-8) 0 0;
+}
+
+.warn {
+  margin: var(--s-8) 0 0;
+  font: var(--type-note);
+  color: var(--cin);
+}
+
+.choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-10);
+  margin-top: var(--s-10);
+}
+
+.choice > p {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* a link in a sentence: gold, underlined, a 44 px target on phones */
+.inline {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.failed {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-10);
+}
+
+.failed p {
+  margin: 0;
+  font: 400 var(--fs-14)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+/* phones: the whole window, no frame margins; the list scrolls under the head */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .page {
+    padding: 0;
+    place-items: stretch;
+  }
+  .frame {
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+  }
+  /* the frame is the window itself: no corners to set */
+  .frame::before,
+  .frame::after {
+    display: none;
+  }
+  .head {
+    padding: calc(var(--s-18) + env(safe-area-inset-top, 0px)) var(--s-16) var(--s-12);
+  }
+  .body {
+    padding: var(--s-14) var(--s-16) calc(var(--s-28) + env(safe-area-inset-bottom, 0px));
+  }
+  .tops {
+    gap: var(--s-12);
+  }
+  .tops > button {
+    flex: 1 1 0;
+    padding-inline: var(--s-10);
+  }
+  .load {
+    padding: var(--s-12) var(--s-10);
+    gap: var(--s-12);
+  }
+  .actions {
+    gap: var(--s-12);
+  }
+  .inline::after {
+    content: '';
+    position: absolute;
+    inset: -14px -4px;
+  }
+}
+
+/* a finger on the desktop layout: the text-like buttons answer a touch 44 px tall */
+@media (pointer: coarse) {
+  .inline::after {
+    content: '';
+    position: absolute;
+    inset: -14px -4px;
+  }
+}

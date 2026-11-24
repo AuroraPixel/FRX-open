@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <!-- the browser's colour follows the colour set of the hour (app.tsx); night until the page says -->
+    <meta name="theme-color" content="#04070d" />
+    <title>云汀修行录</title>
+    <!-- Added to the home screen it opens full screen with its own icon (assets/app/, drawn by
+         tools/art/app-icons.mjs). Runtime assets, like the fonts: never bundled. -->
+    <link rel="manifest" href="/play/assets/app/manifest.webmanifest" vite-ignore />
+    <link rel="icon" href="/play/assets/app/favicon.ico" sizes="16x16 32x32 48x48" vite-ignore />
+    <link rel="icon" href="/play/assets/app/icon-192.png" type="image/png" sizes="192x192" vite-ignore />
+    <link rel="apple-touch-icon" href="/play/assets/app/apple-touch-icon.png" vite-ignore />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="云汀修行录" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Fonts are runtime assets (tools/fonts/subset.py): sliced by unicode-range, only the slices a
+         page uses are downloaded. -->
+    <link rel="stylesheet" href="/play/assets/fonts/fonts.css" vite-ignore />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

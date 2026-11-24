@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "description": "压力钟（玩法设计第十节，执行计划第 15 项）：一口钟是一件正在逼近的事，几格满了就发生。钟由导演起名、写它满了之后的事，格数由引擎记；引擎自己也按 started 起钟。同时最多 limit 口。一口钟写明范围（scopes 之一）、几格（sizes 之一）、起于几格、怎么涨、怎么消、满了发生什么。涨法消法只从 rises、falls 的词里选：needs 是这一种要写明的参数（days 日数，item 物品名，stones 灵石数，person 人物编号或名字，task 任务编号或标题）；每条可写 steps（一次进退几格，缺省一格），消法还可写 clear（清空），clear 为真的那几种缺省就是清空。inScope 的那几种只在人在范围里时算；act 只认 kinds 里的行动。days 和 away 在月结里按日数走：人在范围里，每满 days 日涨 steps 格；人不在范围里，每满 days 日退 steps 格，回到范围里重新数；away 只给有范围的钟。say 是这一条怎么说：年谱行里进退的缘由，也是状态里那一句怎么消（后面接 noteWords）；{范围} {日} {格} {物} {灵石} {人} {事} 换成这条的值，方括号里的一段缺值就不写。started 是引擎自己起的钟：哪几种行动、哪种结果、在哪种地方（地点的种类，content/life/places.json），起哪口钟，范围是那个地方。范围 home 是主角的洞府（value 写洞府所在的地图地点，执行计划第 45 项），满了就有人打上门来（content/life/home.json）；范围所在的地方布了隐匿阵（content/life/arrays.json），days 那一样按 slower 倍数数日子。数都是初值。",
+  "limit": 3,
+  "sizes": [4, 6, 8],
+  "scopes": {
+    "place": "一个地图地点",
+    "region": "一个地域",
+    "self": "只冲着主角",
+    "home": "主角的洞府"
+  },
+  "rises": {
+    "days": { "name": "每过若干日", "needs": ["days"], "say": "[人在{范围}]" },
+    "act": { "name": "在范围内动手", "inScope": true, "kinds": ["强攻", "硬闯", "施术"], "say": "[在{范围}]动手" },
+    "fumble": { "name": "检定大失败", "inScope": true, "say": "[在{范围}]失手" },
+    "show": { "name": "露出某件东西", "inScope": true, "needs": ["item"], "say": "露出{物}" },
+    "director": { "name": "导演的一次推演", "say": "风声又紧了些" },
+    "realm": { "name": "每破一个大境界", "say": "破了一个大境界" }
+  },
+  "falls": {
+    "away": { "name": "离开范围满若干日", "needs": ["days"], "say": "离开{范围}满{日}日" },
+    "hand": { "name": "交出某物", "needs": ["item"], "clear": true, "say": "交出{物}" },
+    "bribe": { "name": "打点", "inScope": true, "needs": ["stones"], "say": "打点{灵石}块灵石" },
+    "settle": { "name": "了结某人", "needs": ["person"], "clear": true, "say": "了结{人}" },
+    "task": { "name": "办成某件差事", "needs": ["task"], "clear": true, "say": "办成{事}" }
+  },
+  "noteWords": {
+    "join": "，",
+    "between": "；",
+    "clear": "清空",
+    "back": "退{格}格"
+  },
+  "started": [
+    {
+      "kinds": ["欺瞒", "潜行"],
+      "outcome": "大失败",
+      "placeKinds": ["城镇"],
+      "say": "在{范围}{行动}失手",
+      "clock": {
+        "name": "盘查",
+        "scope": "place",
+        "size": 4,
+        "value": 1,
+        "rises": [{ "kind": "days", "days": 10 }],
+        "falls": [{ "kind": "away", "days": 10 }],
+        "full": "差役挨家盘查，查到了你的头上"
+      }
+    }
+  ]
+}

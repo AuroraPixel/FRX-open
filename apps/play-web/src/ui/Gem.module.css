@@ -1,0 +1,124 @@
+.gem {
+  --hit-size: 34px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-14);
+  min-width: var(--hit-size);
+  min-height: var(--hit-size);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--soft);
+  font: 400 var(--fs-13)/1 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.diamond {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 calc((var(--hit-size) - 34px) / 2);
+  border: var(--hair) solid var(--line);
+  background: var(--panel);
+  transform: rotate(45deg);
+  transition: border-color var(--d-focus), box-shadow var(--d-focus), background-color var(--d-press);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  transform: rotate(-45deg);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.glyph {
+  transform: rotate(-45deg);
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--ink);
+}
+
+.label {
+  white-space: nowrap;
+  transition: opacity var(--d-focus), transform var(--d-focus);
+}
+
+/* the nav rail on desktops: the label floats in */
+.gem[data-label='hover'] .label {
+  opacity: 0;
+  transform: translateX(-6px);
+}
+.gem[data-label='hover']:hover .label,
+.gem[data-label='hover']:focus-visible .label,
+.gem[data-label='hover'][data-hover] .label,
+.gem[data-label='hover'][data-focus] .label,
+.gem[data-label='hover'][aria-pressed='true'] .label {
+  opacity: 1;
+  transform: none;
+}
+
+/* the phone's navigation grid: two characters under the diamond */
+.gem[data-label='below'] {
+  flex-direction: column;
+  gap: var(--s-12);
+  font-size: var(--fs-12);
+}
+.gem[data-label='below'] .diamond {
+  margin-top: var(--s-6);
+}
+
+.gem:hover .diamond,
+.gem[data-hover] .diamond {
+  border-color: var(--gold);
+}
+
+.gem:active .diamond,
+.gem[data-active] .diamond {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.diamond[data-on] {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px var(--glow);
+}
+
+.gem[aria-pressed='true'] {
+  color: var(--ink);
+}
+
+.gem:disabled {
+  cursor: default;
+  color: var(--faint);
+}
+.gem:disabled .diamond {
+  border-color: var(--line-soft);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .gem {
+    --hit-size: var(--hit);
+  }
+  .gem[data-label='hover'] .label {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* a finger on a desktop layout: the 34 px diamond answers a touch 44 px across (spec 十一), without
+   moving the row; on phones the button is that size already */
+@media (pointer: coarse) {
+  .gem::after {
+    content: '';
+    position: absolute;
+    inset: calc((var(--hit-size) - var(--hit)) / 2);
+  }
+}

@@ -1,0 +1,76 @@
+{
+ "version": 1,
+ "half": "half/",
+ "assets": {
+  "corner-cloud": {
+   "file": "corner-cloud.webp",
+   "kind": "corner",
+   "w": 429,
+   "h": 401,
+   "note": "角花：卷草祥云，画在左上角的方向；其余三角镜像使用"
+  },
+  "corner-fret": {
+   "file": "corner-fret.webp",
+   "kind": "corner",
+   "w": 381,
+   "h": 369,
+   "note": "角花：回纹，画在左上角的方向；其余三角镜像使用"
+  },
+  "divider": {
+   "file": "divider.webp",
+   "kind": "divider",
+   "w": 426,
+   "h": 75,
+   "note": "分隔纹样：居中的菱形云纹，两侧金线淡出"
+  },
+  "fret-band": {
+   "file": "fret-band.webp",
+   "kind": "border",
+   "w": 434,
+   "h": 69,
+   "note": "回纹边饰：六个单元的横带"
+  },
+  "medallion": {
+   "file": "medallion.webp",
+   "kind": "ornament",
+   "w": 438,
+   "h": 409,
+   "note": "团花徽记，中间留空"
+  },
+  "cloud": {
+   "file": "cloud.webp",
+   "kind": "ornament",
+   "w": 435,
+   "h": 212,
+   "note": "单朵祥云纹"
+  },
+  "seal": {
+   "file": "seal.webp",
+   "kind": "texture",
+   "w": 256,
+   "h": 256,
+   "note": "印泥：颜色是色板的朱砂，透明度是着墨的浓淡（有细小的漏白）；256 px，可平铺；可直接当印章的底图，也可当 mask-image 让界面按 --cin 上色"
+  },
+  "paper": {
+   "file": "paper.webp",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "note": "宣纸底纹，可平铺；512 px"
+  },
+  "title-clouds": {
+   "file": "title-clouds.webp",
+   "kind": "title",
+   "w": 1726,
+   "h": 566,
+   "note": "标题页上方左右对称的祥云纹，中间留给竖排标题"
+  },
+  "title-mountains": {
+   "file": "title-mountains.webp",
+   "kind": "title",
+   "w": 2172,
+   "h": 433,
+   "note": "标题页下方的远山剪影，横贯画面，向下淡出"
+  }
+ }
+}

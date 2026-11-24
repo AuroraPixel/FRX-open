@@ -1,0 +1,44 @@
+.kv {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-8) var(--s-18);
+  margin: 0;
+  font: var(--type-kv);
+}
+
+.cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-10);
+  min-width: 0;
+  padding-bottom: 5px;
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.cell dt {
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.cell dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-align: right;
+  min-width: 0;
+}
+
+.cell em {
+  margin-left: var(--s-4);
+  font-style: normal;
+  font-weight: 400;
+  color: var(--jade);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .cell[data-long] {
+    grid-column: 1 / -1;
+  }
+}

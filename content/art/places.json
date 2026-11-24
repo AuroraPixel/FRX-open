@@ -1,0 +1,431 @@
+{
+ "about": "每个地方的场景描述（frx.play_places）：在哪儿（setting：露天、屋里、地下、天上、水上）、什么地形（terrain）、什么建筑（structure）、有什么（features，至多四样）、窄还是开阔（scale）、什么气氛（mood）。地点名字「自己那部分」（地图地名之后的字，或不在地图上的地点整个名字）里的词先定：从末尾往前，最后出现的词是它的「头」——outside 里的词（前、外、旁……）是某处外头，屋子是屋里，地形是露天，sky 是天上，water 是水上；同一处重叠的词取长的。地形取名字里档次最高的一个（瀑布最具体，tier 3 是具体的地貌，2 是谷、路、城镇，1 是泛泛的山），一样高取靠后的。名字说不出时，地图上的地点按它的场景族（families），屋里按正文里屋子的字样（rooms）；名字说不出的楼阁、前台按正文里的字样（kinds），野地里的亭子、小屋按正文里写到它的那几句的地形（terrainNear），房子的字号在楼里还是院里按到达的正文（buildings）；新到一个地方、名字没有把在哪儿、地形、建筑都说定时，再问一次模型，名字说定的规则来检查它的回答。scenes 是按描述选场景的阶梯：从上往下，when 里每一项都要满足（列出的值任一个），use 里第一个已经画好（场景目录里有 scene.json）或有部件库（kit- 开头，有 kit.json）的就用，都没有就往下找。version 是这套读法的版本：改了词或读法、已经按规则存下的样子该照新的重读时加一（模型给的样子不动）。nowhere 是离地图上的地点都远、名字又说不出是什么地方时的样子：山野里的一处，不是观云台。",
+ "version": 5,
+ "nowhere": {"setting": "outdoor", "terrain": "mountain", "structure": "none", "features": [], "scale": "open", "mood": "calm"},
+ "settings": {"outdoor": "露天", "indoor": "屋里", "underground": "地下", "sky": "天上", "water": "水上"},
+ "terrain": {
+  "none": {"label": "无", "tier": 0, "words": []},
+  "cave": {
+   "label": "洞穴",
+   "tier": 3,
+   "setting": "underground",
+   "scale": "narrow",
+   "words": ["石穴", "山洞", "岩洞", "洞窟", "洞穴", "石洞", "溶洞", "树洞", "矿洞", "地穴", "洞", "穴", "窟"]
+  },
+  "shaft": {"label": "井下", "tier": 3, "setting": "underground", "scale": "narrow", "words": ["井底", "井下", "井中", "井内", "竖井", "矿井", "深井", "坑底", "矿坑"]},
+  "tunnel": {
+   "label": "地道",
+   "tier": 3,
+   "setting": "underground",
+   "scale": "narrow",
+   "words": ["暗渠", "地道", "甬道", "隧道", "密道", "暗道", "岩隙", "石缝", "石隙", "裂隙", "岩缝", "石罅", "岩罅", "罅隙", "矿道", "地下河", "暗河", "罅"]
+  },
+  "waterfall": {"label": "瀑布", "tier": 4, "scale": "open", "words": ["瀑布", "飞瀑", "水帘", "瀑"]},
+  "canyon": {"label": "峡谷", "tier": 3, "scale": "narrow", "words": ["一线峡", "一线天", "峡谷", "峡道", "峡口", "隘口", "关隘", "夹道", "峡", "隘"]},
+  "cliff": {"label": "断崖", "tier": 3, "scale": "open", "words": ["断崖", "悬崖", "绝壁", "峭壁", "崖壁", "崖顶", "崖边", "崖下", "石崖", "山崖", "崖"]},
+  "peak": {"label": "山巅", "tier": 3, "scale": "open", "words": ["山巅", "山顶", "峰顶", "绝顶", "主峰", "峰巅", "顶峰", "孤峰", "峰"]},
+  "field": {
+   "label": "田地",
+   "tier": 3,
+   "scale": "open",
+   "words": ["药田", "灵田", "稻田", "麦田", "菜地", "菜园", "菜畦", "药圃", "苗圃", "花圃", "田垄", "药垄", "田埂", "梯田", "农田", "农场", "田地", "田间", "田野", "灵药园", "药园", "果园", "药庄", "农庄", "田庄", "园", "圃", "田", "垄", "畦"]
+  },
+  "forest": {
+   "label": "树林",
+   "tier": 3,
+   "scale": "open",
+   "words": ["森林", "密林", "树林", "竹林", "荒林", "古林", "林海", "丛林", "老林", "林间", "林中", "林地", "林子", "林场", "猎场", "松林", "桃林", "枫林", "林"]
+  },
+  "river": {
+   "label": "河岸",
+   "tier": 3,
+   "scale": "open",
+   "words": ["河边", "河畔", "河岸", "江边", "江畔", "江岸", "溪边", "溪畔", "河谷", "河滩", "渡口", "溪流", "山涧", "河", "江", "溪", "涧", "川"]
+  },
+  "lake": {"label": "湖泊", "tier": 3, "scale": "open", "words": ["湖畔", "湖边", "湖岸", "湖心", "湖面", "池畔", "水潭", "深潭", "寒潭", "灵池", "池塘", "湖", "潭", "池", "泊", "塘"]},
+  "coast": {
+   "label": "海岸",
+   "tier": 3,
+   "scale": "open",
+   "words": ["海边", "海岸", "海滩", "沙滩", "礁石", "港口", "码头", "海湾", "海角", "海岛", "小岛", "海", "岛", "礁", "港", "湾", "滩"]
+  },
+  "desert": {"label": "荒漠", "tier": 3, "scale": "open", "words": ["沙漠", "大漠", "荒漠", "戈壁", "沙丘", "黄沙", "沙海", "漠"]},
+  "grassland": {"label": "原野", "tier": 3, "scale": "open", "words": ["草原", "草甸", "草海", "荒原", "原野", "平原", "旷野", "荒野", "野地", "草地", "草场", "牧场", "原"]},
+  "snowfield": {"label": "雪原", "tier": 3, "scale": "open", "words": ["雪原", "冰原", "雪山", "冰川", "雪峰", "冰峰", "雪地", "冰谷", "冰", "雪"]},
+  "swamp": {"label": "沼泽", "tier": 3, "scale": "open", "words": ["沼泽", "泥沼", "湿地", "泥潭", "芦苇荡", "芦荡", "沼", "泽"]},
+  "ruins": {"label": "遗迹", "tier": 3, "scale": "open", "words": ["遗迹", "遗址", "废墟", "残垣", "古迹", "断壁", "禁区", "禁地", "墟"]},
+  "abyss": {"label": "深渊", "tier": 3, "scale": "open", "words": ["深渊", "魔渊", "地渊", "裂谷", "地缝", "渊"]},
+  "battlefield": {"label": "战场", "tier": 3, "scale": "open", "words": ["古战场", "战场", "沙场", "焦土"]},
+  "cloud_sea": {"label": "云海", "tier": 3, "scale": "open", "words": ["云海", "云台", "云上"]},
+  "valley": {"label": "山谷", "tier": 2, "scale": "open", "words": ["山谷", "幽谷", "深谷", "荒谷", "溪谷", "山坳", "谷地", "谷底", "坳", "谷"]},
+  "path": {"label": "山道", "tier": 2, "scale": "open", "words": ["山道", "山路", "山径", "小径", "小路", "小道", "古道", "栈道", "石阶", "台阶", "狭道", "荒道", "官道", "驿道", "道", "路", "径"]},
+  "town": {"label": "城镇", "tier": 2, "scale": "open", "words": ["长街", "大街", "街道", "街市", "街巷", "巷子", "胡同", "城中", "城内", "镇上", "村中", "街", "巷", "城", "镇", "村"]},
+  "mountain": {
+   "label": "山野",
+   "tier": 1,
+   "scale": "open",
+   "words": ["山脉", "山岭", "山坡", "山腰", "山脚", "山麓", "山野", "荒山", "后山", "山间", "山中", "碎石坡", "土坡", "陡坡", "斜坡", "缓坡", "山坂", "山岗", "土岗", "高岗", "山梁", "石坪", "采石场", "矿场", "岭", "坡", "坂", "岗", "梁", "坪", "麓", "山"]
+  }
+ },
+ "structures": {
+  "none": {"label": "无", "words": []},
+  "bandit_hall": {"label": "匪寨大厅", "inside": true, "scale": "open", "words": ["聚义厅", "聚义堂", "寨厅", "忠义堂", "匪窝", "贼窝"]},
+  "hall": {
+   "label": "大殿",
+   "inside": true,
+   "scale": "open",
+   "within": {"inn": "inn", "tavern": "tavern", "teahouse": "teahouse", "shop": "shop"},
+   "words": ["大殿", "正殿", "偏殿", "侧殿", "后殿", "内殿", "殿堂", "大厅", "正厅", "厅堂", "议事厅", "议事堂", "执事堂", "传功堂", "讲堂", "经堂", "刑堂", "佛堂", "宗祠", "祠堂", "殿", "厅", "堂", "祠"]
+  },
+  "hut": {"label": "小屋", "inside": true, "scale": "narrow", "words": ["小屋", "茅屋", "茅舍", "草屋", "草庐", "草堂", "木屋", "竹屋", "竹舍", "竹楼", "棚屋", "石屋", "土屋", "陋室", "庐"]},
+  "dormitory": {"label": "宿舍", "inside": true, "scale": "narrow", "words": ["杂役舍", "弟子舍", "宿舍", "寝舍", "石舍", "通铺", "弟子房", "杂役房", "下人房", "舍"]},
+  "room": {
+   "label": "房间",
+   "inside": true,
+   "scale": "narrow",
+   "words": ["卧房", "厢房", "客房", "上房", "寝室", "卧室", "闺房", "房间", "偏房", "耳房", "居室", "居所", "住所", "住处", "居处", "寓所", "屋", "房", "室"],
+   "generic": ["屋", "房", "室"]
+  },
+  "abode": {"label": "洞府", "inside": true, "scale": "narrow", "within": {"inn": "room", "tavern": "room", "teahouse": "room", "courtyard": "room", "hall": "room", "tower": "room", "shop": "room", "study": "room", "hut": "room", "dormitory": "room"}, "words": ["洞府", "静室", "密室", "石室", "闭关室", "修炼室", "练功房", "暗室"]},
+  "shop": {"label": "店铺", "inside": true, "scale": "narrow", "words": ["店铺", "商铺", "铺子", "当铺", "药铺", "杂货铺", "铁匠铺", "布庄", "钱庄", "商行", "店", "铺"]},
+  "inn": {
+   "label": "客栈",
+   "inside": true,
+   "scale": "open",
+   "words": ["客栈", "驿站", "驿馆", "客舍", "客店", "旅店", "前堂", "大堂", "前厅", "前台", "柜台", "账台", "雅间", "雅座", "雅室", "包间", "包厢"],
+   "generic": ["前堂", "大堂", "前厅", "前台", "柜台", "账台", "雅间", "雅座", "雅室", "包间", "包厢"]
+  },
+  "tavern": {"label": "酒楼", "inside": true, "scale": "open", "words": ["酒楼", "酒肆", "酒馆", "酒家", "酒铺", "饭馆", "饭庄", "食肆", "膳堂", "饭堂", "食堂"]},
+  "teahouse": {"label": "茶楼", "inside": true, "scale": "open", "words": ["茶楼", "茶馆", "茶肆", "茶坊", "茶室", "茶舍"]},
+  "stall": {"label": "路边的摊棚", "inside": false, "scale": "open", "words": ["茶摊", "茶棚", "茶寮", "凉棚", "酒棚", "面摊", "粥棚"]},
+  "storeroom": {"label": "库房", "inside": true, "scale": "narrow", "words": ["柴房", "柴屋", "柴棚", "库房", "仓库", "仓房", "货仓", "粮仓", "谷仓", "储物间", "杂物间", "杂物房", "储藏室", "库"]},
+  "cellar": {"label": "地窖", "inside": true, "setting": "underground", "scale": "narrow", "words": ["地窖", "酒窖", "冰窖", "菜窖", "地下室", "窖"]},
+  "alchemy_room": {"label": "丹房", "inside": true, "scale": "narrow", "words": ["炼丹房", "丹房", "丹室", "药房", "药室", "药庐", "丹炉房"]},
+  "workshop": {"label": "工坊", "inside": true, "scale": "narrow", "words": ["炼器房", "炼器室", "器房", "工坊", "作坊", "制符室", "符房", "伙房", "厨房", "后厨", "灶房", "账房"]},
+  "study": {"label": "书房", "inside": true, "scale": "narrow", "words": ["书房", "书斋", "藏书阁", "藏经阁", "经阁", "书阁", "藏书楼", "典籍阁", "斋"]},
+  "cell": {"label": "牢房", "inside": true, "scale": "narrow", "words": ["牢房", "地牢", "监牢", "囚室", "水牢", "天牢", "大牢", "牢狱", "囚笼", "牢"]},
+  "corridor": {"label": "回廊", "inside": true, "scale": "narrow", "words": ["回廊", "长廊", "走廊", "廊道", "游廊", "廊"]},
+  "tower": {"label": "楼阁", "inside": true, "scale": "narrow", "words": ["楼阁", "阁楼", "宝塔", "高塔", "塔", "楼", "阁"], "generic": ["塔", "楼", "阁"]},
+  "tomb": {"label": "墓室", "inside": true, "scale": "narrow", "words": ["墓室", "墓穴", "地宫", "古墓", "陵墓", "墓"]},
+  "tent": {"label": "营帐", "inside": true, "scale": "narrow", "words": ["营帐", "帐篷", "大帐", "帐"]},
+  "boat": {"label": "船", "inside": false, "scale": "open", "words": ["船舱", "船头", "船上", "楼船", "渔船", "舱", "船", "舟"]},
+  "courtyard": {
+   "label": "庭院",
+   "inside": false,
+   "scale": "open",
+   "words": ["庭院", "院落", "院子", "天井", "花园", "园林", "后院", "前院", "别院", "小院", "宅院", "书院", "广场", "院", "庭", "宅", "府邸", "家", "府"]
+  },
+  "temple": {"label": "寺庙", "inside": false, "scale": "open", "words": ["寺庙", "古寺", "古庙", "道观", "寺", "庙", "观"]},
+  "gate": {"label": "山门", "inside": false, "scale": "open", "words": ["山门", "门楼", "牌坊", "牌楼", "城门", "寨门", "大门", "正门", "宗门"]},
+  "stockade": {"label": "寨子", "inside": false, "scale": "narrow", "words": ["山寨", "营寨", "寨子", "寨墙", "哨卡", "哨所", "关卡", "岗哨", "哨塔", "寨"]},
+  "camp": {"label": "营地", "inside": false, "scale": "open", "words": ["营地", "军营", "大营", "营"]},
+  "pavilion": {"label": "亭榭", "inside": false, "scale": "open", "words": ["凉亭", "亭子", "亭台", "水榭", "亭", "榭"]},
+  "bridge": {"label": "桥", "inside": false, "scale": "narrow", "words": ["石桥", "木桥", "吊桥", "索桥", "廊桥", "桥头", "桥"]},
+  "market": {"label": "集市", "inside": false, "scale": "open", "words": ["坊市", "集市", "市集", "黑市", "暗市", "鬼市", "夜市", "市场", "摊位", "摊", "市"]},
+  "arena": {"label": "擂台", "inside": false, "scale": "open", "words": ["擂台", "演武场", "比武场", "比武台", "斗法台", "演武台", "校场", "练武场", "斗台"]},
+  "terrace": {
+   "label": "平台",
+   "inside": false,
+   "scale": "open",
+   "words": ["观景台", "观云台", "观星台", "观日台", "观月台", "观海台", "摘星台", "望月台", "升仙台", "飞升台", "天台", "平台", "石台", "高台", "台"]
+  }
+ },
+ "features": {
+  "herb_beds": {"label": "药垄", "settings": ["outdoor"], "words": ["药田", "药圃", "药垄", "灵田", "苗圃", "灵药园", "药园", "药草", "灵草"]},
+  "well": {"label": "水井", "settings": ["outdoor"], "words": ["枯井", "古井", "水井", "井口", "井台", "井边", "井旁", "井"]},
+  "bamboo": {"label": "竹子", "settings": ["outdoor"], "words": ["竹林", "翠竹", "修竹", "竹"]},
+  "pines": {"label": "古松", "settings": ["outdoor"], "words": ["古松", "老松", "松林", "松"]},
+  "waterfall": {"label": "瀑布", "settings": ["outdoor"], "words": ["瀑布", "飞瀑"]},
+  "stream": {"label": "溪流", "settings": ["outdoor", "underground"], "words": ["溪流", "小溪", "山涧", "暗河", "溪", "涧"]},
+  "pond": {"label": "水池", "settings": ["outdoor", "indoor"], "words": ["池塘", "水池", "灵池", "灵泉", "泉"]},
+  "rocks": {"label": "乱石", "settings": ["outdoor", "underground"], "words": ["乱石", "怪石", "巨石", "石林", "碎石", "采石", "嶙峋"]},
+  "vines": {"label": "藤蔓", "settings": ["outdoor", "underground"], "words": ["藤蔓", "古藤", "枯藤", "藤", "树洞", "树根", "盘根"]},
+  "torches": {"label": "火把", "settings": ["outdoor", "indoor", "underground"], "words": ["火把", "火盆", "篝火", "火堆"]},
+  "lanterns": {"label": "灯火", "settings": ["outdoor", "indoor"], "words": ["灯笼", "油灯", "烛火", "灯"]},
+  "banners": {"label": "旗幡", "settings": ["outdoor", "indoor"], "words": ["旌旗", "大旗", "旗", "幡"]},
+  "bones": {"label": "白骨", "settings": ["outdoor", "indoor", "underground"], "words": ["白骨", "骸骨", "尸骨", "骷髅"]},
+  "statue": {"label": "石像", "settings": ["outdoor", "indoor", "underground"], "words": ["石像", "雕像", "神像", "佛像"]},
+  "stele": {"label": "石碑", "settings": ["outdoor"], "words": ["石碑", "墓碑", "碑"]},
+  "altar": {"label": "祭坛", "settings": ["outdoor", "indoor", "underground"], "words": ["祭坛", "法坛", "祭台", "阵台", "坛"]},
+  "formation": {"label": "阵法", "settings": ["outdoor", "indoor", "underground"], "words": ["法阵", "阵法", "禁制", "阵"]},
+  "furnace": {"label": "丹炉", "settings": ["indoor", "underground"], "words": ["丹炉", "药炉", "药鼎", "炉鼎", "丹房", "炼丹房", "丹室", "炉"]},
+  "cabinets": {"label": "药柜", "settings": ["indoor"], "words": ["药柜", "药架", "货架", "柜台", "药房", "药铺", "药室"]},
+  "books": {"label": "书架", "settings": ["indoor"], "words": ["书架", "书卷", "典籍", "经卷", "书房", "藏书", "藏经"]},
+  "bunks": {"label": "床铺", "settings": ["indoor"], "words": ["通铺", "床铺", "木榻", "床榻", "杂役舍", "弟子舍", "宿舍", "寝舍", "石舍", "榻", "床"]},
+  "weapons": {"label": "兵器", "settings": ["outdoor", "indoor"], "words": ["兵器架", "刀枪", "兵器", "演武"]},
+  "skins": {"label": "兽皮", "settings": ["indoor"], "words": ["兽皮", "虎皮", "聚义厅", "聚义堂"]},
+  "bars": {"label": "铁栏", "settings": ["indoor", "underground"], "words": ["铁栏", "栅栏", "铁链", "镣铐", "牢"]},
+  "flowers": {"label": "花丛", "settings": ["outdoor"], "words": ["花海", "花丛", "花圃", "桃林", "花"]},
+  "reeds": {"label": "芦苇", "settings": ["outdoor"], "words": ["芦苇", "芦荡", "苇"]},
+  "graves": {"label": "坟冢", "settings": ["outdoor"], "words": ["坟冢", "坟", "墓碑", "乱葬岗"]},
+  "ice": {"label": "冰棱", "settings": ["outdoor", "indoor", "underground"], "words": ["冰棱", "冰柱", "寒冰", "冰"]},
+  "fire": {"label": "地火", "settings": ["outdoor", "indoor", "underground"], "words": ["熔岩", "岩浆", "地火", "火山", "熔火"]},
+  "jars": {"label": "酒坛", "settings": ["outdoor", "indoor", "underground"], "words": ["酒坛", "酒缸", "酒瓮", "大缸", "陶坛", "陶缸", "坛子", "泥封", "缸"]}
+ },
+ "story": {
+  "about": "正文里能补进描述的景物（只补这些看得见的、这个地方能有的，名字里没说的），最多补两样：只数到达那一回合正文的后一半（前一半常是路上），那里没有再数整段。ambiguous 是在正文里常常另有意思、不数的单字（百花酿的花、放松的松）。",
+  "features": ["bamboo", "pines", "well", "waterfall", "stream", "rocks", "vines", "torches", "lanterns", "bones", "statue", "stele", "flowers", "reeds", "herb_beds", "jars"],
+  "ambiguous": ["花", "松"]
+ },
+ "scale": {
+  "narrow": ["一线", "狭", "窄", "隙", "缝", "罅", "巷", "暗渠", "甬道", "地道", "夹道", "小屋", "陋室", "囚室", "密室", "雅间", "雅座", "雅室", "包间", "包厢"],
+  "open": ["原", "野", "广场", "海", "云海", "湖", "峰顶", "山巅", "绝顶", "坪", "大堂", "前堂", "前厅"]
+ },
+ "moods": {
+  "about": "名字和地图上的描述里有这些字时的气氛；都没有时按建筑和地形的默认（大殿肃穆，集市热闹，其余平静）。",
+  "eerie": ["鬼", "魔", "血", "阴", "煞", "骨", "尸", "坟", "墓", "禁地", "毒", "邪", "冥"],
+  "tense": ["哨卡", "寨", "匪", "贼", "伏", "埋伏", "阴影", "杀", "险", "哨"],
+  "desolate": ["废弃", "荒", "枯", "残", "破", "遗", "古战场", "焦土", "废"],
+  "solemn": ["殿", "祠", "庙", "寺", "坛", "祖", "圣", "陵", "宗门"],
+  "lively": ["集市", "坊市", "街", "市", "客栈", "酒楼", "酒肆", "酒馆", "茶楼", "茶馆", "繁华", "热闹"]
+ },
+ "structureMoods": {
+  "hall": "solemn",
+  "temple": "solemn",
+  "tomb": "eerie",
+  "cell": "tense",
+  "bandit_hall": "tense",
+  "stockade": "tense",
+  "market": "lively",
+  "stall": "lively",
+  "inn": "lively",
+  "tavern": "lively",
+  "teahouse": "lively",
+  "shop": "lively",
+  "arena": "tense"
+ },
+ "outside": ["门外", "门口", "门前", "外围", "外头", "外面", "外廊", "廊下", "檐下", "附近", "四周", "周围", "外", "前", "旁", "边", "顶", "口"],
+ "behind": {"about": "名字以这些字结尾、前面紧挨着一座有屋里的建筑（草堂后、大殿后头）：在它外头、屋后。门后、屏风后、石门后说的是门里头，不算（那样的名字照旧说不出）。", "words": ["后面", "后头", "后侧", "后方", "背后", "后"]},
+ "sky": ["上空", "高空", "空中", "云端", "云层之上", "天际", "半空", "飞舟"],
+ "water": ["水下", "湖底", "海底", "水底", "河底", "潭底", "江上", "湖上", "海上"],
+ "families": {
+  "about": "地图上的地点按它的场景族（content/art/scenes.json 的 rules）的样子；名字里的具体地貌（tier 3）另改地形。",
+  "guanyuntai": {"setting": "outdoor", "terrain": "peak", "structure": "terrace", "features": ["pines"], "scale": "open", "mood": "calm"},
+  "fangshi": {"setting": "outdoor", "terrain": "town", "structure": "market", "features": ["lanterns", "banners"], "scale": "open", "mood": "lively"},
+  "dongfu": {"setting": "underground", "terrain": "cave", "structure": "abode", "features": ["furnace"], "scale": "narrow", "mood": "calm"},
+  "shanmen": {"setting": "outdoor", "terrain": "mountain", "structure": "gate", "features": ["pines"], "scale": "open", "mood": "solemn"},
+  "dadian": {"setting": "indoor", "terrain": "none", "structure": "hall", "features": ["lanterns"], "scale": "open", "mood": "solemn"},
+  "jieshi": {"setting": "outdoor", "terrain": "town", "structure": "none", "features": ["lanterns"], "scale": "open", "mood": "lively"},
+  "dianpu": {"setting": "indoor", "terrain": "none", "structure": "shop", "features": ["cabinets"], "scale": "narrow", "mood": "lively"},
+  "haian": {"setting": "outdoor", "terrain": "coast", "structure": "none", "features": ["rocks"], "scale": "open", "mood": "calm"},
+  "shandao": {"setting": "outdoor", "terrain": "forest", "structure": "none", "features": ["pines"], "scale": "open", "mood": "calm"},
+  "tingyuan": {"setting": "outdoor", "terrain": "town", "structure": "courtyard", "features": ["lanterns", "pond"], "scale": "open", "mood": "calm"},
+  "simiao": {"setting": "outdoor", "terrain": "mountain", "structure": "temple", "features": ["lanterns"], "scale": "open", "mood": "solemn"},
+  "huangmo": {"setting": "outdoor", "terrain": "desert", "structure": "none", "features": ["rocks"], "scale": "open", "mood": "desolate"},
+  "bingyuan": {"setting": "outdoor", "terrain": "snowfield", "structure": "none", "features": ["ice"], "scale": "open", "mood": "desolate"},
+  "yiji": {"setting": "outdoor", "terrain": "ruins", "structure": "none", "features": ["stele", "altar"], "scale": "open", "mood": "eerie"},
+  "shenyuan": {"setting": "outdoor", "terrain": "abyss", "structure": "bridge", "features": ["fire", "bones"], "scale": "open", "mood": "eerie"},
+  "zhanchang": {"setting": "outdoor", "terrain": "battlefield", "structure": "none", "features": ["banners", "bones"], "scale": "open", "mood": "desolate"},
+  "gaokong": {"setting": "sky", "terrain": "cloud_sea", "structure": "none", "features": [], "scale": "open", "mood": "calm"}
+ },
+ "indoorOf": {
+  "about": "名字说不出的地方，主角进了屋、正文里又认不出是哪种屋子时，按地方的场景族算作哪种屋子。",
+  "shanmen": "hall",
+  "tingyuan": "hall",
+  "simiao": "hall",
+  "dadian": "hall",
+  "jieshi": "inn",
+  "fangshi": "shop",
+  "dianpu": "shop",
+  "haian": "inn",
+  "guanyuntai": "abode",
+  "shandao": "hut",
+  "bingyuan": "abode",
+  "huangmo": "tent",
+  "yiji": "tomb",
+  "shenyuan": "abode",
+  "zhanchang": "tent",
+  "dongfu": "abode",
+  "gaokong": "abode"
+ },
+ "rooms": {
+  "about": "名字说不出的地方，主角在屋里时，正文里这些字样说明是哪种屋子（取最后出现的）。",
+  "hall": ["大殿", "殿内", "殿中", "殿上", "正厅", "厅内", "厅中", "堂上", "堂内", "堂中"],
+  "bandit_hall": ["聚义厅", "聚义堂", "虎皮大椅", "虎皮椅"],
+  "hut": ["小屋", "茅屋", "草屋", "木屋", "竹屋", "草庐", "茅舍"],
+  "dormitory": ["杂役舍", "通铺", "宿舍", "石舍"],
+  "room": ["屋内", "屋里", "屋中", "房中", "房内", "房里", "卧房", "厢房", "客房", "寝室", "居室", "居所", "住处"],
+  "abode": ["洞府", "石室", "静室", "密室", "闭关"],
+  "shop": ["店内", "铺子里", "铺内", "柜台", "掌柜"],
+  "inn": ["客栈", "店小二"],
+  "tavern": ["酒楼", "酒肆", "酒馆", "饭馆"],
+  "teahouse": ["茶楼", "茶馆", "茶肆", "雅座", "雅间"],
+  "storeroom": ["柴房", "库房", "仓库"],
+  "cellar": ["地窖", "酒窖"],
+  "alchemy_room": ["丹房", "丹炉", "药房", "药炉"],
+  "study": ["书房", "书架", "藏书", "藏经阁"],
+  "cell": ["牢房", "地牢", "牢门", "囚室", "铁栏"],
+  "tent": ["帐中", "帐内", "营帐", "帐篷"],
+  "boat": ["舱内", "船舱", "舱中"]
+ },
+ "scenes": [
+  {
+   "when": {"setting": ["sky"]},
+   "use": ["gaokong"]
+  },
+  {
+   "when": {"setting": ["water"]},
+   "use": ["kit-haian", "haian"]
+  },
+  {
+   "when": {"structure": ["boat"]},
+   "use": ["kit-haian", "haian"]
+  },
+  {
+   "when": {"structure": ["bandit_hall"], "setting": ["indoor", "underground"]},
+   "use": ["kit-dadian", "dadian"]
+  },
+  {
+   "when": {"structure": ["hall", "temple"], "setting": ["indoor", "underground"]},
+   "use": ["kit-dadian", "dadian"]
+  },
+  {
+   "when": {"structure": ["tower"], "setting": ["indoor"]},
+   "use": ["kit-dadian", "dadian"]
+  },
+  {
+   "when": {"structure": ["shop", "inn", "tavern", "teahouse"], "setting": ["indoor"]},
+   "use": ["kit-dianpu", "dianpu"]
+  },
+  {
+   "when": {"structure": ["alchemy_room"], "features": ["cabinets"], "setting": ["indoor"]},
+   "use": ["kit-room", "kit-dianpu", "dianpu"]
+  },
+  {
+   "when": {"structure": ["hut", "dormitory", "room", "study", "alchemy_room", "workshop", "storeroom", "cellar", "cell", "corridor", "tent"], "setting": ["indoor", "underground"]},
+   "use": ["kit-room", "kit-dongfu", "dongfu"]
+  },
+  {
+   "when": {"structure": ["abode"], "setting": ["indoor", "underground"]},
+   "use": ["kit-dongfu", "dongfu"]
+  },
+  {
+   "when": {"structure": ["tomb"], "setting": ["indoor", "underground"]},
+   "use": ["kit-dongfu", "dongfu"]
+  },
+  {
+   "when": {"setting": ["underground"]},
+   "use": ["kit-dongfu", "dongfu"]
+  },
+  {
+   "when": {"setting": ["indoor"]},
+   "use": ["kit-room", "kit-dongfu", "dongfu"]
+  },
+  {
+   "when": {"setting": ["outdoor"], "structure": ["room", "dormitory", "storeroom", "alchemy_room", "workshop", "study", "tower"], "terrain": ["field", "forest", "path", "river", "swamp"]},
+   "use": ["kit-wild", "shandao"]
+  },
+  {
+   "when": {"setting": ["outdoor"], "structure": ["hall", "tower", "study", "room", "dormitory", "alchemy_room", "workshop", "storeroom", "cellar", "corridor"]},
+   "use": ["kit-tingyuan", "tingyuan"]
+  },
+  {
+   "when": {"setting": ["outdoor"], "structure": ["shop", "inn", "tavern", "teahouse"]},
+   "use": ["kit-jieshi", "jieshi"]
+  },
+  {
+   "when": {"structure": ["stall"], "terrain": ["town"]},
+   "use": ["kit-jieshi", "jieshi"]
+  },
+  {
+   "when": {"structure": ["stall"]},
+   "use": ["kit-wild", "shandao"]
+  },
+  {
+   "when": {"structure": ["market"]},
+   "use": ["fangshi"]
+  },
+  {
+   "when": {"structure": ["gate"], "terrain": ["town"]},
+   "use": ["kit-jieshi", "jieshi"]
+  },
+  {
+   "when": {"structure": ["gate"]},
+   "use": ["kit-shanmen", "shanmen"]
+  },
+  {
+   "when": {"structure": ["temple"]},
+   "use": ["simiao"]
+  },
+  {
+   "when": {"structure": ["courtyard"]},
+   "use": ["kit-tingyuan", "tingyuan"]
+  },
+  {
+   "when": {"terrain": ["town"]},
+   "use": ["kit-jieshi", "jieshi"]
+  },
+  {
+   "when": {"terrain": ["coast", "lake"]},
+   "use": ["kit-haian", "haian"]
+  },
+  {
+   "when": {"terrain": ["grassland"]},
+   "use": ["kit-wild", "huangmo"]
+  },
+  {
+   "when": {"terrain": ["desert"]},
+   "use": ["huangmo"]
+  },
+  {
+   "when": {"terrain": ["snowfield"]},
+   "use": ["bingyuan"]
+  },
+  {
+   "when": {"terrain": ["ruins"]},
+   "use": ["kit-wild", "yiji"]
+  },
+  {
+   "when": {"terrain": ["abyss"]},
+   "use": ["kit-shenyuan", "shenyuan"]
+  },
+  {
+   "when": {"terrain": ["battlefield"]},
+   "use": ["zhanchang"]
+  },
+  {
+   "when": {"terrain": ["cloud_sea"]},
+   "use": ["guanyuntai"]
+  },
+  {
+   "when": {"setting": ["outdoor"], "terrain": ["cave", "tunnel", "shaft"]},
+   "use": ["kit-wild", "shandao"]
+  },
+  {
+   "when": {"terrain": ["peak", "cliff"]},
+   "use": ["guanyuntai"]
+  },
+  {
+   "when": {"structure": ["terrace", "arena"], "terrain": ["none", "mountain", "peak", "cliff", "cloud_sea"]},
+   "use": ["guanyuntai"]
+  },
+  {
+   "when": {"terrain": ["field", "forest", "path", "valley", "canyon", "mountain", "river", "waterfall", "swamp"]},
+   "use": ["kit-wild", "shandao"]
+  }
+ ],
+ "broad": {
+  "about": "专名后面只跟一个单字地名（谷、岭、山、城、镇、村、街）的短名字（神手谷、黑风岭、西街）是一片地方，不是一处：主角在里面可能在屋里也可能在外头，和地图上的地点一样按到达那一回合的正文定。荒谷、山坳这样带着样子的词说的是一处，不算。",
+  "terrain": ["valley", "mountain", "town"],
+  "longest": 5
+ },
+ "buildings": {
+  "about": "名字是一座楼、一家客栈酒楼茶楼的字号（望仙楼、燕家客栈、听风阁、百巧阁），后面没有再说是其中哪一处：主角可能在楼里，也可能在它的后院、门前，和一片地方一样按到达那一回合的正文定屋里屋外，屋里和屋外各存一份样子。structures 是这样的建筑；屋外时正文里有 yards 的字样是它的院子，否则是它的门前。",
+  "structures": ["tower", "inn", "tavern", "teahouse"],
+  "yards": ["后院", "前院", "院子", "院中", "院内", "院里", "天井"]
+ },
+ "kinds": {
+  "about": "名字里只有泛指的楼、阁、前台、雅座这样的字，说不出是哪种建筑时，按到达那一回合正文里这些字样出现的次数定（多的为准；一样多取前面的）；都没有就是名字的字面（楼阁），留给模型。",
+  "tavern": ["酒楼", "酒肆", "酒馆", "饭馆", "酒客", "食客", "跑堂", "店小二", "小二", "酒菜", "饮宴", "宴饮", "后厨", "酒糟", "酒坛", "酒瓮", "灵酒", "美酒", "劣酒"],
+  "teahouse": ["茶楼", "茶馆", "茶肆", "茶客", "茶博士", "说书", "茶香", "品茶", "茶盏", "灵茶", "清茶"],
+  "inn": ["客栈", "投宿", "住店", "打尖", "客房", "上房", "房钱"],
+  "study": ["藏书", "书架", "典籍", "经卷", "书卷", "玉简架", "藏经"],
+  "shop": ["店铺", "货架", "货物", "商铺", "售卖", "出售", "收购", "价钱"],
+  "hall": ["大殿", "正殿", "殿内", "殿中", "议事", "宝座"]
+ },
+ "terrainNear": {
+  "about": "名字里没有比泛泛的山更具体的地形、又是在屋外的野地里时（structures：没有建筑，或是亭子、桥、小屋、营帐、寨子、平台这样立在野地里的；擂台、大殿、集市照它所在地点的地形），正文里写到这个地方（名字最后那个字）的那一句和前后各一句里两个字以上的具体地形词定地形（林间的亭子是树林），都没有就看正文的后一半里最常出现的具体地形，再没有才按它所在地点的场景族。",
+  "sentences": 1,
+  "structures": ["none", "pavilion", "bridge", "hut", "tent", "camp", "stockade", "terrace", "stall"]
+ }
+}

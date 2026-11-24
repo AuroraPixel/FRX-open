@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "description": "示例世界的历法与各地定期开场的活动。",
+  "ahead": 3,
+  "fixed": [
+    {
+      "id": "tainan",
+      "name": "春汀集",
+      "place": "白苇集",
+      "month": 3,
+      "day": 3,
+      "every": 1,
+      "first": 1,
+      "days": 5,
+      "opens": "开市",
+      "note": "潮水退至石阶时，药农和修士会在浮排上赶集。",
+      "worth": true
+    },
+    {
+      "id": "ascension",
+      "name": "开院会",
+      "place": "听澜院",
+      "month": 7,
+      "day": 9,
+      "every": 2,
+      "first": 1,
+      "days": 6,
+      "opens": "广纳学徒",
+      "note": "听澜院教授测潮和阵学，收愿意到水边做工的学徒。",
+      "worth": true
+    },
+    {
+      "id": "bloodland",
+      "name": "沉钟泽退潮",
+      "place": "沉钟泽",
+      "month": 5,
+      "day": 18,
+      "every": 2,
+      "first": 1,
+      "days": 5,
+      "opens": "水道露出",
+      "note": "退潮让水道露出几天，识路的修士能进去采药。",
+      "worth": true
+    },
+    {
+      "id": "auction",
+      "name": "泊灯城秋拍",
+      "place": "泊灯城",
+      "month": 10,
+      "day": 21,
+      "every": 1,
+      "first": 1,
+      "days": 3,
+      "opens": "开拍",
+      "note": "行会会拍卖失主未认领的货物，遗失者可以当场申辩。",
+      "worth": true
+    },
+    {
+      "id": "contest",
+      "name": "宗门小比",
+      "place": "听澜院",
+      "month": 8,
+      "day": 15,
+      "every": 1,
+      "first": 1,
+      "days": 3,
+      "opens": "开比",
+      "note": "学徒比试布阵和手法，弟子以本门贡献换取观席。",
+      "worth": false
+    }
+  ],
+  "own": {
+    "cooldown": {
+      "title": "冲关的冷却",
+      "note": "冲关受挫，到这一天之前不能再冲关",
+      "unique": true
+    },
+    "job": {
+      "title": "差事的期限",
+      "note": "接下的差事要在这一天之前办成，过了就作罢",
+      "unique": false
+    },
+    "injury": {
+      "title": "内伤痊愈",
+      "note": "斗法落败留下的内伤，到这一天养好；在这之前不能修炼",
+      "unique": true
+    },
+    "realm": {
+      "title": "秘境关闭",
+      "note": "到这一天秘境关闭，还在里面的人被送出来，没拿到手的不算",
+      "unique": true
+    },
+    "repair": {
+      "title": "取回器物",
+      "note": "交给炼器师修补的器物，这一天修好",
+      "unique": false
+    },
+    "craft": {
+      "title": "取货",
+      "note": "请人炼制的东西到这一天做好",
+      "unique": false
+    },
+    "hatch": {
+      "title": "兽卵破壳",
+      "note": "孵着的兽卵到这一天孵足，过了这一天的月结破壳",
+      "unique": false
+    },
+    "beast": {
+      "title": "灵兽伤愈",
+      "note": "重伤的灵兽到这一天养好，之前不出战",
+      "unique": false
+    },
+    "promise": {
+      "title": "诺的期限",
+      "note": "答应过人的事要在这一天之前办成，过了就成了一笔怨",
+      "unique": false
+    },
+    "contest": {
+      "title": "宗门比试",
+      "note": "报了名的小比或大比，这一天开比",
+      "unique": true
+    },
+    "rent": {
+      "title": "交租",
+      "note": "租的洞府这一天交下一年的租金，交不起就被收回",
+      "unique": true
+    },
+    "garden": {
+      "title": "药园",
+      "note": "药园里种下的灵草这一天熟",
+      "unique": false
+    },
+    "lifespan": {
+      "title": "寿元将尽",
+      "note": "寿元到这一天用尽，坐化；剩不到十年时才记上，只是给人看，不打断日子",
+      "unique": true
+    }
+  }
+}

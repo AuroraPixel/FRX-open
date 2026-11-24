@@ -1,0 +1,146 @@
+/* 目录: a volume a group, its name in brush on a gold line, what closed it and its days under it, the
+   words of its closing page (three lines at most); then its 回, a row each at least 48 px tall with a
+   dashed line under it (as the calendar's rows): 「第三回」 in gold at the left, the 回目 after it. The
+   回 under way has a gold diamond before its number. */
+.contents {
+  display: grid;
+  gap: var(--s-22);
+  min-width: 0;
+}
+
+.volume {
+  display: grid;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.head {
+  margin: 0;
+}
+
+.head > button,
+.head > span {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--s-6) var(--s-2);
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  background: none;
+  color: var(--ink);
+  text-align: left;
+}
+
+.head > button {
+  cursor: pointer;
+  transition: background-color var(--d-press);
+}
+
+.head > button:hover {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.head b {
+  flex: none;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.head b + span {
+  min-width: 0;
+  font: 400 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--ink);
+}
+
+.about {
+  margin: 0;
+  font: 400 var(--fs-12)/1.6 var(--f-serif);
+  letter-spacing: .08em;
+  color: var(--soft);
+}
+
+.words {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font: 400 var(--fs-13)/1.8 var(--f-serif);
+  color: var(--text);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.chapters {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapters button {
+  display: flex;
+  align-items: center;
+  gap: var(--s-10);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-6) var(--s-4);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--d-press);
+}
+
+.chapters button:hover {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.chapters b {
+  flex: none;
+  min-width: 6em;
+  font: 700 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.chapters [aria-current] b::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--s-6);
+  background: var(--gold);
+  transform: rotate(45deg);
+  vertical-align: .12em;
+}
+
+.name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 1em;
+  min-width: 0;
+  font: 400 var(--fs-14)/1.6 var(--f-serif);
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+
+.name > span {
+  white-space: nowrap;
+}
+
+.chapters small {
+  font: 400 var(--fs-11)/1 var(--f-ui);
+  letter-spacing: .1em;
+  color: var(--soft);
+}
+
+.none,
+.problem {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--soft);
+}

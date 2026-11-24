@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "description": "坐化与传承（执行计划第 49 项）。twilight：剩余寿元（寿元减年龄）只剩 years 年或更少时，主角的状态栏挂上 status，日历上记一条「寿元将尽」（寿元用尽的那个新年，只是给人看，不停日子），此后每到新年年谱提醒一次；寿元又长了（过了关）就摘掉。寿元用尽的那一天（年龄到寿元的那个新年）每一段日子都停在那里，不管多长、从哪天起：stop 是这一停的名字（cause）、预览的最后一行（preview）、回执 summary 末尾的话（summary），不开戏；冲关的日子撑不过那一天的不让冲。寿元用尽就坐化：斗法还在打、一场戏还在演时不算，等打完、演完的那一下再算；一段日子半路被打断的，坐化之后不再开那场戏。极限模式（主角的 isExtreme）照旧走现有的死亡流程：坐化的回执把寿元写成 0，回合之后的判死退回开局。其余难度是传承：状态栏写上 status，指令全停，除了 open 里的几种操作都不让做，只等定下传人：heirs.kinds 是人物关系里能接着走的几种；或者另立一个后人（newHeir：岁数、境界、身份、来历，名字由玩家起，最多 nameMax 个字，灵根由服务端照建角的规则用存档的种子抽）。传人接过洞府、仓库、身上的东西和灵石，还有一句遗言（最多 wordsMax 个字，没写就是 words）；前人的功法装备照旧穿在传人身上（衣钵），前人的法术（8 号表）不传。reset 和 drop 是 frxPlay 里只属于前人、换了人就清掉的：reset 回到新存档的样子，drop 去掉；calendar 是日历上只属于前人的几种事；pending 是人物关系带来的、只冲着前人的几种戏；范围是 self 的钟了结（年谱一行，缘由 clockReason）。前人变成人物表里的一行：状态栏是 dead，有传记（biography）。record：一生的年谱只记 kinds 里这几种行，每年至多 perYear 行，always 里的几种不算在内。mourners：坐化时挑出几位故人（有关系的在先，再是在场的），坐化那一回合请模型替他们各说一句评说，一次调用，写不出来就没有。reads 是不结算任何东西的操作，年谱和坐化都不看它们。",
+  "twilight": { "years": 10, "status": "大限将至" },
+  "status": "坐化",
+  "dead": "已故（坐化）",
+  "held": "寿元已尽，先定下传承",
+  "alive": "主角还在世，谈不上传承",
+  "notHeir": "传人只能从道侣、弟子里选，或者另立一个后人",
+  "badName": "后人的名字要写一到八个字，不能带空格和竖线",
+  "noRoot": "后人的灵根还没有抽出来",
+  "heirs": { "kinds": ["道侣", "弟子"] },
+  "newHeir": { "kind": "后人", "age": 16, "realm": "炼气一层", "identity": "{前}的后人", "background": "{前}留下的后人，承了{前}的洞府和仓库。", "nameMax": 8 },
+  "words": "大道漫漫，余下的路，你替我走。",
+  "wordsMax": 40,
+  "biography": "{名}[，{境界}修士]，享年{岁}，于{地}坐化。[一生过关：{关}。]衣钵传给了{传人}。",
+  "clockReason": "前人坐化",
+  "stop": { "cause": "寿元将尽", "preview": "{日期}寿元用尽，就此坐化。", "summary": "{日期}寿元用尽" },
+  "reset": { "scene": null, "cards": null, "fight": null, "offer": null, "gates": {}, "foundation": {}, "perks": [] },
+  "drop": ["encounter", "realm", "perkUses", "mind", "minded", "warped", "toxin", "toxinCut", "pills", "crafts", "belt", "sect", "ties", "karma", "knots", "gifts", "hunt", "birth", "opening", "twilight"],
+  "calendar": ["injury", "cooldown", "lifespan", "contest", "promise", "realm", "job"],
+  "pending": ["来访", "求助", "相邀", "反目", "重逢", "护法"],
+  "record": {
+    "perYear": 6,
+    "always": ["breakthrough", "twilight", "died", "inherit"],
+    "kinds": ["breakthrough", "perk", "personDeath", "personFeud", "realmEnter", "craftRank", "beastBorn", "contest", "saga", "fortune", "clockFull", "clockGone", "knot", "unknot", "promiseBroken", "twilight", "died", "inherit"]
+  },
+  "mourners": 3,
+  "open": ["view", "calendar", "legacy", "notices", "shop", "preview", "gate", "director"],
+  "reads": ["view", "calendar", "notices", "shop", "preview", "gate"]
+}

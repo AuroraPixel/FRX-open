@@ -1,0 +1,124 @@
+/* Pieces the panels share: a section, plain lists, the block that opens under an entry, small notes. */
+.section {
+  display: grid;
+  gap: var(--s-12);
+  min-width: 0;
+}
+
+.list {
+  display: grid;
+  gap: var(--s-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li {
+  display: grid;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+/* what opens under a picked entry: the entry's own tinted surface continued, edged on the left */
+.more {
+  display: grid;
+  gap: var(--s-10);
+  margin-left: 2px;
+  padding: var(--s-12) var(--s-14);
+  border-left: var(--hair) solid var(--line);
+  background: var(--tint);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+  /* brought into sight with a little room, so its buttons' touch areas are not cut by the edge */
+  scroll-margin-block: var(--s-16);
+}
+
+/* the same room for a detail block brought into sight */
+.revealed {
+  scroll-margin-block: var(--s-16);
+}
+
+.more p {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+/* one line of an entry's text, cut with an ellipsis; it asks for no width of its own, so a long
+   line never widens the entry */
+.oneLine {
+  display: block;
+  width: 0;
+  min-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* a line about the panel itself: why buttons wait, how many there are */
+.note {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* holds a row of tabs: the row scrolls sideways, and as a scrolling box straight in the sheet's grid
+   it would shrink to nothing once the panel's content overflows */
+.tabsRow {
+  min-width: 0;
+}
+
+/* a tab's content */
+.pane {
+  display: grid;
+  gap: var(--s-12);
+  min-width: 0;
+}
+
+.pane:focus-visible {
+  outline-offset: 4px;
+}
+
+/* facts one to a line (Rows.tsx): the key-value table's look, the value free to wrap */
+.rows {
+  display: grid;
+  gap: var(--s-8);
+  margin: 0;
+}
+
+.rows > div {
+  display: grid;
+  grid-template-columns: 5em minmax(0, 1fr);
+  gap: var(--s-10);
+  padding-bottom: 5px;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  font: var(--type-kv);
+}
+
+.rows dt {
+  color: var(--soft);
+}
+
+.rows dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+}
+
+/* a list entry keeps a 44 px touch target on phones, also with its title alone (spec 十一) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  /* a row that wraps keeps its buttons' 44 px touch areas (each reaches 8 px past its edge) apart */
+  .actions {
+    gap: var(--s-16) var(--s-12);
+  }
+  .tall {
+    min-height: var(--hit);
+  }
+}

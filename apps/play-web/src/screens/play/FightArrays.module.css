@@ -1,0 +1,77 @@
+/* A fight's arrays: one line of small tags over the commands (wrapping when they are many; on phones one row
+   that scrolls sideways), each with its side's seal: 我 in gold, 敌 in cinnabar; a spent one faded. */
+.arrays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-6) var(--s-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.array {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-6);
+  max-width: 100%;
+  padding: 2px var(--s-8) 2px 2px;
+  border: var(--hair) solid var(--line-soft);
+  background: var(--panel);
+  font: var(--type-note);
+  color: var(--text);
+}
+
+/* the side's seal, as the life panels draw theirs: 我 a gold hairline frame round a gold brush glyph (the
+   calendar's 固), 敌 the textured cinnabar seal in its light ink (灵兽's 出战, the calendar's 局) */
+.array b {
+  display: inline-grid;
+  place-items: center;
+  align-self: stretch;
+  min-width: 1.6em;
+  border: var(--hair) solid var(--gold);
+  border-radius: var(--r-seal);
+  font: 400 var(--fs-14)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.array[data-side='foes'] b {
+  border-color: var(--cin);
+  background: var(--cin) var(--tex-seal) center / cover;
+  color: var(--seal-ink);
+}
+
+.array span {
+  color: var(--ink);
+}
+
+.array small {
+  color: var(--soft);
+}
+
+.array[data-gone] {
+  opacity: .55;
+}
+
+/* phones, upright or on their side: the tags in one row that scrolls sideways (faded at its end, as the
+   commands' strip), so a fight with arrays, a beast and the belt keeps its bar short; the foes' arrays lead
+   it, as 破 is for them */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .arrays {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .arrays::-webkit-scrollbar {
+    display: none;
+  }
+  .array {
+    flex: none;
+    max-width: none;
+  }
+  .array[data-side='foes'] {
+    order: -1;
+  }
+}

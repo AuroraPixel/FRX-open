@@ -1,0 +1,108 @@
+/* 灵兽 (spec 七): a list entry with the species' picture, 80 px square, at its left. */
+.beast {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-14);
+  width: 100%;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--d-press);
+}
+
+.beast:hover {
+  background: var(--glow-soft);
+}
+
+.beast:active {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.beast[aria-expanded='true'] {
+  border-left-color: var(--gold);
+}
+
+.picture {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  overflow: hidden;
+}
+
+.picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* the silhouette stands in for a species the bestiary lacks: quieter than a real picture */
+.picture:not([data-known]) img {
+  opacity: .55;
+}
+
+.words {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.name {
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+}
+
+.level {
+  font: 400 var(--fs-12h)/1.5 var(--f-serif);
+  color: var(--gold);
+}
+
+.text {
+  font: 400 var(--fs-12h)/1.6 var(--f-serif);
+  color: var(--soft);
+}
+
+.skills {
+  display: grid;
+  gap: var(--s-4);
+  padding-top: var(--s-8);
+  border-top: var(--hair) dashed var(--line-soft);
+}
+
+.skills span {
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+/* the bag's consumables a beast can be fed, on their own line under 投喂 */
+.feed {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-10);
+  padding-top: var(--s-10);
+  border-top: var(--hair) dashed var(--line-soft);
+}
+
+.feedLabel {
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  color: var(--soft);
+}
+
+/* phones, and a finger on the desktop layouts (a phone on its side, a tablet): rows 16 px apart, so the
+   44 px touch areas of buttons one above the other do not overlap */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .feed {
+    gap: var(--s-16) var(--s-12);
+  }
+}

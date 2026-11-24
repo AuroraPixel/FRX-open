@@ -1,0 +1,18 @@
+/* 炼制 reuses the shop's rows, stepper and detail (Shop.module.css); the odds of a batch stand under the
+   preview's lines in gold figures. */
+.odds {
+  margin: 0;
+  font: 600 var(--fs-13)/1.6 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+  color: var(--gold);
+}
+
+/* the recipe's kind (丹方) before its name in the brush title */
+.kind {
+  margin-right: var(--s-8);
+  font: 600 var(--fs-13)/1 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+  vertical-align: middle;
+}

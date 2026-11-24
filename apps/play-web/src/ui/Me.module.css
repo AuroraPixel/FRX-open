@@ -1,0 +1,36 @@
+.me {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-12);
+  margin: 0 0 .7em;
+  padding: 1px 0 1px var(--s-12);
+  border-left: 2px solid var(--cin);
+  font: var(--type-me);
+  letter-spacing: var(--ls-me);
+  color: var(--gold);
+  text-align: left;
+  text-indent: 0;
+}
+
+.me b {
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: var(--ls-sub);
+  color: var(--faint);
+}
+
+.queue {
+  display: block;
+  font: 400 var(--fs-12)/1.6 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--soft);
+}
+
+.me[data-cancelled] {
+  border-left-color: var(--line-soft);
+  color: var(--faint);
+}
+.me[data-cancelled] span {
+  text-decoration: line-through;
+  text-decoration-color: var(--faint);
+}

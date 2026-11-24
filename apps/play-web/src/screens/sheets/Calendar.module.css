@@ -1,0 +1,95 @@
+/* 日历: a group a year, a row an entry at least 44 px tall, a dashed line under each (as the settings'
+   rows); the kind's seal at the left, then the day with the days off under it (「一百四十八日后」 at the
+   right took the title's room on a phone), then what and where. */
+.calendar {
+  display: grid;
+  gap: var(--s-16);
+  min-width: 0;
+}
+
+.group {
+  display: grid;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: auto 8.2em minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-10);
+  font-size: var(--fs-12);
+  min-height: 44px;
+  padding: var(--s-6) 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+/* 固 in a gold frame, 局 a cinnabar seal, 己 a faint frame */
+.seal {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: var(--hair) solid var(--gold);
+  border-radius: var(--r-seal);
+  font: 400 var(--fs-14)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+}
+
+.entry[data-kind='director'] .seal {
+  border-color: var(--cin);
+  background: var(--cin) var(--tex-seal) center / cover;
+  color: var(--seal-ink);
+}
+
+.entry[data-kind='own'] .seal {
+  border-color: var(--line-soft);
+  color: var(--ink);
+}
+
+.when {
+  display: grid;
+  min-width: 0;
+}
+
+.when time {
+  font: 700 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.when small {
+  font: 400 var(--fs-11)/1.4 var(--f-ui);
+  letter-spacing: .04em;
+  color: var(--soft);
+}
+
+.what {
+  display: grid;
+  min-width: 0;
+}
+
+.what b {
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.what small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.problem {
+  margin: 0;
+  padding-left: var(--s-10);
+  border-left: 2px solid var(--cin);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}

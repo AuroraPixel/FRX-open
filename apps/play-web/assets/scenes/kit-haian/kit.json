@@ -1,0 +1,101 @@
+{
+ "id": "kit-haian",
+ "family": "haian",
+ "name": "海岸",
+ "layout": "coast",
+ "ground": 4.0,
+ "base": {
+  "kind": "coast",
+  "indoor": false,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36],
+    "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]
+   },
+   "read": {
+    "wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36],
+    "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]
+   },
+   "sheet": {
+    "wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34],
+    "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]
+   },
+   "cult": {
+    "wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33],
+    "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]
+   },
+   "close": {
+    "wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34],
+    "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]
+   },
+   "cine1": {
+    "wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40],
+    "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]
+   },
+   "cine2": {
+    "wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40],
+    "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear",
+   "cloud",
+   "mist",
+   "rain"
+  ],
+  "ambience": {
+   "night": "amb.sea",
+   "dawn": "amb.sea",
+   "day": "amb.sea",
+   "dusk": "amb.sea"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "haze",
+   "tint": [0.85, 0.95, 1.05]
+  },
+  "protagonist": {
+   "pose": "stand"
+  }
+ },
+ "sea": -2.2,
+ "elements": [
+  {"id": "sea", "file": "sea.webp", "role": "sea", "px": [2172, 478], "bytes": [148708, 50896], "v": "85a8ef17", "height": 123.152, "foot": 0.5},
+  {"id": "far-islands", "file": "far-islands.webp", "role": "far", "px": [2172, 300], "bytes": [141572, 42772], "v": "d4e40a8d", "height": 0, "foot": 0.62, "top": 0.12, "feature": 0.6, "tags": ["island", "rustic"]},
+  {"id": "far-cliffs", "file": "far-cliffs.webp", "role": "far", "px": [2172, 351], "bytes": [138148, 44298], "v": "c4cf7e0a", "height": 0, "foot": 0.62, "top": 0.1, "feature": 0.55, "tags": ["mountain", "dark", "beast"]},
+  {"id": "far-harbour", "file": "far-harbour.webp", "role": "far", "px": [2172, 339], "bytes": [140352, 44548], "v": "b28edbd2", "height": 0, "foot": 0.62, "top": 0.1, "feature": 0.5, "tags": ["port", "city", "market", "capital"]},
+  {"id": "islet-pines", "file": "islet-pines.webp", "role": "isle", "px": [1476, 801], "bytes": [287982, 87078], "v": "98d3a40e", "height": 13.0, "foot": 0.9, "tags": ["island", "rustic"], "mask": "0400e01f00f80f01f83fc3fcfffffe3fc060"},
+  {"id": "sea-stack", "file": "sea-stack.webp", "role": "isle", "px": [866, 1070], "bytes": [247152, 77566], "v": "279c11f4", "height": 30.0, "foot": 0.92, "tags": ["beast", "mountain", "dark"], "mask": "0e03c03c03c03c83dc7dc3dc3de7deffe7fc"},
+  {"id": "island-temple", "file": "island-temple.webp", "role": "isle", "px": [1741, 820], "bytes": [444462, 128036], "v": "63588e2d", "height": 15.0, "foot": 0.9, "tags": ["temple", "grace", "rustic", "island"], "mask": "0c00e01f00fc0fc3fc3fc7feffffff7fe1f0"},
+  {"id": "island-town", "file": "island-town.webp", "role": "isle", "px": [1774, 869], "bytes": [475572, 133042], "v": "f33440e1", "height": 17.0, "foot": 0.92, "tags": ["port", "city", "market", "capital"], "mask": "0000700f01f83fc7fe7fe7feffffff7fe1f8"},
+  {"id": "junk", "file": "junk.webp", "role": "boat", "px": [987, 732], "bytes": [252032, 72078], "v": "b1080d48", "height": 9.0, "foot": 0.88, "tags": ["port", "market"], "mask": "0000700702fc6fe6feefefff7ff7feffe3f0"},
+  {"id": "tower-ship", "file": "tower-ship.webp", "role": "boat", "px": [1262, 706], "bytes": [249392, 80572], "v": "1ccadfd6", "height": 9.5, "foot": 0.9, "tags": ["city", "grand", "port", "capital"], "mask": "00006006013c37e5fe5ffffffff7fffff3f8"},
+  {"id": "fishing-boat", "file": "fishing-boat.webp", "role": "boat", "px": [928, 379], "bytes": [100692, 30620], "v": "4967874f", "height": 3.2, "foot": 0.85, "tags": ["rustic", "island", "town"], "mask": "0801800f807807f3ff3ff1ff3ff1fe0fc020"},
+  {"id": "sampan", "file": "sampan.webp", "role": "boat", "px": [1076, 493], "bytes": [68604, 24530], "v": "046994e5", "height": 2.8, "foot": 0.85, "tags": ["rustic", "island"], "mask": "0000000000000000000030ff0fe0ff0fe038"},
+  {"id": "reef", "file": "reef.webp", "role": "ground", "px": [1411, 834], "bytes": [329742, 94650], "v": "3d865193", "height": 13.0, "foot": 0, "top": 0.12, "tags": ["island", "dark", "beast", "mountain"]},
+  {"id": "pier", "file": "pier.webp", "role": "ground", "px": [1605, 881], "bytes": [426416, 121162], "v": "2401428b", "height": 12.0, "foot": 0, "top": 0.1, "tags": ["port", "market", "city", "capital", "town"]},
+  {"id": "beach", "file": "beach.webp", "role": "ground", "px": [1612, 758], "bytes": [397202, 121208], "v": "e616a414", "height": 10.5, "foot": 0, "top": 0.08, "tags": ["rustic", "grace", "temple"], "weight": 0.7},
+  {"id": "pier-arch", "file": "pier-arch.webp", "role": "subject", "px": [1254, 1132], "bytes": [280586, 92546], "v": "0f49953c", "height": 10.0, "foot": 0.93, "plaque": {"box": [0.275, 0.205, 0.725, 0.29], "ink": "gold"}, "tags": ["port", "market", "town"], "weight": 0.6, "mask": "1f8fff7ff7fe70e60620420420420470e7fe", "body": [0.119, 0.891], "crown": 0.0},
+  {"id": "watchtower", "file": "watchtower.webp", "role": "subject", "px": [1288, 1162], "bytes": [345656, 105968], "v": "85396f97", "height": 23.0, "foot": 0.9, "plaque": {"box": [0.395, 0.235, 0.615, 0.295], "ink": "gold"}, "tags": ["dark", "beast", "mountain", "island"], "weight": 0.6, "water": true, "mask": "0000f03fc1f81f81f81f81f81f83fcfff7fe", "body": [0.054, 0.959], "crown": 0.0},
+  {"id": "sea-temple", "file": "sea-temple.webp", "role": "subject", "px": [1214, 1206], "bytes": [298594, 91770], "v": "0484127d", "height": 21.0, "foot": 0.9, "plaque": {"box": [0.465, 0.165, 0.531, 0.29], "ink": "gold", "vertical": true}, "tags": ["temple", "grace", "rustic", "island"], "weight": 0.6, "water": true, "mask": "0e01f81f80f00f00f01f81f83fc7fefff7fe", "body": [0.024, 0.979], "crown": 0.0},
+  {"id": "lighthouse", "file": "lighthouse.webp", "role": "subject", "px": [1018, 1512], "bytes": [280480, 81570], "v": "66f035c5", "height": 23.0, "foot": 0.91, "plaque": {"box": [0.46, 0.238, 0.59, 0.264], "ink": "dark"}, "tags": ["grand", "capital", "wall", "sword", "city", "port"], "weight": 0.6, "water": true, "mask": "0200f00f00f00f00f00f00f01f81fcfff7fe", "body": [0.067, 0.938], "crown": 0.0},
+  {"id": "fishing-hall", "file": "fishing-hall.webp", "role": "subject", "px": [962, 1489], "bytes": [391730, 114004], "v": "77c73336", "height": 20.0, "foot": 0.93, "plaque": {"box": [0.42, 0.175, 0.566, 0.208], "ink": "gold"}, "tags": ["fishing", "rustic", "village", "town", "island"], "weight": 0.6, "water": true, "mask": "0f03fc3fc3f81f83fc3fc3fc3fc3fc7fe7fe", "body": [0.048, 0.952], "crown": 0.0},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [1549, 782], "bytes": [401144, 104974], "v": "d4600e20", "height": 2.6, "foot": 0.95, "plaque": {"box": [0.225, 0.43, 0.77, 0.79], "ink": "dark"}, "only": "name", "mask": "0f83fc7fe7fe7feffffffffffffffffff7fe"},
+  {"id": "posts", "file": "posts.webp", "role": "prop", "px": [851, 759], "bytes": [165440, 48746], "v": "60f95e3d", "height": 3.4, "foot": 0.9, "depths": ["mid"], "tags": ["port", "market", "town"], "mask": "0e00e01f03f03f03f83f83fc3fcffe7fc3f8"},
+  {"id": "nets", "file": "nets.webp", "role": "prop", "px": [890, 780], "bytes": [297446, 91918], "v": "a09c131d", "height": 4.0, "foot": 0.95, "depths": ["mid"], "tags": ["rustic", "island", "town"], "mask": "4026077fe7fe7fe7fe6fefffbfdbf9bf9bfd"},
+  {"id": "crates", "file": "crates.webp", "role": "prop", "px": [812, 599], "bytes": [163352, 46002], "v": "3bb23ca7", "height": 2.6, "foot": 0.93, "depths": ["mid"], "tags": ["port", "market", "city"], "mask": "0f01f01fe1ff7ff7ff7ff7ff7fffff7fc0f0"},
+  {"id": "stone-lantern", "file": "stone-lantern.webp", "role": "prop", "px": [763, 700], "bytes": [107946, 32710], "v": "768443b3", "height": 3.2, "foot": 0.93, "depths": ["mid"], "tags": ["temple", "grace", "grand"], "mask": "0600e01f80e00e00600600f01f83fefff1fe"},
+  {"id": "rocks", "file": "rocks.webp", "role": "near", "px": [829, 461], "bytes": [119024, 36012], "v": "3bb5d2ae", "height": 5.0, "foot": 0.8, "hold": [0.3, 0.8], "mask": "0000703f87fc7fefffffffffffe7fe3fc0e0"},
+  {"id": "pine-rock", "file": "pine-rock.webp", "role": "near", "px": [1510, 999], "bytes": [488662, 137844], "v": "d48a931e", "height": 9.0, "foot": 0.9, "hold": [0.3, 0.9], "mask": "0380fe3fe3ff7f07f83803807e07f8ffc7fc"}
+ ]
+}

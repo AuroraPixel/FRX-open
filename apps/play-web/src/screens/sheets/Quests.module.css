@@ -1,0 +1,66 @@
+/* 任务 (spec 七): the mainline is a large list entry; clues carry hollow or solid diamonds. */
+.main {
+  display: grid;
+  gap: var(--s-6);
+  padding: var(--s-14) var(--s-16) var(--s-16);
+  border-left: 2px solid var(--gold);
+  background: var(--tint);
+}
+
+.kicker {
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.chapter {
+  font: 700 var(--fs-16)/1.4 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.goal {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.clues {
+  display: grid;
+  gap: var(--s-6);
+  margin: var(--s-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clues li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-10);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+/* a clue still open: a hollow diamond; found: solid gold */
+.clues i {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border: var(--hair) solid var(--gold);
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.clues li[data-done] {
+  color: var(--soft);
+}
+
+.clues li[data-done] i {
+  background: var(--gold);
+}
+
+.progress {
+  display: block;
+  font: 400 var(--fs-12)/1.6 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+}

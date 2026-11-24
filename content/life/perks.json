@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "description": "修仙人生的悟得（玩法设计第七节「悟得」；执行计划第 23 项）。每破一个大境界，从三条里选一条，永久生效。text 给玩家看；rare 是稀有；effect 是引擎读的效果（type 加几个数）；needs 是它依赖的那一项和那一项的模块（apps/engine/life/<module>.cjs），模块还没有时这一条不进抽取的池子。悟得不改任何属性。带「初值」的数在实玩里调。",
+  "offer": {
+    "count": 3,
+    "note": "破了大境界之后抽三条不重样的，主角已有的不抽"
+  },
+  "rare": {
+    "chance": [0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6],
+    "guaranteedBy": "圆满",
+    "note": "chance 的第 n 个数是气运修正档 n（content/checks.json 的 modifierBands）每抽一条抽到稀有的机会（初值）；根基是 guaranteedBy 时三条里保底一条稀有的"
+  },
+  "night": {
+    "from": 19,
+    "to": 5,
+    "note": "夜里：从 from 点起，到次日 to 点前（戌时到寅时）"
+  },
+  "perks": {
+    "吐纳绵长": {
+      "text": "在灵气「薄」的地方修炼，环境按「中」算",
+      "rare": false,
+      "effect": { "type": "auraFloor", "from": "薄", "to": "中" },
+      "needs": { "item": 12, "module": "speed" }
+    },
+    "草木知音": {
+      "text": "在山野修炼，速度 +10%",
+      "rare": false,
+      "effect": { "type": "bonus", "value": 0.1, "placeKinds": ["山野"] },
+      "needs": { "item": 12, "module": "speed" }
+    },
+    "丹田宽厚": {
+      "text": "丹毒的上限 +20",
+      "rare": false,
+      "effect": { "type": "poisonCap", "value": 20 },
+      "needs": { "item": 44, "module": "poison" }
+    },
+    "察言观色": {
+      "text": "交涉之前，先看到对方的态度和底线",
+      "rare": true,
+      "effect": { "type": "insight", "kinds": ["交涉"] },
+      "needs": { "item": 6, "module": "actions" }
+    },
+    "脚底抹油": {
+      "text": "脱身检定 +2",
+      "rare": false,
+      "effect": { "type": "checkBonus", "kinds": ["脱身"], "value": 2 },
+      "needs": { "item": 6, "module": "actions" }
+    },
+    "静气": {
+      "text": "每月一次，重掷一次交涉或欺瞒",
+      "rare": true,
+      "effect": { "type": "reroll", "kinds": ["交涉", "欺瞒"], "per": "month" },
+      "needs": { "item": 8, "module": "actions" }
+    },
+    "夜行": {
+      "text": "夜里潜行，难度降一档",
+      "rare": false,
+      "effect": { "type": "tierDown", "kinds": ["潜行"], "when": "night", "steps": 1 },
+      "needs": { "item": 6, "module": "actions" }
+    },
+    "识货": {
+      "text": "买卖时看得到货的真实品阶和市价",
+      "rare": false,
+      "effect": { "type": "appraise" },
+      "needs": { "item": 35, "module": "trade" }
+    },
+    "先声夺人": {
+      "text": "斗法先手时，第一手命中 +4",
+      "rare": false,
+      "effect": { "type": "hitBonus", "value": 4, "when": "firstStrike" },
+      "needs": { "item": 19, "module": "fight" }
+    },
+    "守拙": {
+      "text": "每年一次，让一口压力钟退一格",
+      "rare": true,
+      "effect": { "type": "clockStep", "per": "year", "steps": 1 },
+      "needs": { "item": 15, "module": "clocks" }
+    },
+    "延年": {
+      "text": "寿元 +10",
+      "rare": true,
+      "effect": { "type": "lifespan", "value": 10 },
+      "needs": { "item": 23, "module": "perks" }
+    }
+  },
+  "traits": {
+    "notes": "器物的特性（玩法设计第八节「特性」；执行计划第 34 项）：一件器物带零到两条，写法和悟得一样，text 给玩家看，effect 是引擎读的效果；slots 是哪几类器物上会有（content/life/gear.json 的 slots）。只有生效的器物上的特性算数（apps/engine/life/gear.cjs）。带「初值」的数在实玩里调。",
+    "破甲": { "text": "用这件兵器出手时，物理穿透 +3", "slots": ["weapon"], "effect": { "type": "statBonus", "stat": "物理穿透", "value": 3 } },
+    "回锋": { "text": "落空之后，下一手命中 +2", "slots": ["weapon"], "effect": { "type": "missBonus", "value": 2 } },
+    "护主": { "text": "每场一次，本该打倒你的一击改为剩 1 点气血", "slots": ["armor", "treasure"], "effect": { "type": "lastStand", "left": 1 } },
+    "噬灵": { "text": "打中时回 5% 法力", "slots": ["weapon", "treasure"], "effect": { "type": "manaOnHit", "percent": 5 } },
+    "敛息": { "text": "潜行的难度降一档", "slots": ["armor", "treasure"], "effect": { "type": "tierDown", "kinds": ["潜行"], "steps": 1 } },
+    "镇邪": { "text": "对邪物、鬼物的伤害 +25%", "slots": ["weapon", "treasure"], "effect": { "type": "bane", "classes": ["evil", "puppet"], "factor": 1.25 } },
+    "御风": { "text": "飞行的法器：日行升一档", "slots": ["treasure"], "effect": { "type": "travel", "bands": 1 } }
+  }
+}

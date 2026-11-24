@@ -1,0 +1,142 @@
+/* 主线: as the next gate's card (a gold line over, a faint one under, the tint), 主 in its diamond; the
+   chapter in bold serif after a small gold 主线, the goal, a line each condition (a diamond, filled when
+   met), the count of a counted one at the right over a thin gold bar, the next chapter greyed. */
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-14);
+  width: 100%;
+  min-height: 56px;
+  margin: var(--s-4) 0 var(--s-8);
+  padding: var(--s-10) var(--s-12) var(--s-10) var(--s-8);
+  border: 0;
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  text-align: left;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+  transition: background-color var(--d-focus);
+}
+
+.card:hover,
+.card[data-hover],
+.card:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), var(--tint) 70%);
+}
+
+.card:focus-visible {
+  outline-offset: -2px;
+}
+
+.kind {
+  flex: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  color: var(--cin);
+}
+
+.kind::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: var(--hair) solid var(--cin);
+  background: var(--tint);
+  transform: rotate(45deg);
+}
+
+.kind > span {
+  position: relative;
+}
+
+.words {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.words strong {
+  display: block;
+  font: 700 var(--fs-14h)/1.5 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.words strong small {
+  margin-right: .7em;
+  font: 600 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+
+.goal {
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.clue {
+  display: flex;
+  align-items: center;
+  gap: var(--s-10);
+  min-width: 0;
+  font: 400 var(--fs-12)/1.7 var(--f-ui);
+  color: var(--soft);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.text::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 var(--s-8) 1px 1px;
+  border: var(--hair) solid var(--gold);
+  transform: rotate(45deg);
+}
+
+.clue[data-done] .text::before {
+  background: var(--gold);
+}
+
+.count {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  gap: 2px;
+  min-width: 4.6em;
+}
+
+.count b {
+  font: 600 var(--fs-12)/1.2 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.track {
+  display: block;
+  justify-self: stretch;
+  height: 2px;
+  background: var(--line-soft);
+}
+
+.track i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--line), var(--gold));
+}
+
+.next {
+  margin-top: 2px;
+  font: 400 var(--fs-12)/1.6 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .08em;
+  color: var(--soft);
+}

@@ -1,0 +1,160 @@
+/* The play screen: the stage fills the screen; the page's words stand on it in their own layer, which
+   fades away for the first-meeting close-up. Only the book's text scrolls. */
+.screen {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  /* clip, not just hidden: a hidden box can still be scrolled by code, and the turn menu's
+     scrollIntoView moved the whole screen 30 px sideways on a 375 px phone */
+  overflow: clip;
+  background: var(--page);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-stage);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* the safe area at the top, measured by script for the phone's fully open page */
+.safeTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: env(safe-area-inset-top, 0px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* the top 17% darkens towards the edge, under the status bar's words (spec 四). By day the picture's
+   vignette darkens that corner, so the shade is the halo colour instead: dark words keep 4.5:1. */
+.shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-veil);
+  /* never shorter than the status block itself, on short screens */
+  height: max(17%, 120px);
+  background: linear-gradient(180deg, var(--veil), transparent);
+  pointer-events: none;
+}
+
+:global(:root[data-light='day']) .shade {
+  background: linear-gradient(180deg, var(--halo), transparent);
+}
+
+/* a phone's fully open page leaves only a strip of picture behind the status bar, often the moon's
+   glow: the shade holds its full strength over the upper half of it, so the bar's numbers keep 4.5:1 */
+.screen[data-dock='full'] .shade {
+  background: linear-gradient(180deg, var(--veil), var(--veil) 50%, transparent);
+}
+
+:global(:root[data-light='day']) .screen[data-dock='full'] .shade {
+  background: linear-gradient(180deg, var(--halo), var(--halo) 50%, transparent);
+}
+
+/* dialogs stand over the picture: the page colour under the panel keeps their words at 4.5:1 */
+.solid.solid,
+/* and with the blur off, whose more opaque panel would otherwise take its place without the page under it
+   (the documents pass, #18) */
+:global(:root[data-blur='off']) .solid.solid {
+  background: linear-gradient(180deg, var(--panel-hi), var(--panel)), var(--page);
+}
+
+.ui {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-ui);
+  transition: opacity var(--d-bars) ease;
+  pointer-events: none;
+}
+
+/* the layer itself is only a frame: its empty parts let the pointer through to the stage */
+.ui > * {
+  pointer-events: auto;
+}
+
+.screen[data-cine] .ui {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 连接中断: over the top of the book on desktops, above the bottom bar on phones (spec 三, 提示) */
+.notice {
+  position: absolute;
+  z-index: var(--z-toast);
+  left: var(--s-46);
+  top: 116px;
+  width: min(588px, 100% - 92px);
+  /* the notice stands over the book's head: the page colour behind it keeps the head from showing through */
+  background: var(--page);
+}
+
+/* ---- phones: the bottom bar with the line, send and 卷; the chips above it (spec 十一) ---- */
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--kb, 0px);
+  z-index: var(--z-ui);
+  padding: 0 max(var(--s-16), env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px)
+    max(var(--s-16), env(safe-area-inset-left, 0px));
+  border-top: var(--hair) solid var(--line-soft);
+  background: var(--panel-hi);
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  min-height: 56px;
+}
+
+.own {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+
+/* 待结算 on phones: the notice and 继续结算 stand in the bar, above the line they lock */
+.barNote {
+  padding: var(--s-10) 0 var(--s-4);
+}
+
+/* the cultivation life: why commands cannot be done now, over the row of commands */
+.barNotes {
+  padding: var(--s-8) 0 0;
+}
+
+/* the row scrolls sideways, so it clips: 8 px above and below keep each chip's cross a 44 px target */
+.chipRow {
+  display: flex;
+  gap: var(--s-8);
+  overflow-x: auto;
+  padding: var(--s-8) 0;
+  scrollbar-width: none;
+}
+
+.chipRow::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .notice {
+    top: auto;
+    left: var(--s-16);
+    right: var(--s-16);
+    width: auto;
+    bottom: calc(var(--bar-h, 56px) + var(--kb, 0px) + var(--s-12));
+  }
+}

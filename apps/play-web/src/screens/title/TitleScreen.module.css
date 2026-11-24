@@ -1,0 +1,182 @@
+/* 标题页 (spec 七): the stage fills the window behind; the title stands upright in the middle, a little
+   high, framed by the painted gold clouds; the actions are a column at the lower left on desktops and
+   across the bottom on phones; the version and the signature at the bottom right. */
+.title {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ui);
+  overflow: hidden;
+  /* the title's size: the spec's clamp, held to the window's height so all five characters stay on it */
+  --name-size: min(clamp(72px, 12vw, 160px), 13.2dvh);
+}
+
+/* the painted title clouds, symmetrical, their open middle around the title's head (desktops) */
+.clouds {
+  position: absolute;
+  top: max(var(--s-8), 1.2dvh);
+  left: 50%;
+  width: max(min(1040px, 74vw), calc(var(--name-size) * 8.2));
+  aspect-ratio: 1726 / 566;
+  transform: translateX(-50%);
+  background: var(--tex-title-clouds) center top / contain no-repeat;
+  opacity: .82;
+  filter: drop-shadow(0 2px 14px var(--halo));
+  pointer-events: none;
+}
+
+/* the painted far hills along the foot of the picture, fading upward: they ground the actions and the
+   signature on the darker ink of the hills */
+.hills {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(36dvh, 25vw);
+  background: var(--tex-title-mountains) center bottom / max(100%, 1200px) auto no-repeat;
+  opacity: .9;
+  -webkit-mask: linear-gradient(180deg, transparent, var(--ink) 38%);
+  mask: linear-gradient(180deg, transparent, var(--ink) 38%);
+  pointer-events: none;
+}
+
+:global(:root[data-light='day']) .hills {
+  opacity: .5;
+  mix-blend-mode: multiply;
+}
+
+/* the title, upright, its middle on the window's middle; the line of small writing to its left */
+.mark {
+  position: absolute;
+  top: max(var(--s-46), 7dvh);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.name {
+  margin: 0;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font: var(--type-title-page);
+  font-size: var(--name-size);
+  letter-spacing: .04em;
+  color: var(--foil);
+  text-shadow: 0 0 34px var(--glow), 0 1px 10px var(--halo);
+}
+
+/* 左边一行竖排的小字, on a fine gold rule as the breakthrough's title has it, on a little shade of its own */
+.motto {
+  position: absolute;
+  top: calc(var(--name-size) * .62);
+  right: calc(100% + var(--s-14));
+  margin: 0;
+  padding: var(--s-14) var(--s-10) var(--s-14) var(--s-8);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  border-left: var(--hair) solid var(--line);
+  /* large enough to read as large text (3:1) over the bright sky without a shade behind it */
+  font: 700 var(--fs-20)/1.5 var(--f-serif);
+  letter-spacing: .42em;
+  color: var(--ink);
+  text-shadow: 0 1px 10px var(--halo), 0 0 3px var(--halo);
+}
+
+.acts {
+  position: absolute;
+  left: max(var(--s-46), env(safe-area-inset-left, 0px));
+  bottom: max(var(--s-46), calc(env(safe-area-inset-bottom, 0px) + var(--s-22)));
+  display: grid;
+  gap: var(--s-10);
+  width: 320px;
+}
+
+.sign {
+  position: absolute;
+  right: max(var(--s-22), env(safe-area-inset-right, 0px));
+  bottom: max(var(--s-18), calc(env(safe-area-inset-bottom, 0px) + var(--s-8)));
+  display: flex;
+  gap: var(--s-10);
+  margin: 0;
+  padding: var(--s-10) var(--s-28);
+  background: radial-gradient(farthest-side, var(--halo) 58%, transparent);
+  font: var(--type-note);
+  letter-spacing: .2em;
+  color: var(--soft);
+  text-shadow: 0 1px 10px var(--halo), 0 0 2px var(--halo);
+}
+
+/* phones: the title in the upper part, the actions across the bottom with 24 px at the sides */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .title {
+    --name-size: min(clamp(72px, 12vw, 160px), 10.4dvh);
+  }
+  /* the scene's terrace stands in the middle of a phone: the title goes to the right of it */
+  .clouds {
+    display: none;
+  }
+  .mark {
+    top: max(var(--s-36), calc(env(safe-area-inset-top, 0px) + var(--s-22)));
+    left: auto;
+    right: max(var(--s-22), 7vw);
+    transform: none;
+  }
+  .motto {
+    right: calc(100% + var(--s-6));
+    letter-spacing: .3em;
+  }
+  .hills {
+    height: 30dvh;
+    background-size: auto 100%;
+  }
+  .acts {
+    left: 24px;
+    right: 24px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-46));
+    width: auto;
+    gap: var(--s-8);
+  }
+  .sign {
+    right: 24px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--s-16));
+  }
+}
+
+/* short windows (a phone held sideways): the actions in two columns, the title smaller */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .title {
+    --name-size: 13dvh;
+  }
+  .acts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 560px;
+    bottom: var(--s-22);
+  }
+}
+
+/* The login (plan item 68) stands where the actions do. Where the window is too narrow for the title in
+   the middle beside it, the title stands at the right, as on phones; on phones it shrinks to stay above
+   the login, and the signature under the login gives way. A window too short for both shows the login. */
+@media (min-width: 760px) and (max-width: 1099px) {
+  .title[data-login] .clouds {
+    display: none;
+  }
+  .title[data-login] .mark {
+    left: auto;
+    right: max(var(--s-46), 7vw);
+    transform: none;
+  }
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .title[data-login] {
+    --name-size: min(clamp(72px, 12vw, 160px), 10.4dvh, calc((100dvh - 480px) / 5.4));
+  }
+  .title[data-login] .sign {
+    display: none;
+  }
+}
+
+@media (max-height: 559px) {
+  .title[data-login] .mark {
+    display: none;
+  }
+}

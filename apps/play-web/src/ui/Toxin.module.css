@@ -1,0 +1,113 @@
+/* 丹毒: the bar as 气血's (Bar), a little taller, its fill one gradient over the whole track (so its end
+   says how bad it is), each mark a thin line through it with its number under it; the effects under that,
+   each after a small cinnabar diamond. */
+.toxin {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2.4em minmax(0, 1fr) 5.4em;
+  align-items: center;
+  gap: var(--s-8);
+  font: 400 var(--fs-11)/1.4 var(--f-ui);
+  color: var(--soft);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  height: 13px;
+  background: var(--line-soft);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--jade), var(--gold) 50%, var(--cin) 70%, var(--cin));
+  background-repeat: no-repeat;
+  transition: width var(--d-value) var(--ease);
+}
+
+.mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -.5px;
+  background: var(--ink);
+  opacity: .55;
+}
+
+.mark[data-past] {
+  background: var(--page);
+  opacity: .8;
+}
+
+.value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* the marks' numbers, under the track (the label's column and the value's are left out) */
+.scale {
+  position: relative;
+  height: 1.4em;
+  margin: 0 calc(5.4em + var(--s-8)) 0 calc(2.4em + var(--s-8));
+  font: 400 var(--fs-11)/1.4 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+}
+
+.scale span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.scale span[data-end] {
+  transform: translateX(-100%);
+}
+
+.scale span[data-past] {
+  color: var(--ink);
+}
+
+.effects {
+  display: grid;
+  gap: var(--s-2);
+  margin: var(--s-2) 0 0;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.effects li::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 var(--s-8) 2px var(--s-2);
+  background: var(--cin);
+  transform: rotate(45deg);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .row {
+    grid-template-columns: 2.4em minmax(0, 1fr) 4.6em;
+    gap: var(--s-6);
+  }
+  .scale {
+    margin: 0 calc(4.6em + var(--s-6)) 0 calc(2.4em + var(--s-6));
+  }
+}

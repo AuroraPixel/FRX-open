@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "description": "灵兽（玩法设计第八节「灵兽」，执行计划第 41 项）。灵兽本身照旧是卡的 7 号表（名字、等级、外貌、性格、神通、状态、资质、气血、法力、好感；资质八等是 apps/engine/core/beasts.cjs 的 BEAST_APTITUDE_CONFIG），新玩法另记在 frxPlay.beasts[编号]：性情、认没认主、这个月喂过几次、出不出战、伤势；兽卵记在 frxPlay.eggs。能养（keep）：base 加神识档位那么多只（神识照面板，不算装备加的；档位是 content/checks.json 的 modifierBands），兽卵也占一个；出战的只有一只。性情（temperaments）：凶悍抢攻、机警护主、狡黠扰敌，act 是斗法里它自己出的那一手（acts）；性情先看 7 号表性格一列里的字（words），认不出按种类（content/art/species.json 的种类）的 bySpecies 加权抽（本种的权重 speciesWeight，别的各 1）。吩咐（obey）：好感到 favour 才听，不听就照自己的性子来。收服（tame）：斗法里妖兽的气血低于最大值的 below%，多一个指令「降服」，一次驭兽检定（看魅力，加天赋里驭兽的加值和第 42 项驭兽的熟练度）；对方的大境界低于你难度 tiers.lower，同境界 tiers.same，高你一个大境界就办不到；结果 outcomes：成了收进 7 号表、好感 favour，大失败对方挣脱逃走；资质按 aptitude 的权重抽（不低于它的阶减一那一等）。认主（bind）：指令 bind 花 days 日，认了主好感加 favour；新收服的、买来的、别人送的都要认主才肯出战、才有用处，破壳的生来认主。伤（injury）：斗法里气血归零是重伤，按它的阶养 days 日（进日历），养好之前不出战、没有用处；只有极限模式会死。月结时伤养好了、没受伤的气血回满。兽卵（hatch）：名字里有 words 的东西，孵 months 个月（照兽卵的阶，进日历），到那个月的月结破壳；资质按 aptitude 抽，好感 favour。买（buy）、别人送（gift：好感到 favour 的人，一年一次，和装备的所赠共用一个记录，送的是 names 里合用的一只）：资质按各自的 aptitude 抽。喂食（feed）：新玩法里每月最多 perMonth 次；能喂的是 types 那几类物品和 classes 那几类图鉴里的东西；一口涨落照旧的喂食（handlePersistentFeed：资质每高一等 t，min 是 base + per×t、max 是 base + per×t（不含），crit 的几率完美吸收、绝对值乘 factor），涨的那一份乘食物的品阶（tiers，图鉴里没有的按名字里写的阶，都没有算一阶）再乘同五行的 sameElement；好感加 favour，满了一等照旧血脉蜕变升一等。等阶的上限看资质：凡品到一阶，灵品到二阶，一路对上去；升阶（promote）要一样同系的东西：同一种妖兽的 parts，或同五行的 classes，阶不低于要升到的那一阶。用处（uses）：每个种类归一样，只有出战的那只灵兽的用处算数：代步日行升 bands 档，寻药采集多得 count 份（先给灵草），警戒野外被打扰撞上的人先被你发现（不会被偷袭），寻宝探查加 value，守府打上洞府时多 helpers 个帮手（第 45 项读它）。数都是初值；apps/engine/life/beasts.cjs 读这份文件。",
+  "keep": { "base": 2 },
+  "temperaments": {
+    "凶悍": { "act": "attack", "words": ["凶", "猛", "暴", "烈", "悍", "狂", "躁"] },
+    "机警": { "act": "guard", "words": ["警", "机灵", "灵敏", "谨慎", "胆小", "忠", "稳"] },
+    "狡黠": { "act": "harass", "words": ["狡", "黠", "诈", "滑", "顽皮", "调皮", "精怪"] },
+    "speciesWeight": 3,
+    "bySpecies": {
+      "wolf": "凶悍", "tiger": "凶悍", "bear": "凶悍", "boar": "凶悍", "leopard": "凶悍", "jiao": "凶悍", "fiend": "凶悍",
+      "scorpion": "凶悍", "centipede": "凶悍", "skeleton": "凶悍", "eagle": "凶悍",
+      "turtle": "机警", "horse": "机警", "deer": "机警", "crane": "机警", "ox": "机警", "golem": "机警", "carp": "机警",
+      "roc": "机警", "treant": "机警", "bat": "机警",
+      "fox": "狡黠", "cat": "狡黠", "rat": "狡黠", "crow": "狡黠", "ape": "狡黠", "snake": "狡黠", "spider": "狡黠",
+      "toad": "狡黠", "insect": "狡黠"
+    }
+  },
+  "acts": {
+    "attack": { "glyph": "攻", "label": "扑击", "note": "抢在前头扑上去" },
+    "guard": { "glyph": "护", "label": "护主", "note": "替你挡下一手" },
+    "harass": { "glyph": "扰", "label": "扰敌", "note": "绕着对手打转，给它上破绽" }
+  },
+  "obey": { "favour": 30, "refused": "「{名}」不听吩咐，照自己的性子来" },
+  "tame": {
+    "below": 30,
+    "tiers": { "lower": "中", "same": "难" },
+    "outcomes": { "大成功": { "favour": 20 }, "成功": { "favour": 10 }, "失败": {}, "大失败": { "flee": true } },
+    "aptitude": { "凡品": 70, "灵品": 25, "玄品": 5 },
+    "texts": {
+      "none": "没有气血低于三成的妖兽可以降服",
+      "notBeast": "「{名}」不是妖兽，降服不了",
+      "above": "「{名}」是{境界}，高你一个大境界，降服不了",
+      "full": "能养的灵兽已满（{数}只），收服不了",
+      "note": "成算{成}",
+      "mood": "刚被降服，还没认主"
+    },
+    "results": { "大成功": "它低下头来，服了", "成功": "它不再挣扎，服了", "失败": "它不服，还要再斗", "大失败": "它挣脱开去，逃了" },
+    "glyph": "降"
+  },
+  "bind": { "days": 7, "favour": 20 },
+  "injury": { "days": { "一阶": 10, "二阶": 20, "三阶": 30, "四阶": 60, "五阶": 90 }, "status": "重伤，要养" },
+  "hatch": {
+    "words": ["兽卵", "卵", "蛋"],
+    "months": { "一阶": 3, "二阶": 6, "三阶": 12, "四阶": 24, "五阶": 36 },
+    "aptitude": { "凡品": 40, "灵品": 40, "玄品": 15, "地品": 5 },
+    "favour": 40
+  },
+  "buy": { "aptitude": { "凡品": 60, "灵品": 35, "玄品": 5 } },
+  "gift": {
+    "favour": "信赖",
+    "everyDays": 360,
+    "names": ["寻宝鼠", "灵猫", "白鹤", "青鬃马", "黄犬", "金睛雕", "灵龟"],
+    "aptitude": { "灵品": 70, "玄品": 30 }
+  },
+  "feed": {
+    "perMonth": 3,
+    "types": ["消耗品"],
+    "classes": ["妖兽材料", "灵物", "灵草"],
+    "tiers": { "一阶": 1, "二阶": 1.5, "三阶": 2, "四阶": 2.5, "五阶": 3, "六阶": 3.5, "七阶": 4, "八阶": 4.5, "九阶": 5 },
+    "sameElement": 1.5,
+    "draw": { "min": { "base": -5, "per": -5 }, "max": { "base": 25, "per": 8 }, "crit": { "chance": 0.08, "factor": 2 } },
+    "favour": 1
+  },
+  "promote": { "parts": ["妖丹"], "classes": ["灵物"] },
+  "uses": {
+    "代步": { "text": "日行升一档", "species": ["horse", "deer", "crane", "eagle", "roc", "ox"], "effect": { "type": "mount", "bands": 1 } },
+    "寻药": { "text": "采集多得一份", "species": ["cat", "ape", "boar", "treant"], "effect": { "type": "forage", "count": 1 } },
+    "警戒": { "text": "野外被打扰时不会被偷袭", "species": ["wolf", "fox", "crow", "bat", "leopard", "spider"], "effect": { "type": "alert" } },
+    "寻宝": { "text": "探查检定 +2", "species": ["rat", "insect", "toad", "carp", "centipede", "scorpion"], "effect": { "type": "checkBonus", "kinds": ["探查"], "value": 2 } },
+    "守府": { "text": "有人打上洞府时多一个帮手", "species": ["tiger", "bear", "turtle", "jiao", "snake", "golem", "skeleton", "fiend"], "effect": { "type": "guardHome", "helpers": 1 } }
+  },
+  "texts": {
+    "noBeast": "没有这只灵兽",
+    "notBound": "「{名}」还没认主，不肯跟你出战",
+    "hurt": "「{名}」{伤}，{日}日后才养好",
+    "fed": "「{名}」这个月已经喂过{数}次了",
+    "notFood": "「{物}」不能拿来喂灵兽",
+    "noItem": "储物袋里没有这件东西",
+    "full": "能养的灵兽已满（{数}只）",
+    "capped": "「{名}」资质是{资质}，等阶到{阶}为止",
+    "promoteNeeds": "升到{阶}要一样{阶}以上的同系之物：{种}的妖丹，或{属}属的灵物",
+    "bound": "「{名}」已经认主了",
+    "noOut": "没有出战的灵兽",
+    "noOrder": "没有「{令}」这个吩咐",
+    "price": "灵石不够：要{数}块，只有{有}块",
+    "giftFavour": "{名}和你的交情还没到「{好感}」",
+    "giftOnce": "{名}前不久才送过你东西",
+    "notEgg": "「{物}」不是兽卵"
+  }
+}

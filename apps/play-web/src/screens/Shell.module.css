@@ -1,0 +1,12 @@
+/* The holding page: a line in brush and the way back to the title. */
+.page {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--s-16);
+  padding: var(--s-36) max(var(--s-16), calc((100% - 588px) / 2)) var(--s-36);
+  background: var(--bg);
+}

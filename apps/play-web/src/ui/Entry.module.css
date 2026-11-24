@@ -1,0 +1,72 @@
+.entry {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: var(--s-10) var(--s-46) var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--d-press);
+}
+
+button.entry:hover,
+button.entry[data-hover] {
+  background: var(--glow-soft);
+}
+
+.title {
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+}
+
+.text {
+  font: 400 var(--fs-12h)/1.6 var(--f-serif);
+  color: var(--soft);
+}
+
+.status {
+  position: absolute;
+  top: 9px;
+  right: var(--s-10);
+}
+em.status {
+  font: 400 var(--fs-15)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--soft);
+}
+
+.entry[data-state='active'] {
+  border-left-color: var(--gold);
+}
+.entry[data-state='active'] em.status {
+  color: var(--gold);
+}
+
+.entry[data-state='done'] {
+  border-left-color: var(--cin);
+}
+
+.entry[data-state='locked'] {
+  border-left-color: var(--line-soft);
+}
+.entry[data-state='locked'] .title,
+.entry[data-state='locked'] .text,
+.entry[data-state='locked'] em.status {
+  color: var(--faint);
+}
+
+.entry[aria-pressed='true'] {
+  outline: var(--hair) solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* a finger (a phone, or a phone on its side and a tablet in the desktop layouts): an entry of one line is
+   a whole touch target too */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .entry {
+    min-height: var(--hit);
+  }
+}

@@ -1,0 +1,16 @@
+.sub {
+  display: flex;
+  align-items: center;
+  gap: var(--s-10);
+  margin: var(--s-4) 0 0;
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.sub::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+}

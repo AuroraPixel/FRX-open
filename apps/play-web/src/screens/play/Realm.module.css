@@ -1,0 +1,283 @@
+/* 秘境的节点图: under a gold line, the realm's name in brush and its days; a layer a row with its number at
+   the left on a thin rail, its nodes as diamonds (the action cards' kind diamond, larger), the others at
+   the right; the exit last. Phones: each node is a cell of its own, as wide as the row allows. */
+.realm {
+  display: grid;
+  gap: var(--s-12);
+  margin: var(--s-10) 0 var(--s-4);
+  padding-top: var(--s-12);
+  border-top: var(--hair) solid var(--line);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-4) var(--s-14);
+}
+
+.head h3 {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.head p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-10);
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.head b {
+  font: 400 var(--fs-18)/1 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.layers {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* the rail through the layers' numbers */
+.layers::before {
+  content: '';
+  position: absolute;
+  top: var(--s-14);
+  bottom: var(--s-14);
+  left: calc(1em - .5px);
+  width: 1px;
+  background: var(--line-soft);
+}
+
+.layer {
+  display: grid;
+  grid-template-columns: 2em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-10);
+  min-height: 72px;
+  padding: var(--s-6) 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.depth {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  color: var(--soft);
+  background: var(--page);
+  border: var(--hair) solid var(--line-soft);
+  border-radius: 50%;
+}
+
+.layer[data-at='next'] .depth {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 10px var(--glow-soft);
+}
+
+.nodes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+/* a node: its diamond and a few words under it */
+.node {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 56px;
+  padding: var(--s-2) var(--s-4);
+  border: 0;
+  background: none;
+  color: var(--ink);
+}
+
+.d {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  font: 400 var(--fs-21)/1 var(--f-brush);
+  color: var(--ink);
+}
+
+.d::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: var(--hair) solid var(--line);
+  background: var(--panel);
+  transform: rotate(45deg);
+  transition: border-color var(--d-focus), background-color var(--d-press), box-shadow var(--d-focus);
+}
+
+.d > span {
+  position: relative;
+}
+
+.node small {
+  min-height: 1.3em;
+  font: 400 var(--fs-11)/1.3 var(--f-ui);
+  letter-spacing: .12em;
+  color: var(--soft);
+}
+
+/* walked: on the path, filled gold, the glyph in the page's colour (dark by night, light by day) */
+.node[data-state='walked'] .d::before {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.node[data-state='walked'] .d {
+  color: var(--page);
+}
+
+/* open: the next layer, gilded, to be taken */
+.node[data-state='open'] .d,
+.node[data-state='open'] small {
+  color: var(--gold);
+}
+
+.node[data-state='open'] .d::before {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px var(--glow-soft), inset 0 0 8px var(--glow-soft);
+}
+
+button.node:not(:disabled):hover .d::before,
+button.node[data-hover] .d::before,
+button.node:focus-visible .d::before {
+  background: var(--glow-soft);
+}
+
+button.node:not(:disabled):active .d::before {
+  background: var(--glow);
+  transition-duration: 0s;
+}
+
+button.node:disabled {
+  cursor: default;
+}
+
+/* passed: a layer behind, not taken; hidden: deeper, dashed */
+.node[data-state='passed'] .d,
+.node[data-state='hidden'] .d {
+  color: var(--faint);
+}
+
+.node[data-state='passed'] .d::before {
+  border-color: var(--line-soft);
+  background: none;
+}
+
+.node[data-state='hidden'] .d::before {
+  border-style: dashed;
+  border-color: var(--faint);
+  background: none;
+}
+
+/* the others: a mate with a jade rule, a rival with a cinnabar one */
+.others {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s-4);
+  max-width: 9em;
+}
+
+.others i {
+  padding: 1px var(--s-6);
+  border-left: 2px solid var(--jade);
+  background: var(--tint);
+  font: 400 var(--fs-12)/1.5 var(--f-serif);
+  font-style: normal;
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.others i[data-side='rival'] {
+  border-left-color: var(--cin);
+}
+
+.exitWord {
+  font: var(--type-note);
+  letter-spacing: .3em;
+  color: var(--soft);
+}
+
+.leave {
+  min-height: 44px;
+  padding: var(--s-6) var(--s-18);
+  border: var(--hair) solid var(--gold);
+  background: linear-gradient(180deg, var(--glow-soft), transparent);
+  font: 400 var(--fs-15)/1 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--gold);
+}
+
+.leave:not(:disabled):hover {
+  background: var(--glow-soft);
+}
+
+.taken {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--text);
+}
+
+.taken b {
+  margin-right: .6em;
+  font-weight: 600;
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+
+/* phones: a node a cell, as wide as the row allows, at least 64 px tall; the open ones framed in gold */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .layer {
+    grid-template-columns: 2em minmax(0, 1fr);
+    gap: var(--s-8);
+  }
+  .layer > .others {
+    grid-column: 2;
+    justify-content: flex-start;
+    max-width: none;
+  }
+  .nodes {
+    flex-wrap: nowrap;
+    gap: var(--s-6);
+  }
+  .node {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 64px;
+    align-content: center;
+    border: var(--hair) solid var(--line-soft);
+  }
+  .node[data-state='open'] {
+    border-color: var(--line);
+    background: var(--tint);
+  }
+  .node[data-state='hidden'] {
+    border-style: dashed;
+  }
+  .leave {
+    flex: 1;
+  }
+}

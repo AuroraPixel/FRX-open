@@ -1,0 +1,125 @@
+/* 接下来: a small gold heading, then a row each suggestion at least 48 px tall (a whole row is the button):
+   its character in a small diamond, the words, a chevron at the right; the main line's diamond cinnabar. */
+.next {
+  display: grid;
+  /* one column no wider than the page: a folded line's words (one line, nowrap) would otherwise widen the
+     column to their whole length and run past a narrow screen instead of ending in an ellipsis */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-6);
+  margin: var(--s-6) 0 var(--s-8);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: var(--s-6) var(--s-6) var(--s-6) var(--s-2);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+  transition: background-color var(--d-focus);
+}
+
+button.step:hover,
+button.step[data-hover],
+button.step:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+button.step:disabled {
+  cursor: default;
+}
+
+.d {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font: 400 var(--fs-16)/1 var(--f-brush);
+  color: var(--gold);
+}
+
+.d::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: var(--hair) solid var(--line);
+  background: var(--tint);
+  transform: rotate(45deg);
+}
+
+.d > span {
+  position: relative;
+}
+
+.step[data-kind='main'] .d {
+  color: var(--cin);
+}
+
+.step[data-kind='main'] .d::before {
+  border-color: var(--cin);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  font: 400 var(--fs-14)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.go {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-right: var(--s-6);
+  border-top: var(--hair) solid var(--gold);
+  border-right: var(--hair) solid var(--gold);
+  transform: rotate(45deg);
+}
+
+/* the main line's and the next gate's cards folded to a line each when the turn did not move them, under the
+   suggestions: the same row, its words on one line in the softer ink, a little apart from the suggestions
+   above; on a narrow screen an ellipsis cuts the words, never where it stands (0/1, 成算七成) */
+.lines {
+  margin: var(--s-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step[data-line] .text {
+  display: flex;
+  white-space: nowrap;
+  color: var(--soft);
+}
+
+.words {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tail {
+  flex: none;
+  white-space: pre;
+}
+
+/* the first few scenes that close: how to go on from one, a quiet line under it all */
+.note {
+  margin: var(--s-6) 0 0;
+  padding-left: var(--s-2);
+  font: 400 var(--fs-12)/1.7 var(--f-serif);
+  color: var(--soft);
+}

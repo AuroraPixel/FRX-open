@@ -1,0 +1,130 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  pointer-events: none;
+}
+
+.scrim {
+  display: none;
+}
+
+/* desktop: a side panel on the right; the book stays where it is */
+.sheet {
+  position: absolute;
+  top: calc(var(--s-14) + env(safe-area-inset-top, 0px));
+  bottom: calc(var(--s-14) + env(safe-area-inset-bottom, 0px));
+  right: max(var(--s-16), env(safe-area-inset-right, 0px));
+  width: min(420px, 100% - 32px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  pointer-events: auto;
+  animation: global(slide-in) var(--d-slide) var(--ease) both;
+}
+
+.layer[data-size='wide'] .sheet {
+  width: min(720px, 100% - 32px);
+}
+
+.head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: var(--s-16) 20px var(--s-12);
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+.head .handle,
+.head .back {
+  display: none;
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font: var(--type-sheet-title);
+  color: var(--ink);
+}
+
+.title small {
+  margin-left: .7em;
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--soft);
+}
+
+.body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  align-content: start;
+  gap: var(--s-16);
+  padding: var(--s-16) 20px var(--s-22);
+}
+
+.sheet:focus-visible {
+  outline: none;
+}
+
+/* phones: a bottom sheet with a handle; the scrim behind it closes it */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .layer {
+    pointer-events: auto;
+  }
+  .scrim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: var(--veil);
+    animation: global(fade-in) var(--d-rise) ease both;
+  }
+  .sheet {
+    top: auto;
+    bottom: 0;
+    left: max(var(--s-16), env(safe-area-inset-left, 0px));
+    right: max(var(--s-16), env(safe-area-inset-right, 0px));
+    width: auto;
+    height: min(72dvh, 560px);
+    animation-name: global(rise-in);
+    animation-duration: var(--d-rise);
+    transition: height var(--d-rise) var(--ease), transform var(--d-rise) var(--ease);
+  }
+  .layer[data-size='wide'] .sheet {
+    width: auto;
+  }
+  .sheet[data-stop='full'] {
+    height: 92dvh;
+  }
+  .head {
+    padding-top: var(--s-28);
+    touch-action: none;
+    user-select: none;
+  }
+  .head .handle {
+    display: block;
+    position: absolute;
+    top: var(--s-12);
+    left: calc(50% - 18px);
+    width: 36px;
+    height: 4px;
+    background: var(--line);
+  }
+  .head .back {
+    display: inline-grid;
+  }
+  .body {
+    padding-bottom: calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+  }
+  .body[data-fill] {
+    align-content: stretch;
+  }
+}
+
+/* a phone on its side (the desktop's side panel, lower than 560 px): the content stretched too */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .body[data-fill] {
+    align-content: stretch;
+  }
+}

@@ -1,0 +1,120 @@
+/* Page-wide rules: box model, the page that never scrolls, focus, scrollbars and motion switches. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 var(--fs-14)/1.5 var(--f-ui);
+  /* only the story and panel bodies scroll (spec 十一) */
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* spec 十二: a 2 px gold outline, 3 px away. [data-focus] shows the state in the gallery. */
+:focus {
+  outline: none;
+}
+:focus-visible,
+[data-focus] {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Thin gold scrollbars; only the story and the panel bodies scroll. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Reduced motion: the ring's ticks and other endless motion stop. */
+@media (prefers-reduced-motion: reduce) {
+  [data-endless] {
+    animation: none !important;
+  }
+}
+:root[data-motion='weak'] [data-endless],
+:root[data-motion='off'] [data-endless] {
+  animation: none !important;
+}
+
+/* Pinned time (?t= in the address, used by screenshots): nothing moves, the caret does not blink. */
+:root[data-pinned] {
+  transition-duration: 0s !important;
+}
+:root[data-pinned] *,
+:root[data-pinned] *::before,
+:root[data-pinned] *::after {
+  animation-delay: 0s !important;
+  animation-duration: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  caret-color: transparent !important;
+}

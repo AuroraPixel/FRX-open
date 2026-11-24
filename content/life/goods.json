@@ -1,0 +1,2802 @@
+{
+  "version": 1,
+  "description": "图鉴（玩法设计第十二节「材料与奖励」，执行计划第 29 项）：云汀湾这一段用得上的东西，每样一行。id 编号，name 名字，class 类别（classes 那六类），tier 品阶（tiers：一阶对炼气，二阶对筑基），price 底价（多少块下品灵石；尺度照第十二节「价目的尺度」：炼气期握灵石修炼每日 1 块，外门月俸 3 块，一件差事 5 到 20 块；筑基这一阶照灵石的日耗大十倍；冲关的辅助丹药约是服它那一境界握灵石修炼六百日的灵石，元婴起日耗不再涨，底价也就不再涨），uses 用途，element 五行（有的才写，取 elements 里的字），key 是不是关键材料。灵草另记年份 age；妖兽材料另记部位 part（parts）和妖兽的种类 species（content/art/species.json 的种类，null 是认不出是哪一种的；content/life/foes.json 遭遇表里的每一种妖兽都有自己的）；成品另记 kind（kinds）；器物方子（kind 方）另记品 q recipe：哪门技艺 craft、每炉的材料 materials、每炉几日 days、出什么 ouality（下、中、上、极：加成照 content/life/geartput（第 42 项的炼制读它，content/life/crafts.json 按阶和品算，effect 写的是那几项、照算出的数写）。放进储物袋时：物品类型是 type（不写照类别的），描述是 uses，效果是 effect（不写是「无」），量词是 unit（不写照类别的）。丹药照引擎认得的名字和写法收进来：用物的规则（apps/engine/turn-rules.cjs 的 useItem）读 effect 里的「恢复30点法力」「修为+5」「每日限服一枚」；mechanics.isAid 认的冲关辅助丹药按原名收，effect 不写数，平时服下会被拒，冲关时才起作用。aliases 是同一样东西的别的叫法。图鉴里查不到的东西没有市价（none），店里不收，只当线索。炼出来的东西有成色（qualities：精、常、残），写在名字后头的括号里（回气丹（精））；没写的算常，查图鉴时照原名查。三阶以上的东西眼下只为认得名字、有个底价：奖励表里还没有它们，做到那一段时再标关键材料、补来路。shop 为 false 的东西店里不卖（听澜帖、神器碎片只从别处来）。功法（数值平衡第二轮，功法上限是目标不是墙）：一阶到五阶每阶五部，金木水火土各一部（element），没写上限，修到它那一阶的境界为止；底价和那一境界的冲关丹药一个尺度（二阶六百、三阶六千、四阶六万、五阶六十万）；坊市和大城的店常年摆一二阶的（trade.json methods），藏经阁换到三阶（sects.json exchange），拍卖会有时出三四阶（trade.json auction），奇遇的格子里有高一阶的一部，主线在上限挡关时给一部；五阶 shop 为 false，只有剧情的机缘给。apps/engine/life/goods.cjs 读这份文件；数都是初值。",
+  "classes": {
+    "灵石": {
+      "unit": "块",
+      "type": "材料",
+      "note": "奖励里的灵石记进主角的当前灵石（第 26 列，按下品灵石计）"
+    },
+    "灵草": {
+      "unit": "株",
+      "type": "材料",
+      "note": "按年份分，年份越老品阶越高"
+    },
+    "妖兽材料": {
+      "unit": "份",
+      "type": "材料",
+      "note": "妖丹和皮骨，按妖兽的种类和阶"
+    },
+    "矿材": {
+      "unit": "块",
+      "type": "材料",
+      "note": "炼器、阵法、傀儡"
+    },
+    "灵物": {
+      "unit": "份",
+      "type": "材料",
+      "note": "天地灵物：高阶丹药、法宝的主材，冲关时可代灵地"
+    },
+    "成品": {
+      "unit": "件",
+      "type": "其他物品",
+      "note": "丹、符、器、功法、方子"
+    }
+  },
+  "tiers": {
+    "一阶": "炼气",
+    "二阶": "筑基",
+    "三阶": "结丹",
+    "四阶": "元婴",
+    "五阶": "化神",
+    "六阶": "炼虚",
+    "七阶": "合体",
+    "八阶": "大乘",
+    "九阶": "渡劫"
+  },
+  "kinds": [
+    "丹",
+    "符",
+    "器",
+    "功法",
+    "方"
+  ],
+  "parts": [
+    "妖丹",
+    "皮骨"
+  ],
+  "elements": "金木水火土雷风冰暗光",
+  "qualities": [
+    "精",
+    "常",
+    "残"
+  ],
+  "none": "无市价",
+  "goods": [
+    {
+      "id": "stone-low",
+      "name": "下品灵石",
+      "class": "灵石",
+      "tier": "一阶",
+      "price": 1,
+      "uses": "修炼、买卖的通货；炼气修士握着修炼，每日一块",
+      "key": false
+    },
+    {
+      "id": "stone-mid",
+      "name": "中品灵石",
+      "class": "灵石",
+      "tier": "二阶",
+      "price": 100,
+      "uses": "一块抵一百块下品灵石；筑基修士修炼、买卖用",
+      "key": false
+    },
+    {
+      "id": "stone-high",
+      "name": "上品灵石",
+      "class": "灵石",
+      "tier": "三阶",
+      "price": 10000,
+      "uses": "一块抵一百块中品灵石，云汀湾少见",
+      "key": false
+    },
+    {
+      "id": "herb-qingling",
+      "name": "青灵草",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 1,
+      "uses": "最常见的灵草，炼聚气散、补气丸",
+      "element": "木",
+      "key": false,
+      "age": 10
+    },
+    {
+      "id": "herb-ninglu",
+      "name": "凝露草",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 2,
+      "uses": "晨露凝在叶上不散，炼回气丹、清心丸",
+      "element": "水",
+      "key": false,
+      "age": 30
+    },
+    {
+      "id": "herb-huangjing-50",
+      "name": "五十年黄精",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 2,
+      "uses": "补气养身，炼辟谷丹",
+      "element": "土",
+      "key": false,
+      "age": 50,
+      "aliases": [
+        "黄精"
+      ]
+    },
+    {
+      "id": "herb-jinxian",
+      "name": "金线草",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "叶上有金线，炼解毒丹",
+      "element": "金",
+      "key": false,
+      "age": 50
+    },
+    {
+      "id": "herb-huangjing-100",
+      "name": "百年黄精",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 6,
+      "uses": "药力足了，炼回春丹、回露丹",
+      "element": "土",
+      "key": false,
+      "age": 100
+    },
+    {
+      "id": "herb-chizhi-100",
+      "name": "百年赤芝",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "炼回露丹的主药",
+      "element": "火",
+      "key": false,
+      "age": 100,
+      "aliases": [
+        "赤芝"
+      ]
+    },
+    {
+      "id": "herb-xueshen-100",
+      "name": "百年血参",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 10,
+      "uses": "补气血，炼回春丹",
+      "element": "木",
+      "key": false,
+      "age": 100,
+      "aliases": [
+        "血参"
+      ]
+    },
+    {
+      "id": "herb-zihou",
+      "name": "照夜芦",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "筑基丹的主药之一，只在沉钟泽里长",
+      "element": "木",
+      "key": true,
+      "age": 100
+    },
+    {
+      "id": "herb-tianling",
+      "name": "汀果",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 35,
+      "uses": "筑基丹的主药之一，只在沉钟泽里长",
+      "element": "木",
+      "key": true,
+      "age": 100
+    },
+    {
+      "id": "herb-yusui",
+      "name": "月纹菌",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "筑基丹的主药之一，只在沉钟泽里长",
+      "element": "水",
+      "key": true,
+      "age": 100
+    },
+    {
+      "id": "herb-qiyan",
+      "name": "泊烟藤",
+      "class": "灵草",
+      "tier": "一阶",
+      "price": 25,
+      "uses": "筑基丹的主药之一，只在沉钟泽里长",
+      "element": "木",
+      "key": true,
+      "age": 100
+    },
+    {
+      "id": "herb-chizhi-300",
+      "name": "三百年赤芝",
+      "class": "灵草",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "筑基修士炼精元丹的主药",
+      "element": "火",
+      "key": false,
+      "age": 300
+    },
+    {
+      "id": "herb-xueshen-300",
+      "name": "三百年血参",
+      "class": "灵草",
+      "tier": "二阶",
+      "price": 50,
+      "uses": "炼生肌丹",
+      "element": "木",
+      "key": false,
+      "age": 300
+    },
+    {
+      "id": "herb-bingpo",
+      "name": "冰魄草",
+      "class": "灵草",
+      "tier": "二阶",
+      "price": 45,
+      "uses": "寒气逼人，炼冰属性的丹药",
+      "element": "冰",
+      "key": false,
+      "age": 300
+    },
+    {
+      "id": "herb-dihuo",
+      "name": "地火莲",
+      "class": "灵草",
+      "tier": "二阶",
+      "price": 60,
+      "uses": "长在地火旁，炼回元丹，炼器时淬火",
+      "element": "火",
+      "key": false,
+      "age": 300
+    },
+    {
+      "id": "herb-lingzhi-1000",
+      "name": "千年灵芝",
+      "class": "灵草",
+      "tier": "二阶",
+      "price": 120,
+      "uses": "炼精元丹，也可上交宗门换贡献",
+      "element": "木",
+      "key": false,
+      "age": 1000
+    },
+    {
+      "id": "beast-wolf-1-core",
+      "name": "一阶狼妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶狼妖的内丹，炼丹、炼器的主材",
+      "key": false,
+      "part": "妖丹",
+      "species": "wolf",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-wolf-1-part",
+      "name": "一阶狼皮",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "制法衣、符纸",
+      "key": false,
+      "part": "皮骨",
+      "species": "wolf",
+      "unit": "张"
+    },
+    {
+      "id": "beast-boar-1-core",
+      "name": "一阶野猪妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶野猪妖的内丹，炼丹、炼器的主材",
+      "element": "土",
+      "key": false,
+      "part": "妖丹",
+      "species": "boar",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-boar-1-part",
+      "name": "一阶野猪獠牙",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "炼飞刀、锥一类的法器",
+      "element": "土",
+      "key": false,
+      "part": "皮骨",
+      "species": "boar",
+      "unit": "根"
+    },
+    {
+      "id": "beast-snake-1-core",
+      "name": "一阶蟒妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶蟒妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "snake",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-snake-1-part",
+      "name": "一阶蟒胆",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "炼丹，明目解毒",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "snake",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-ape-1-core",
+      "name": "一阶猿妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶猿妖的内丹，炼丹、炼器的主材",
+      "element": "金",
+      "key": false,
+      "part": "妖丹",
+      "species": "ape",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-ape-1-part",
+      "name": "一阶猿骨",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "炼器，也能入药炼体",
+      "element": "金",
+      "key": false,
+      "part": "皮骨",
+      "species": "ape",
+      "unit": "根"
+    },
+    {
+      "id": "beast-bear-1-core",
+      "name": "一阶熊妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶熊妖的内丹，炼丹、炼器的主材",
+      "element": "土",
+      "key": false,
+      "part": "妖丹",
+      "species": "bear",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-bear-1-part",
+      "name": "一阶熊胆",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "炼疗伤的丹药",
+      "element": "土",
+      "key": false,
+      "part": "皮骨",
+      "species": "bear",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-tiger-1-core",
+      "name": "一阶虎妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶虎妖的内丹，炼丹、炼器的主材",
+      "element": "金",
+      "key": false,
+      "part": "妖丹",
+      "species": "tiger",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-tiger-1-part",
+      "name": "一阶虎骨",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "炼器，泡酒强筋",
+      "element": "金",
+      "key": false,
+      "part": "皮骨",
+      "species": "tiger",
+      "unit": "根"
+    },
+    {
+      "id": "beast-fox-1-core",
+      "name": "一阶狐妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶狐妖的内丹，炼丹、炼器的主材",
+      "element": "火",
+      "key": false,
+      "part": "妖丹",
+      "species": "fox",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-fox-1-part",
+      "name": "一阶狐皮",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "制法衣",
+      "element": "火",
+      "key": false,
+      "part": "皮骨",
+      "species": "fox",
+      "unit": "张"
+    },
+    {
+      "id": "beast-eagle-1-core",
+      "name": "一阶鹰妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶鹰妖的内丹，炼丹、炼器的主材",
+      "element": "风",
+      "key": false,
+      "part": "妖丹",
+      "species": "eagle",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-eagle-1-part",
+      "name": "一阶鹰羽",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "制遁符、风属性的法器",
+      "element": "风",
+      "key": false,
+      "part": "皮骨",
+      "species": "eagle",
+      "unit": "根"
+    },
+    {
+      "id": "beast-spider-1-core",
+      "name": "一阶蛛妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶蛛妖的内丹，炼丹、炼器的主材",
+      "element": "暗",
+      "key": false,
+      "part": "妖丹",
+      "species": "spider",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-spider-1-part",
+      "name": "一阶蛛丝",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "炼缚索，织法衣",
+      "element": "暗",
+      "key": false,
+      "part": "皮骨",
+      "species": "spider",
+      "unit": "卷"
+    },
+    {
+      "id": "beast-toad-1-core",
+      "name": "一阶蟾妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶蟾妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "toad",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-toad-1-part",
+      "name": "一阶蟾酥",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "炼解毒的丹药，也能制毒",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "toad",
+      "unit": "份"
+    },
+    {
+      "id": "beast-leopard-1-core",
+      "name": "一阶豹妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶豹妖的内丹，炼丹、炼器的主材",
+      "element": "风",
+      "key": false,
+      "part": "妖丹",
+      "species": "leopard",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-leopard-1-part",
+      "name": "一阶豹皮",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "制轻便的法衣",
+      "element": "风",
+      "key": false,
+      "part": "皮骨",
+      "species": "leopard",
+      "unit": "张"
+    },
+    {
+      "id": "beast-crow-1-core",
+      "name": "一阶鸦妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶鸦妖的内丹，炼丹、炼器的主材",
+      "element": "火",
+      "key": false,
+      "part": "妖丹",
+      "species": "crow",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-crow-1-part",
+      "name": "一阶鸦羽",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "制符，炼火属性的法器",
+      "element": "火",
+      "key": false,
+      "part": "皮骨",
+      "species": "crow",
+      "unit": "根"
+    },
+    {
+      "id": "beast-turtle-1-core",
+      "name": "一阶龟妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶龟妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "turtle",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-turtle-1-part",
+      "name": "一阶龟甲",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "炼盾、甲一类护身的法器",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "turtle",
+      "unit": "块"
+    },
+    {
+      "id": "beast-carp-1-core",
+      "name": "一阶鱼妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "一阶鱼妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "carp",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-carp-1-part",
+      "name": "一阶鱼鳞",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "炼护身的法器，也能入药",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "carp",
+      "unit": "片"
+    },
+    {
+      "id": "beast-any-1-core",
+      "name": "一阶妖丹",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 6,
+      "uses": "一阶妖兽的内丹，认不出是哪一种的",
+      "key": false,
+      "part": "妖丹",
+      "species": null,
+      "unit": "枚"
+    },
+    {
+      "id": "beast-any-1-part",
+      "name": "一阶兽骨",
+      "class": "妖兽材料",
+      "tier": "一阶",
+      "price": 2,
+      "uses": "一阶妖兽的骨头，炼器的辅料",
+      "key": false,
+      "part": "皮骨",
+      "species": null,
+      "unit": "根"
+    },
+    {
+      "id": "beast-wolf-2-core",
+      "name": "二阶狼妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶狼妖的内丹，炼丹、炼器的主材",
+      "key": false,
+      "part": "妖丹",
+      "species": "wolf",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-wolf-2-part",
+      "name": "二阶狼皮",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 20,
+      "uses": "制法衣、符纸",
+      "key": false,
+      "part": "皮骨",
+      "species": "wolf",
+      "unit": "张"
+    },
+    {
+      "id": "beast-boar-2-core",
+      "name": "二阶野猪妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶野猪妖的内丹，炼丹、炼器的主材",
+      "element": "土",
+      "key": false,
+      "part": "妖丹",
+      "species": "boar",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-boar-2-part",
+      "name": "二阶野猪獠牙",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 15,
+      "uses": "炼飞刀、锥一类的法器",
+      "element": "土",
+      "key": false,
+      "part": "皮骨",
+      "species": "boar",
+      "unit": "根"
+    },
+    {
+      "id": "beast-snake-2-core",
+      "name": "二阶蟒妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶蟒妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "snake",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-snake-2-part",
+      "name": "二阶蟒胆",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 25,
+      "uses": "炼丹，明目解毒",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "snake",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-ape-2-core",
+      "name": "二阶猿妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶猿妖的内丹，炼丹、炼器的主材",
+      "element": "金",
+      "key": false,
+      "part": "妖丹",
+      "species": "ape",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-ape-2-part",
+      "name": "二阶猿骨",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 15,
+      "uses": "炼器，也能入药炼体",
+      "element": "金",
+      "key": false,
+      "part": "皮骨",
+      "species": "ape",
+      "unit": "根"
+    },
+    {
+      "id": "beast-bear-2-core",
+      "name": "二阶熊妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶熊妖的内丹，炼丹、炼器的主材",
+      "element": "土",
+      "key": false,
+      "part": "妖丹",
+      "species": "bear",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-bear-2-part",
+      "name": "二阶熊胆",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 25,
+      "uses": "炼疗伤的丹药",
+      "element": "土",
+      "key": false,
+      "part": "皮骨",
+      "species": "bear",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-tiger-2-core",
+      "name": "二阶虎妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶虎妖的内丹，炼丹、炼器的主材",
+      "element": "金",
+      "key": false,
+      "part": "妖丹",
+      "species": "tiger",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-tiger-2-part",
+      "name": "二阶虎骨",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 20,
+      "uses": "炼器，泡酒强筋",
+      "element": "金",
+      "key": false,
+      "part": "皮骨",
+      "species": "tiger",
+      "unit": "根"
+    },
+    {
+      "id": "beast-fox-2-core",
+      "name": "二阶狐妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶狐妖的内丹，炼丹、炼器的主材",
+      "element": "火",
+      "key": false,
+      "part": "妖丹",
+      "species": "fox",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-fox-2-part",
+      "name": "二阶狐皮",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 20,
+      "uses": "制法衣",
+      "element": "火",
+      "key": false,
+      "part": "皮骨",
+      "species": "fox",
+      "unit": "张"
+    },
+    {
+      "id": "beast-eagle-2-core",
+      "name": "二阶鹰妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶鹰妖的内丹，炼丹、炼器的主材",
+      "element": "风",
+      "key": false,
+      "part": "妖丹",
+      "species": "eagle",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-eagle-2-part",
+      "name": "二阶鹰羽",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 15,
+      "uses": "制遁符、风属性的法器",
+      "element": "风",
+      "key": false,
+      "part": "皮骨",
+      "species": "eagle",
+      "unit": "根"
+    },
+    {
+      "id": "beast-spider-2-core",
+      "name": "二阶蛛妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶蛛妖的内丹，炼丹、炼器的主材",
+      "element": "暗",
+      "key": false,
+      "part": "妖丹",
+      "species": "spider",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-spider-2-part",
+      "name": "二阶蛛丝",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 20,
+      "uses": "炼缚索，织法衣",
+      "element": "暗",
+      "key": false,
+      "part": "皮骨",
+      "species": "spider",
+      "unit": "卷"
+    },
+    {
+      "id": "beast-toad-2-core",
+      "name": "二阶蟾妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶蟾妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "toad",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-toad-2-part",
+      "name": "二阶蟾酥",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 25,
+      "uses": "炼解毒的丹药，也能制毒",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "toad",
+      "unit": "份"
+    },
+    {
+      "id": "beast-leopard-2-core",
+      "name": "二阶豹妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶豹妖的内丹，炼丹、炼器的主材",
+      "element": "风",
+      "key": false,
+      "part": "妖丹",
+      "species": "leopard",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-leopard-2-part",
+      "name": "二阶豹皮",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 20,
+      "uses": "制轻便的法衣",
+      "element": "风",
+      "key": false,
+      "part": "皮骨",
+      "species": "leopard",
+      "unit": "张"
+    },
+    {
+      "id": "beast-crow-2-core",
+      "name": "二阶鸦妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶鸦妖的内丹，炼丹、炼器的主材",
+      "element": "火",
+      "key": false,
+      "part": "妖丹",
+      "species": "crow",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-crow-2-part",
+      "name": "二阶鸦羽",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 15,
+      "uses": "制符，炼火属性的法器",
+      "element": "火",
+      "key": false,
+      "part": "皮骨",
+      "species": "crow",
+      "unit": "根"
+    },
+    {
+      "id": "beast-turtle-2-core",
+      "name": "二阶龟妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶龟妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "turtle",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-turtle-2-part",
+      "name": "二阶龟甲",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 25,
+      "uses": "炼盾、甲一类护身的法器",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "turtle",
+      "unit": "块"
+    },
+    {
+      "id": "beast-carp-2-core",
+      "name": "二阶鱼妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "二阶鱼妖的内丹，炼丹、炼器的主材",
+      "element": "水",
+      "key": false,
+      "part": "妖丹",
+      "species": "carp",
+      "unit": "枚"
+    },
+    {
+      "id": "beast-carp-2-part",
+      "name": "二阶鱼鳞",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 15,
+      "uses": "炼护身的法器，也能入药",
+      "element": "水",
+      "key": false,
+      "part": "皮骨",
+      "species": "carp",
+      "unit": "片"
+    },
+    {
+      "id": "beast-any-2-core",
+      "name": "二阶妖丹",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 30,
+      "uses": "二阶妖兽的内丹，认不出是哪一种的",
+      "key": false,
+      "part": "妖丹",
+      "species": null,
+      "unit": "枚"
+    },
+    {
+      "id": "beast-any-2-part",
+      "name": "二阶兽骨",
+      "class": "妖兽材料",
+      "tier": "二阶",
+      "price": 10,
+      "uses": "二阶妖兽的骨头，炼器的辅料",
+      "key": false,
+      "part": "皮骨",
+      "species": null,
+      "unit": "根"
+    },
+    {
+      "id": "ore-jingtie",
+      "name": "精铁",
+      "class": "矿材",
+      "tier": "一阶",
+      "price": 2,
+      "uses": "炼器最寻常的材料",
+      "element": "金",
+      "key": false
+    },
+    {
+      "id": "ore-chitong",
+      "name": "赤铜精",
+      "class": "矿材",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "炼器、制符时调和火性",
+      "element": "火",
+      "key": false
+    },
+    {
+      "id": "ore-qingyu",
+      "name": "青灵玉",
+      "class": "矿材",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "布阵、刻阵盘",
+      "element": "土",
+      "key": false
+    },
+    {
+      "id": "ore-xuantie",
+      "name": "玄铁",
+      "class": "矿材",
+      "tier": "一阶",
+      "price": 6,
+      "uses": "沉重坚韧，炼飞剑、盾",
+      "element": "金",
+      "key": false
+    },
+    {
+      "id": "ore-puppet",
+      "name": "傀儡残件",
+      "class": "矿材",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "傀儡身上拆下的残件，炼器、修傀儡用",
+      "element": "金",
+      "key": false,
+      "unit": "件"
+    },
+    {
+      "id": "ore-hantie",
+      "name": "寒铁",
+      "class": "矿材",
+      "tier": "二阶",
+      "price": 25,
+      "uses": "寒气内敛，炼冰属性的法器",
+      "element": "冰",
+      "key": false
+    },
+    {
+      "id": "ore-xingchen",
+      "name": "星辰砂",
+      "class": "矿材",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "布高阶阵法、炼法宝",
+      "element": "土",
+      "key": false,
+      "unit": "两"
+    },
+    {
+      "id": "ore-gengjin",
+      "name": "庚金",
+      "class": "矿材",
+      "tier": "二阶",
+      "price": 60,
+      "uses": "锋锐无比，炼飞剑的上品材料",
+      "element": "金",
+      "key": false
+    },
+    {
+      "id": "spirit-leiji",
+      "name": "雷击木",
+      "class": "灵物",
+      "tier": "一阶",
+      "price": 20,
+      "uses": "被天雷劈过的古木，炼雷属性的法器、符",
+      "element": "雷",
+      "key": false,
+      "unit": "截"
+    },
+    {
+      "id": "spirit-puppet-core",
+      "name": "傀儡核心",
+      "class": "灵物",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "驱动傀儡的核心，炼傀儡、布阵用",
+      "key": false,
+      "unit": "枚"
+    },
+    {
+      "id": "spirit-shizhong",
+      "name": "石中灵乳",
+      "class": "灵物",
+      "tier": "一阶",
+      "price": 40,
+      "uses": "滋养经脉，冲关时可代灵地",
+      "element": "水",
+      "key": false,
+      "unit": "滴"
+    },
+    {
+      "id": "spirit-huoyun",
+      "name": "火云晶",
+      "class": "灵物",
+      "tier": "二阶",
+      "price": 120,
+      "uses": "炼火属性的法宝",
+      "element": "火",
+      "key": false,
+      "unit": "块"
+    },
+    {
+      "id": "spirit-tianlei",
+      "name": "天雷竹",
+      "class": "灵物",
+      "tier": "二阶",
+      "price": 200,
+      "uses": "炼雷属性的法宝",
+      "element": "雷",
+      "key": false,
+      "unit": "节"
+    },
+    {
+      "id": "spirit-lingru-1000",
+      "name": "千年灵乳",
+      "class": "灵物",
+      "tier": "二阶",
+      "price": 400,
+      "uses": "冲击结丹时可代灵地，也是结丹丹药的药引",
+      "element": "水",
+      "key": true,
+      "unit": "滴"
+    },
+    {
+      "id": "pill-buqi",
+      "name": "补气丸",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 1,
+      "uses": "药铺常见的丸药，回一点法力",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复8点法力"
+    },
+    {
+      "id": "pill-bigu",
+      "name": "辟谷丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 1,
+      "uses": "服下可十日不饥",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "服下一枚可十日不饥，恢复10点血量",
+      "aliases": [
+        "下品辟谷丹"
+      ]
+    },
+    {
+      "id": "pill-juqi",
+      "name": "聚气散",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 2,
+      "uses": "炼气修士回复法力的散剂",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "瓶",
+      "effect": "恢复10点法力"
+    },
+    {
+      "id": "pill-qingxin",
+      "name": "清心丸",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "静心凝神，回一点法力",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复10点法力"
+    },
+    {
+      "id": "pill-huiqi",
+      "name": "回气丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "回复法力",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复30点法力"
+    },
+    {
+      "id": "pill-huichun",
+      "name": "回春丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "疗伤",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复30点血量"
+    },
+    {
+      "id": "pill-jiedu",
+      "name": "解毒丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 6,
+      "uses": "解寻常毒物，也能减丹毒",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复20点血量，可解寻常毒物"
+    },
+    {
+      "id": "pill-huanglong",
+      "name": "回露丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 15,
+      "uses": "炼气期增进修为的丹药",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "修为+5，每日限服一枚"
+    },
+    {
+      "id": "pill-huiyuan",
+      "name": "回元丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 40,
+      "uses": "筑基修士回复法力",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复150点法力"
+    },
+    {
+      "id": "pill-shengji",
+      "name": "生肌丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 45,
+      "uses": "筑基修士疗伤",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "恢复200点血量"
+    },
+    {
+      "id": "pill-jingyuan",
+      "name": "精元丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 120,
+      "uses": "筑基期增进修为的丹药",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "修为+3，每日限服一枚"
+    },
+    {
+      "id": "aid-zhuji",
+      "name": "筑基丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 600,
+      "uses": "冲击筑基时服用，添几分成算",
+      "key": true,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击筑基时服用"
+    },
+    {
+      "id": "aid-jiangchen",
+      "name": "降尘丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 6000,
+      "uses": "冲击结丹时服用，添几分成算",
+      "key": true,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击结丹时服用"
+    },
+    {
+      "id": "aid-jiejin",
+      "name": "结金丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 5000,
+      "uses": "冲击结丹时服用，添几分成算",
+      "key": true,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击结丹时服用"
+    },
+    {
+      "id": "aid-ningjin",
+      "name": "凝金丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 8000,
+      "uses": "冲击结丹时服用，添几分成算",
+      "key": true,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击结丹时服用"
+    },
+    {
+      "id": "aid-jieying",
+      "name": "结婴丹",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 60000,
+      "uses": "冲击元婴时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击元婴时服用"
+    },
+    {
+      "id": "aid-jiuqu",
+      "name": "九曲灵参丸",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 80000,
+      "uses": "冲击元婴时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击元婴时服用"
+    },
+    {
+      "id": "aid-huashen",
+      "name": "化神丹",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 600000,
+      "uses": "冲击化神时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击化神时服用"
+    },
+    {
+      "id": "aid-lianxu",
+      "name": "炼虚丹",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "冲击炼虚时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击炼虚时服用"
+    },
+    {
+      "id": "method-1-jin",
+      "name": "庚金诀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "金属性的一阶功法，可修到炼气为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "金"
+    },
+    {
+      "id": "method-1-mu",
+      "name": "青木诀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "木属性的一阶功法，可修到炼气为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "木"
+    },
+    {
+      "id": "method-1-shui",
+      "name": "玄水诀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "水属性的一阶功法，可修到炼气为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "水"
+    },
+    {
+      "id": "method-1-huo",
+      "name": "赤焰诀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "火属性的一阶功法，可修到炼气为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "火"
+    },
+    {
+      "id": "method-1-tu",
+      "name": "厚土诀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "土属性的一阶功法，可修到炼气为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "土"
+    },
+    {
+      "id": "method-2-jin",
+      "name": "锐金诀",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "金属性的二阶功法，可修到筑基为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "金"
+    },
+    {
+      "id": "method-2-mu",
+      "name": "枯荣诀",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "木属性的二阶功法，可修到筑基为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "木"
+    },
+    {
+      "id": "method-2-shui",
+      "name": "癸水真经",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "水属性的二阶功法，可修到筑基为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "水"
+    },
+    {
+      "id": "method-2-huo",
+      "name": "离火真诀",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "火属性的二阶功法，可修到筑基为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "火"
+    },
+    {
+      "id": "method-2-tu",
+      "name": "镇岳功",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "土属性的二阶功法，可修到筑基为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "土"
+    },
+    {
+      "id": "method-3-jin",
+      "name": "太白金章",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 6000,
+      "uses": "金属性的三阶功法，可修到结丹为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "金"
+    },
+    {
+      "id": "method-3-mu",
+      "name": "万木归元功",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 6000,
+      "uses": "木属性的三阶功法，可修到结丹为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "木"
+    },
+    {
+      "id": "method-3-shui",
+      "name": "弱水真解",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 6000,
+      "uses": "水属性的三阶功法，可修到结丹为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "水"
+    },
+    {
+      "id": "method-3-huo",
+      "name": "南明离火经",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 6000,
+      "uses": "火属性的三阶功法，可修到结丹为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "火"
+    },
+    {
+      "id": "method-3-tu",
+      "name": "戊己玄黄功",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 6000,
+      "uses": "土属性的三阶功法，可修到结丹为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "土"
+    },
+    {
+      "id": "method-4-jin",
+      "name": "太乙庚金诀",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 60000,
+      "uses": "金属性的四阶功法，可修到元婴为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "金"
+    },
+    {
+      "id": "method-4-mu",
+      "name": "青帝长生经",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 60000,
+      "uses": "木属性的四阶功法，可修到元婴为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "木"
+    },
+    {
+      "id": "method-4-shui",
+      "name": "天一真水诀",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 60000,
+      "uses": "水属性的四阶功法，可修到元婴为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "水"
+    },
+    {
+      "id": "method-4-huo",
+      "name": "太阳真火经",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 60000,
+      "uses": "火属性的四阶功法，可修到元婴为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "火"
+    },
+    {
+      "id": "method-4-tu",
+      "name": "厚德载物经",
+      "class": "成品",
+      "tier": "四阶",
+      "price": 60000,
+      "uses": "土属性的四阶功法，可修到元婴为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "土"
+    },
+    {
+      "id": "method-5-jin",
+      "name": "先天庚金经",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "金属性的五阶功法，可修到化神为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "金",
+      "shop": false
+    },
+    {
+      "id": "method-5-mu",
+      "name": "太乙青木经",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "木属性的五阶功法，可修到化神为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "木",
+      "shop": false
+    },
+    {
+      "id": "method-5-shui",
+      "name": "玄冥真经",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "水属性的五阶功法，可修到化神为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "水",
+      "shop": false
+    },
+    {
+      "id": "method-5-huo",
+      "name": "朱雀真经",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "火属性的五阶功法，可修到化神为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "火",
+      "shop": false
+    },
+    {
+      "id": "method-5-tu",
+      "name": "后土真经",
+      "class": "成品",
+      "tier": "五阶",
+      "price": 600000,
+      "uses": "土属性的五阶功法，可修到化神为止",
+      "key": false,
+      "kind": "功法",
+      "type": "功法",
+      "unit": "部",
+      "effect": "主修的功法",
+      "element": "土",
+      "shop": false
+    },
+    {
+      "id": "aid-heti",
+      "name": "合体丹",
+      "class": "成品",
+      "tier": "六阶",
+      "price": 600000,
+      "uses": "冲击合体时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击合体时服用"
+    },
+    {
+      "id": "aid-dacheng",
+      "name": "大乘丹",
+      "class": "成品",
+      "tier": "七阶",
+      "price": 600000,
+      "uses": "冲击大乘时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击大乘时服用"
+    },
+    {
+      "id": "aid-dujie",
+      "name": "渡劫丹",
+      "class": "成品",
+      "tier": "八阶",
+      "price": 600000,
+      "uses": "冲击渡劫时服用，添几分成算",
+      "key": false,
+      "kind": "丹",
+      "type": "消耗品",
+      "unit": "枚",
+      "effect": "冲击渡劫时服用"
+    },
+    {
+      "id": "charm-huodan",
+      "name": "火弹符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 3,
+      "uses": "激发后化作火弹攻敌",
+      "element": "火",
+      "key": false,
+      "kind": "符",
+      "type": "消耗品",
+      "unit": "张",
+      "effect": "激发后化作火弹攻敌"
+    },
+    {
+      "id": "charm-shenxing",
+      "name": "神行符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 4,
+      "uses": "贴在腿上，一日之内脚程大增",
+      "element": "风",
+      "key": false,
+      "kind": "符",
+      "type": "消耗品",
+      "unit": "张",
+      "effect": "贴在腿上，一日之内脚程大增"
+    },
+    {
+      "id": "charm-jingang",
+      "name": "金刚符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 5,
+      "uses": "激发后护住周身，挡下一击",
+      "element": "金",
+      "key": false,
+      "kind": "符",
+      "type": "消耗品",
+      "unit": "张",
+      "effect": "激发后护住周身，挡下一击"
+    },
+    {
+      "id": "charm-nixing",
+      "name": "匿形符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 8,
+      "uses": "隐去身形一炷香",
+      "element": "暗",
+      "key": false,
+      "kind": "符",
+      "type": "消耗品",
+      "unit": "张",
+      "effect": "隐去身形一炷香"
+    },
+    {
+      "id": "charm-tianlei",
+      "name": "天雷符",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 60,
+      "uses": "引一道天雷击敌",
+      "element": "雷",
+      "key": false,
+      "kind": "符",
+      "type": "消耗品",
+      "unit": "张",
+      "effect": "引一道天雷击敌"
+    },
+    {
+      "id": "tool-zhishi",
+      "name": "制式飞剑",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 20,
+      "uses": "宗门发给弟子的制式法器；从弟子身上夺来的是赃物",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "武器",
+      "effect": "物攻+8",
+      "quality": "中"
+    },
+    {
+      "id": "tool-qingmu",
+      "name": "青木盾",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 25,
+      "uses": "一阶法器，护身的木盾",
+      "element": "木",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "护甲",
+      "effect": "物防+12",
+      "quality": "上"
+    },
+    {
+      "id": "tool-wujin",
+      "name": "乌金飞刀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 28,
+      "uses": "一阶法器，飞刀",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "武器",
+      "effect": "物攻+8，法攻+7",
+      "quality": "中"
+    },
+    {
+      "id": "tool-qingfeng",
+      "name": "青锋剑",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "一阶法器，飞剑",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "武器",
+      "effect": "物攻+12",
+      "quality": "上"
+    },
+    {
+      "id": "tool-fayi",
+      "name": "护身法衣",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "一阶法器，护身的法衣",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "护甲",
+      "effect": "物防+8，法防+7",
+      "quality": "中"
+    },
+    {
+      "id": "tool-yinhun",
+      "name": "阴魂幡",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 35,
+      "uses": "邪修的邪器，正道修士见了要起疑",
+      "element": "暗",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "法宝",
+      "effect": "法攻+11",
+      "quality": "上"
+    },
+    {
+      "id": "tool-jinguang",
+      "name": "金光镜",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 40,
+      "uses": "一阶法器，照人护身",
+      "element": "光",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "法宝",
+      "effect": "法防+11，神识+3",
+      "quality": "上"
+    },
+    {
+      "id": "tool-shigu",
+      "name": "蚀骨钉",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 180,
+      "uses": "魔修的邪器",
+      "element": "暗",
+      "key": false,
+      "kind": "器",
+      "unit": "件",
+      "type": "法宝",
+      "effect": "法攻+42",
+      "quality": "中"
+    },
+    {
+      "id": "tool-julingpan",
+      "name": "聚灵阵盘",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "布下聚灵阵：在这里修炼，环境 +0.1（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-mizongpan",
+      "name": "迷踪阵盘",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 50,
+      "uses": "布下隐匿阵：冲着这里来的钟涨得慢一半（第 43 项）",
+      "element": "暗",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-julingpan-2",
+      "name": "二阶聚灵阵盘",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 450,
+      "uses": "布下二阶聚灵阵：在这里修炼，环境 +0.2（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-julingpan-3",
+      "name": "三阶聚灵阵盘",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 3200,
+      "uses": "布下三阶聚灵阵：在这里修炼，环境 +0.3（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-jinzhipan",
+      "name": "禁制阵盘",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 80,
+      "uses": "布下禁制：在这里闭关不被打扰（第 43 项）",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-jinzhipan-2",
+      "name": "二阶禁制阵盘",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 600,
+      "uses": "布下二阶禁制：在这里闭关不被打扰（第 43 项）",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-mizongpan-2",
+      "name": "二阶迷踪阵盘",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 380,
+      "uses": "布下二阶隐匿阵：冲着这里来的钟涨得慢一半（第 43 项）",
+      "element": "暗",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-hufupan",
+      "name": "护府阵盘",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 90,
+      "uses": "布下护府阵：有人打上门时，那场斗法自带护阵和困阵（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-hufupan-2",
+      "name": "二阶护府阵盘",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 650,
+      "uses": "布下二阶护府阵：有人打上门时，那场斗法自带护阵和困阵（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "面",
+      "type": "法宝",
+      "effect": "布阵用的阵盘"
+    },
+    {
+      "id": "tool-kunqi",
+      "name": "困阵旗",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 40,
+      "uses": "战前布下困阵：阵里的对手遁不走，脚力按一半算（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-kunqi-2",
+      "name": "二阶困阵旗",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 300,
+      "uses": "战前布下二阶困阵：阵里的对手遁不走，脚力按一半算（第 43 项）",
+      "element": "土",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-shaqi",
+      "name": "杀阵旗",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 50,
+      "uses": "战前布下杀阵：每回合对阵里的对手打一手（第 43 项）",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-shaqi-2",
+      "name": "二阶杀阵旗",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 360,
+      "uses": "战前布下二阶杀阵：每回合对阵里的对手打一手（第 43 项）",
+      "element": "金",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-huanqi",
+      "name": "幻阵旗",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 45,
+      "uses": "战前布下幻阵：对手的命中 −4，第一手归你（第 43 项）",
+      "element": "水",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-huanqi-2",
+      "name": "二阶幻阵旗",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 330,
+      "uses": "战前布下二阶幻阵：对手的命中 −4，第一手归你（第 43 项）",
+      "element": "水",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-huqi",
+      "name": "护阵旗",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 45,
+      "uses": "战前布下护阵：你和同伴受的伤害少三成（第 43 项）",
+      "element": "木",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "tool-huqi-2",
+      "name": "二阶护阵旗",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 330,
+      "uses": "战前布下二阶护阵：你和同伴受的伤害少三成（第 43 项）",
+      "element": "木",
+      "key": false,
+      "kind": "器",
+      "unit": "套",
+      "type": "法宝",
+      "effect": "布阵用的阵旗"
+    },
+    {
+      "id": "recipe-juqi",
+      "name": "丹方·聚气散",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 20,
+      "uses": "炼丹的方子：照它炼出聚气散",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "青灵草",
+            "count": 3
+          }
+        ],
+        "days": 2,
+        "output": {
+          "name": "聚气散",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-huiqi",
+      "name": "丹方·回气丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "炼丹的方子：照它炼出回气丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "凝露草",
+            "count": 2
+          },
+          {
+            "name": "青灵草",
+            "count": 2
+          }
+        ],
+        "days": 3,
+        "output": {
+          "name": "回气丹",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-huichun",
+      "name": "丹方·回春丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 35,
+      "uses": "炼丹的方子：照它炼出回春丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "百年黄精",
+            "count": 1
+          },
+          {
+            "name": "百年血参",
+            "count": 1
+          }
+        ],
+        "days": 3,
+        "output": {
+          "name": "回春丹",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-jiedu",
+      "name": "丹方·解毒丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 30,
+      "uses": "炼丹的方子：照它炼出解毒丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "金线草",
+            "count": 2
+          },
+          {
+            "name": "一阶蟾酥",
+            "count": 1
+          }
+        ],
+        "days": 3,
+        "output": {
+          "name": "解毒丹",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-huanglong",
+      "name": "丹方·回露丹",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 60,
+      "uses": "炼丹的方子：照它炼出回露丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "百年赤芝",
+            "count": 1
+          },
+          {
+            "name": "百年黄精",
+            "count": 1
+          }
+        ],
+        "days": 5,
+        "output": {
+          "name": "回露丹",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "recipe-huiyuan",
+      "name": "丹方·回元丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 300,
+      "uses": "炼丹的方子：照它炼出回元丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "地火莲",
+            "count": 1
+          },
+          {
+            "name": "三百年赤芝",
+            "count": 1
+          }
+        ],
+        "days": 5,
+        "output": {
+          "name": "回元丹",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "recipe-shengji",
+      "name": "丹方·生肌丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 300,
+      "uses": "炼丹的方子：照它炼出生肌丹",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "三百年血参",
+            "count": 1
+          },
+          {
+            "name": "冰魄草",
+            "count": 1
+          }
+        ],
+        "days": 5,
+        "output": {
+          "name": "生肌丹",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "recipe-zhuji",
+      "name": "丹方·筑基丹",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 3000,
+      "uses": "炼丹的方子：照它炼出筑基丹",
+      "key": true,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼丹",
+        "materials": [
+          {
+            "name": "照夜芦",
+            "count": 1
+          },
+          {
+            "name": "汀果",
+            "count": 1
+          },
+          {
+            "name": "月纹菌",
+            "count": 1
+          },
+          {
+            "name": "泊烟藤",
+            "count": 1
+          }
+        ],
+        "days": 30,
+        "output": {
+          "name": "筑基丹",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-qingfeng",
+      "name": "器谱·青锋剑",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 50,
+      "uses": "炼器的方子：照它炼出青锋剑",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼器",
+        "materials": [
+          {
+            "name": "玄铁",
+            "count": 3
+          },
+          {
+            "name": "精铁",
+            "count": 2
+          }
+        ],
+        "days": 7,
+        "output": {
+          "name": "青锋剑",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-fayi",
+      "name": "器谱·护身法衣",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 50,
+      "uses": "炼器的方子：照它炼出护身法衣",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼器",
+        "materials": [
+          {
+            "name": "一阶狼皮",
+            "count": 2
+          },
+          {
+            "name": "一阶蛛丝",
+            "count": 1
+          }
+        ],
+        "days": 7,
+        "output": {
+          "name": "护身法衣",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-wujin",
+      "name": "器谱·乌金飞刀",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 45,
+      "uses": "炼器的方子：照它炼出乌金飞刀",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "炼器",
+        "materials": [
+          {
+            "name": "精铁",
+            "count": 3
+          },
+          {
+            "name": "一阶野猪獠牙",
+            "count": 2
+          }
+        ],
+        "days": 6,
+        "output": {
+          "name": "乌金飞刀",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-huodan",
+      "name": "符谱·火弹符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 15,
+      "uses": "制符的方子：照它炼出火弹符",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "制符",
+        "materials": [
+          {
+            "name": "一阶鸦羽",
+            "count": 1
+          },
+          {
+            "name": "赤铜精",
+            "count": 1
+          }
+        ],
+        "days": 1,
+        "output": {
+          "name": "火弹符",
+          "count": 5
+        }
+      }
+    },
+    {
+      "id": "recipe-jingang",
+      "name": "符谱·金刚符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 25,
+      "uses": "制符的方子：照它炼出金刚符",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "制符",
+        "materials": [
+          {
+            "name": "一阶龟甲",
+            "count": 1
+          },
+          {
+            "name": "精铁",
+            "count": 1
+          }
+        ],
+        "days": 2,
+        "output": {
+          "name": "金刚符",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-shenxing",
+      "name": "符谱·神行符",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 20,
+      "uses": "制符的方子：照它炼出神行符",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "制符",
+        "materials": [
+          {
+            "name": "一阶鹰羽",
+            "count": 2
+          }
+        ],
+        "days": 1,
+        "output": {
+          "name": "神行符",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "recipe-tianlei",
+      "name": "符谱·天雷符",
+      "class": "成品",
+      "tier": "二阶",
+      "price": 400,
+      "uses": "制符的方子：照它炼出天雷符",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "制符",
+        "materials": [
+          {
+            "name": "天雷竹",
+            "count": 1
+          },
+          {
+            "name": "二阶鹰羽",
+            "count": 1
+          }
+        ],
+        "days": 3,
+        "output": {
+          "name": "天雷符",
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "recipe-juling",
+      "name": "阵图·聚灵阵",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 80,
+      "uses": "布阵的方子：照它炼出聚灵阵盘",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "布阵",
+        "materials": [
+          {
+            "name": "青灵玉",
+            "count": 3
+          },
+          {
+            "name": "雷击木",
+            "count": 1
+          }
+        ],
+        "days": 10,
+        "output": {
+          "name": "聚灵阵盘",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "recipe-mizong",
+      "name": "阵图·迷踪阵",
+      "class": "成品",
+      "tier": "一阶",
+      "price": 70,
+      "uses": "布阵的方子：照它炼出迷踪阵盘",
+      "key": false,
+      "kind": "方",
+      "type": "重要物品",
+      "unit": "张",
+      "recipe": {
+        "craft": "布阵",
+        "materials": [
+          {
+            "name": "青灵玉",
+            "count": 2
+          },
+          {
+            "name": "一阶蛛丝",
+            "count": 2
+          }
+        ],
+        "days": 8,
+        "output": {
+          "name": "迷踪阵盘",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "token-shengxian",
+      "name": "听澜帖",
+      "class": "灵物",
+      "tier": "一阶",
+      "price": 300,
+      "uses": "云汀各院发出的入门凭证，持令可直入一宗做外门弟子",
+      "key": false,
+      "type": "重要物品",
+      "unit": "枚",
+      "shop": false
+    },
+    {
+      "id": "relic-shard",
+      "name": "残破神器碎片",
+      "class": "灵物",
+      "tier": "二阶",
+      "price": 200,
+      "uses": "远古神器崩碎后的一片，灵力浩瀚，却带着诅咒，拿在手里心神不宁",
+      "key": false,
+      "unit": "片",
+      "shop": false
+    }
+  ]
+}

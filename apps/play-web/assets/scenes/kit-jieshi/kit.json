@@ -1,0 +1,105 @@
+{
+ "id": "kit-jieshi",
+ "family": "jieshi",
+ "name": "城镇街市",
+ "layout": "street",
+ "ground": 4.0,
+ "base": {
+  "kind": "town",
+  "indoor": false,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36],
+    "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]
+   },
+   "read": {
+    "wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36],
+    "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]
+   },
+   "sheet": {
+    "wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34],
+    "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]
+   },
+   "cult": {
+    "wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33],
+    "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]
+   },
+   "close": {
+    "wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34],
+    "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]
+   },
+   "cine1": {
+    "wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40],
+    "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]
+   },
+   "cine2": {
+    "wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40],
+    "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear",
+   "cloud",
+   "mist",
+   "rain"
+  ],
+  "ambience": {
+   "night": "amb.insects",
+   "dawn": "amb.wind",
+   "day": "amb.wind",
+   "dusk": "amb.wind"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "haze"
+  },
+  "protagonist": {
+   "pose": "stand"
+  }
+ },
+ "elements": [
+  {"id": "far-roofs", "file": "far-roofs.webp", "role": "far", "px": [2172, 336], "bytes": [149562, 48868], "v": "bbfbf51f", "height": 0, "foot": 0.52, "top": 0.1, "feature": 0.58},
+  {"id": "far-wall", "file": "far-wall.webp", "role": "far", "px": [2172, 273], "bytes": [133718, 42270], "v": "72c81fa9", "height": 0, "foot": 0.45, "top": 0.05, "feature": 0.38, "tags": ["city", "capital", "wall"], "weight": 0.8},
+  {"id": "far-pagoda", "file": "far-pagoda.webp", "role": "far", "px": [2172, 397], "bytes": [170840, 53022], "v": "743544e1", "height": 0, "foot": 0.5, "top": 0.1, "feature": 0.31, "tags": ["grand", "town", "market"]},
+  {"id": "far-hills", "file": "far-hills.webp", "role": "far", "px": [2172, 359], "bytes": [157072, 48888], "v": "a7373a2c", "height": 0, "foot": 0.5, "top": 0.12, "feature": 0.55, "tags": ["village", "rustic", "clan", "town"]},
+  {"id": "ground-stone", "file": "ground-stone.webp", "role": "ground", "px": [2172, 569], "bytes": [405432, 103704], "v": "4b7775df", "height": 5.5, "foot": 0, "top": 0.02, "stretch": 2.4, "tags": ["city", "capital", "town", "market", "grand"], "weight": 1.2},
+  {"id": "ground-earth", "file": "ground-earth.webp", "role": "ground", "px": [2172, 468], "bytes": [286790, 78036], "v": "16fcc881", "height": 4.6, "foot": 0, "top": 0.02, "stretch": 2.4, "tags": ["village", "rustic", "dry", "clan"], "avoid": ["capital", "grand"], "weight": 0.7},
+  {"id": "ground-canal", "file": "ground-canal.webp", "role": "ground", "px": [2172, 471], "bytes": [303298, 82138], "v": "762fb169", "height": 4.6, "foot": 0, "top": 0.02, "stretch": 2.4, "tags": ["water"], "avoid": ["dry"], "weight": 0.2},
+  {"id": "inn", "file": "inn.webp", "role": "front", "px": [1327, 1034], "bytes": [420610, 128526], "v": "539711f4", "height": 14.6, "foot": 0.905, "eave": 0.53, "tags": ["town", "market", "city"], "weight": 1.2, "mask": "3fc3fcffffff7fe7fe7fe7fe7fe7fe7fe7fe", "body": [0.079, 0.92], "crown": 0.0},
+  {"id": "teahouse", "file": "teahouse.webp", "role": "front", "px": [1430, 945], "bytes": [441306, 124538], "v": "808b099f", "height": 12.5, "foot": 0.9, "eave": 0.445, "tags": ["town", "market", "water"], "weight": 1.0, "mask": "2043fcfff7feffffff7fe7fe7fe7fefff7fe", "body": [0.055, 0.94], "crown": 0.0},
+  {"id": "houses", "file": "houses.webp", "role": "front", "px": [1288, 789], "bytes": [352128, 102496], "v": "e706ffd0", "height": 15.0, "foot": 0.85, "eave": 0.5, "tags": ["town", "village", "water", "rustic"], "weight": 1.2, "mask": "422fe3fffffffffffffffffffffffffff7fe", "body": [0.033, 0.964], "crown": 0.0},
+  {"id": "hall", "file": "hall.webp", "role": "front", "px": [1423, 982], "bytes": [492948, 133356], "v": "a7e264c7", "height": 15.5, "foot": 0.905, "eave": 0.445, "tags": ["hall", "tower", "clan", "city", "capital", "grand"], "avoid": ["village", "rustic"], "weight": 0.8, "mask": "3fc7fefff7feffffffffffffffffffffffff", "body": [0.013, 0.987], "crown": 0.0},
+  {"id": "tower", "file": "tower.webp", "role": "front", "px": [1286, 1044], "bytes": [443344, 144172], "v": "6979ea89", "height": 19.0, "foot": 0.915, "eave": 0.625, "tags": ["tower", "grand", "capital", "market"], "avoid": ["village", "rustic"], "weight": 0.5, "mask": "3fc7fe7fe3fc7fe7feffffff7fe7fe7fe7fe", "body": [0.072, 0.928], "crown": 0.0},
+  {"id": "arch", "file": "arch.webp", "role": "front", "px": [1450, 964], "bytes": [335726, 107432], "v": "a73626b5", "height": 19.0, "foot": 0.895, "plaque": {"box": [0.369, 0.333, 0.631, 0.429], "ink": "gold"}, "opening": true, "tags": ["town"], "avoid": ["capital", "city", "village"], "weight": 0.6, "only": "hero", "mask": "1f83fc3fcffffff7fe50a50a50ad9bffffff", "body": [0.052, 0.948], "crown": 0.0},
+  {"id": "stone-arch", "file": "stone-arch.webp", "role": "front", "px": [1470, 985], "bytes": [348898, 102038], "v": "8e4f505c", "height": 17.0, "foot": 0.9, "plaque": {"box": [0.39, 0.225, 0.61, 0.325], "ink": "dark"}, "opening": true, "tags": ["village", "rustic"], "avoid": ["capital", "city", "grand", "town"], "weight": 0.6, "only": "hero", "mask": "0f01f87fefffffffffd9bd9bd9bd9bffffff", "body": [0.025, 0.975], "crown": 0.0},
+  {"id": "capital-gate", "file": "capital-gate.webp", "role": "front", "px": [1349, 1044], "bytes": [447320, 124812], "v": "a8d7994e", "height": 17.5, "foot": 0.925, "plaque": {"box": [0.325, 0.21, 0.675, 0.272], "ink": "gold"}, "tags": ["capital", "wall", "grand", "city"], "avoid": ["village", "rustic", "clan", "tower"], "weight": 0.6, "only": "hero", "mask": "1f87fe3fc3fc7fe3feffffffffffffffffff", "body": [0.008, 0.992], "crown": 0.0},
+  {"id": "drum-tower", "file": "drum-tower.webp", "role": "front", "px": [1193, 1051], "bytes": [364552, 107082], "v": "849931b1", "height": 18.0, "foot": 0.905, "plaque": {"box": [0.31, 0.19, 0.69, 0.255], "ink": "gold"}, "tags": ["city", "capital", "dark"], "avoid": ["village", "rustic", "clan"], "weight": 0.6, "only": "hero", "mask": "3fcfff7fe7fe7fefff7fefffffffffffffff", "body": [0.018, 0.982], "crown": 0.0},
+  {"id": "ancestral-hall", "file": "ancestral-hall.webp", "role": "front", "px": [1216, 1020], "bytes": [352760, 112752], "v": "ead88ac5", "height": 16.0, "foot": 0.92, "plaque": {"box": [0.32, 0.2, 0.68, 0.28], "ink": "gold"}, "tags": ["clan", "hall"], "avoid": ["capital", "city"], "weight": 0.6, "only": "hero", "mask": "1f83fc3fc7feffffffffffffffffffffffff", "body": [0.018, 0.98], "crown": 0.0},
+  {"id": "opera-stage", "file": "opera-stage.webp", "role": "front", "px": [1320, 1035], "bytes": [371840, 112310], "v": "be1f5c03", "height": 15.0, "foot": 0.905, "plaque": {"box": [0.3, 0.275, 0.705, 0.345], "ink": "gold"}, "tags": ["market"], "avoid": ["capital", "city", "village", "clan"], "weight": 0.5, "only": "hero", "mask": "3fc3fcfff7ff7fe7fe7fe7fe7fe7fe7fe7fe", "body": [0.084, 0.916], "crown": 0.0},
+  {"id": "cottages", "file": "cottages.webp", "role": "front", "px": [1279, 817], "bytes": [383256, 97784], "v": "efe63c0b", "height": 9.5, "foot": 0.865, "eave": 0.47, "tags": ["village", "rustic", "clan"], "avoid": ["capital", "grand", "city", "market"], "weight": 0.5, "mask": "600f00ff0ffffffffffffffffffffffff7fe", "body": [0.038, 0.955], "crown": 0.0},
+  {"id": "willow", "file": "willow.webp", "role": "near", "px": [786, 887], "bytes": [403294, 120692], "v": "b970ccc8", "height": 11.0, "foot": 0.93, "hold": [0.45, 0.93], "tags": ["water", "town", "village"], "mask": "3fc7ffffffff7ff7fe77e2ea3e07feffe3fc"},
+  {"id": "tree", "file": "tree.webp", "role": "near", "px": [1385, 1136], "bytes": [550890, 157514], "v": "9c412a34", "height": 12.0, "foot": 0.93, "hold": [0.35, 0.93], "tags": ["village", "rustic", "clan", "town"], "mask": "1f03fc7feffffffffe7f8710700700780780"},
+  {"id": "lantern-pole", "file": "lantern-pole.webp", "role": "prop", "px": [418, 877], "bytes": [73026, 26622], "v": "25e9e482", "height": 9.0, "foot": 0.95, "depths": ["mid", "near"], "tags": ["market", "town", "city", "capital"], "mask": "040160ffe57e0400400400400400401f03f8"},
+  {"id": "banner-pole", "file": "banner-pole.webp", "role": "prop", "px": [433, 879], "bytes": [78880, 27112], "v": "eb19f9ea", "height": 10.0, "foot": 0.95, "depths": ["mid", "near"], "tags": ["market", "town", "clan", "hall"], "mask": "0803f80f80f80fc0fc0be0bf0801c07e07f0"},
+  {"id": "cart", "file": "cart.webp", "role": "prop", "px": [803, 882], "bytes": [194262, 60344], "v": "5a91e5ce", "height": 4.6, "foot": 0.92, "depths": ["mid", "near"], "tags": ["market", "village", "dry"], "mask": "00401e01f01f1873f47fe7fc7f67fefff3fc"},
+  {"id": "stall-goods", "file": "stall-goods.webp", "role": "prop", "px": [805, 715], "bytes": [186474, 56692], "v": "19f0ff0b", "height": 5.6, "foot": 0.92, "depths": ["mid"], "tags": ["market", "town", "city", "capital"], "weight": 1.2, "mask": "7067fe7ff7ff7fe7fe7fe7fe7feffefff7fe"},
+  {"id": "stall-food", "file": "stall-food.webp", "role": "prop", "px": [796, 720], "bytes": [166070, 54216], "v": "880c1d8f", "height": 5.6, "foot": 0.92, "depths": ["mid"], "tags": ["market", "town", "water"], "mask": "7fe7fe7ff7ff7fe7fe7fe7fe7ffffffff3fe"},
+  {"id": "well", "file": "well.webp", "role": "prop", "px": [747, 754], "bytes": [192060, 63432], "v": "04eb7168", "height": 4.0, "foot": 0.92, "depths": ["mid"], "tags": ["village", "rustic", "town", "clan"], "weight": 0.8, "mask": "3fe7fe7fe37c3fe32f7fc7fc7fe7fe7ff3fe"},
+  {"id": "jars", "file": "jars.webp", "role": "prop", "px": [776, 569], "bytes": [144468, 42680], "v": "2d5d6353", "height": 3.0, "foot": 0.9, "depths": ["mid"], "tags": ["market", "town", "village"], "weight": 0.8, "mask": "1e01e03fc3fefffffffffffeffeffffff3fc"},
+  {"id": "lion", "file": "lion.webp", "role": "prop", "px": [720, 770], "bytes": [178720, 54190], "v": "a41465f5", "height": 4.2, "foot": 0.93, "depths": ["mid"], "tags": ["capital", "city", "hall", "grand", "clan"], "weight": 0.8, "mask": "1e03f03f01f03fc3fc3fe7fe7feffefff7fe"},
+  {"id": "board", "file": "board.webp", "role": "prop", "px": [827, 794], "bytes": [190182, 58256], "v": "cfb8074e", "height": 5.0, "foot": 0.95, "depths": ["mid"], "tags": ["town", "city", "village"], "weight": 0.7, "mask": "7feffffff7fc7fc7fc7fc3fc3fc20670e70e"},
+  {"id": "rockery", "file": "rockery.webp", "role": "prop", "px": [607, 847], "bytes": [265286, 84840], "v": "f16e13bc", "height": 5.5, "foot": 0.94, "depths": ["mid"], "tags": ["hall", "grand", "water"], "weight": 0.6, "mask": "1e03f87fe3f87fe2f81f83fc7f83e0ff07f0"},
+  {"id": "crates", "file": "crates.webp", "role": "prop", "px": [585, 499], "bytes": [100014, 28462], "v": "16bbc96e", "height": 3.0, "foot": 0.91, "depths": ["mid"], "tags": ["market", "water", "town"], "weight": 0.8, "mask": "3e07e07fe3feffeffffffffffffffffff3fe"},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [1386, 781], "bytes": [399804, 103850], "v": "8c0f4b86", "height": 2.6, "foot": 0.95, "plaque": {"box": [0.235, 0.44, 0.755, 0.785], "ink": "dark"}, "only": "name", "mask": "1fc7fe7fe7fe7fe7fe7fe7feffeffffff7fe"}
+ ]
+}

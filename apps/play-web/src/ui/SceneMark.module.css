@@ -1,0 +1,116 @@
+/* A scene's mark (the mock-up's .fx-mark): centred, a gold line fading in from each side. */
+.mark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  margin: var(--s-2) 0 var(--s-12);
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .34em;
+  color: var(--gold);
+  text-indent: 0;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.mark::before,
+.mark::after {
+  content: '';
+  flex: 1;
+  min-width: var(--s-12);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line));
+}
+
+.mark::after {
+  transform: scaleX(-1);
+}
+
+.mark span {
+  flex: none;
+  margin-right: -.34em;
+}
+
+.mark em {
+  min-width: 0;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: .2em;
+  margin-right: -.2em;
+  color: var(--soft);
+}
+
+/* a closing mark: the scene is over, its name stays */
+.mark[data-kind='close'] {
+  margin: var(--s-12) 0 var(--s-16);
+}
+
+/* ---- the life's book (章回, gameplay plan item 38): a scene is one 回 ----
+   The opening mark has its 回 over it; the close is followed by the 回 and its 回目, two lines in brush
+   side by side (one over the other where the page is too narrow for both), over a short gold rule (the
+   mock-up's .fx-couplet). The whole floats in as one; the row inside it keeps still. */
+.chapter {
+  display: grid;
+  justify-items: center;
+  margin: var(--s-2) 0 var(--s-12);
+  text-align: center;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.chapter[data-kind='close'] {
+  margin: var(--s-12) 0 var(--s-16);
+}
+
+.chapter > .mark {
+  justify-self: stretch;
+  margin: 0;
+  animation: none;
+}
+
+.hui {
+  display: block;
+  font: var(--type-hui);
+  letter-spacing: var(--ls-hui);
+  margin-right: calc(-1 * var(--ls-hui));
+  color: var(--gold);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.chapter[data-kind='open'] > .hui {
+  margin-bottom: var(--s-8);
+}
+
+.title {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-8);
+  margin: var(--s-16) 0 0;
+}
+
+.couplet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 1.1em;
+  row-gap: var(--s-2);
+  font: 400 var(--fs-20)/1.35 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.couplet > span {
+  white-space: nowrap;
+}
+
+.title > i {
+  display: block;
+  width: 132px;
+  height: 1px;
+  margin-top: var(--s-2);
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .couplet {
+    font-size: var(--fs-18);
+  }
+}

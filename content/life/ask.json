@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "description": "打探（玩法设计第四节，执行计划第 35 项）。在茶肆、坊市、宗门能用（content/life/verbs.json 的 where.ask），花 minutes 分钟。一次 checks 里的检定，难度 tier：玩家指定 by 就用那一种，不指定就用修正高的那一种；得几条线索照 clues 按结果定。线索从五处出，还不知道的才算：世界线上的传闻（content/life/saga.json：大事之前的传闻、大事之后的余波，引擎 saga.rumours 给的那几句），先打听到这些；导演挂的待发生的事（frxPlay.pending 里 from 是 director 的，由头不是 now 的）；日历上一年之内（days 日内）的事，固定的和导演排的；这一带（同一个大区域里最近的 near 处）的对手表（content/life/foes.json 的 encounters），每处挑一种会撞上的；这一带店里的稀罕货（有店的地点，各取货单里最贵的一样，底价 rare 以上才算）。挑哪几条照检定的种子。文字照 lines 的模板写，不调模型；线索记进 frxPlay.clues，一条一个 { id, kind, text, date }。数都是初值。",
+  "minutes": 720,
+  "checks": ["探查", "交涉"],
+  "tier": "中",
+  "clues": { "大成功": 3, "成功": 2, "失败": 1, "大失败": 1 },
+  "days": 360,
+  "near": 16,
+  "rare": 25,
+  "lines": {
+    "rumour": "{事}。",
+    "pending": "听人说起一桩事：{事}",
+    "calendar": "听说{日}{地}有{事}。",
+    "foe": "听说{地}一带常有{名}出没。",
+    "goods": "听说{地}的铺子里有{货}卖。"
+  }
+}

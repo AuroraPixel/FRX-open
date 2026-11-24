@@ -1,0 +1,306 @@
+/* 角色 (spec 七): the head row, the attribute table, the equipment rows and the way ahead. */
+
+/* the head row: a 60 px diamond holding the realm's first character, the name and one line */
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--s-18);
+  min-width: 0;
+}
+
+.gem {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin: var(--s-12);
+  border: var(--hair) solid var(--gold);
+  background: var(--tint);
+  box-shadow: 0 0 18px var(--glow-soft);
+  transform: rotate(45deg);
+}
+
+.gem i {
+  font: 400 var(--fs-34)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--ink);
+  text-shadow: 0 0 12px var(--glow);
+  transform: rotate(-45deg);
+}
+
+.whoText {
+  display: grid;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+.name {
+  font: 700 var(--fs-20)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-name);
+  color: var(--ink);
+}
+
+.line {
+  font: 400 var(--fs-13)/1.5 var(--f-serif);
+  color: var(--soft);
+}
+
+/* the attributes: the key-value table's look, each cell a button that opens its sources */
+.attrs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-8) var(--s-18);
+}
+
+.attr {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-10);
+  min-width: 0;
+  padding: var(--s-2) 0 5px;
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  color: var(--soft);
+  font: var(--type-kv);
+  text-align: left;
+  transition: background-color var(--d-press), border-color var(--d-focus);
+}
+
+.attr:hover {
+  background: var(--glow-soft);
+}
+
+.attr:active {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.attr[aria-expanded='true'] {
+  border-bottom: var(--hair) solid var(--gold);
+}
+
+.attrLabel {
+  white-space: nowrap;
+}
+
+.attrValue {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.attrValue em {
+  margin-left: var(--s-4);
+  font-style: normal;
+  font-weight: 400;
+  color: var(--jade);
+}
+
+.attrMore {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--s-10);
+  padding: var(--s-12) var(--s-14);
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.sources {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-kv);
+}
+
+.sources li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-10);
+  color: var(--text);
+}
+
+.sources b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--jade);
+}
+
+/* equipment: four rows of six slots, each under a line naming what is worn */
+.gearRows {
+  display: grid;
+  gap: var(--s-14);
+}
+
+.gearRow {
+  display: grid;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+.gearHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-8);
+  min-width: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.gearKind {
+  flex: none;
+  font: 600 var(--fs-12)/1.5 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  color: var(--ink);
+}
+
+.gearNames {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gearCount {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.six {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s-8);
+}
+
+/* the slots are small here: the picture alone, the names stand in the line above */
+.six .gear {
+  padding: var(--s-2);
+}
+.six .gear > span {
+  display: none;
+}
+.six .gear img {
+  width: 70%;
+}
+.six .gear b {
+  font-size: var(--fs-20);
+}
+
+/* an item's effect: plain text (jade fails 4.5:1 on the tinted detail in the day set) */
+.effect {
+  color: var(--text);
+}
+
+.effect span {
+  margin-right: var(--s-8);
+  color: var(--soft);
+}
+
+/* the cultivation life: the spirit beasts in one line, the whole line a button opening their panel */
+.beastsLink {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-6) var(--s-4);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.beastsLink:hover,
+.beastsLink:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.beastsLink b {
+  font: 600 var(--fs-14)/1.4 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.beastsLink span {
+  flex: 1;
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--text);
+}
+
+.beastsLink i {
+  width: 7px;
+  height: 7px;
+  margin-right: var(--s-6);
+  border-top: var(--hair) solid var(--gold);
+  border-right: var(--hair) solid var(--gold);
+  transform: rotate(45deg);
+}
+
+/* the cultivation life: a worn piece that does not count (备用, two tiers up) is faded with a dashed edge */
+.gear[data-idle] {
+  border-style: dashed;
+  opacity: .62;
+}
+
+/* 心境: the number in large figures and the engine's line beside it; under them what it holds back, a
+   cinnabar diamond before each */
+.mind {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.mindLine {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  margin: 0;
+}
+
+.mindLine b {
+  font: 600 var(--fs-24)/1.1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.mindLine span {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.mindNote {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.mindNote::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 var(--s-8) 2px var(--s-2);
+  background: var(--cin);
+  transform: rotate(45deg);
+}
+
+/* phones, and a finger anywhere: an attribute is a 44 px row to the touch */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .attr {
+    min-height: var(--hit);
+    align-items: flex-end;
+  }
+}
+
+/* the narrowest phones: six slots still fit a row at 44 px each */
+@media (max-width: 379px) {
+  .six {
+    gap: var(--s-4);
+  }
+}

@@ -1,0 +1,34 @@
+.page {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--s-22) 0;
+  background: var(--bg);
+}
+
+.box {
+  width: min(420px, 100% - 48px);
+  display: grid;
+  gap: var(--s-14);
+  padding: var(--s-22) var(--s-22) var(--s-18);
+}
+
+.title {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: var(--ls-title);
+  color: var(--ink);
+}
+
+.text {
+  margin: 0;
+  font: 400 var(--fs-14)/1.8 var(--f-serif);
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-12);
+}

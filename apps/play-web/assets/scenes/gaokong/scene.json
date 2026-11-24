@@ -1,0 +1,33 @@
+{
+  "id": "gaokong",
+  "name": "高空御器",
+  "kind": "sky",
+  "indoor": false,
+  "key": "key.webp",
+  "eye": [-3.2, 15.5],
+  "cloudFloor": -5.0,
+  "sky": {"set": "common", "azimuth": 13, "horizon": 0.17},
+  "layers": [
+    {"type": "arc", "file": "far-peaks.webp", "radius": 445, "span": 70.7, "azimuth": 10.0, "aspect": 6.4836, "y": -23.0, "order": -9, "gain": 0.5, "haze": 0.62, "mist": 1, "mistLo": -9.0, "mistHi": 9.0, "mistHaze": 1, "tintNight": [0.92, 0.97, 1.06], "tintDay": [2.6, 1.9, 1.6], "satDay": 0.5},
+    {"type": "arc", "file": "far-peaks.webp", "radius": 445, "span": 70.7, "azimuth": -60.7, "aspect": 6.4836, "y": -23.0, "flip": true, "order": -9, "gain": 0.5, "haze": 0.62, "mist": 1, "mistLo": -9.0, "mistHi": 9.0, "mistHaze": 1, "tintNight": [0.92, 0.97, 1.06], "tintDay": [2.6, 1.9, 1.6], "satDay": 0.5},
+    {"type": "arc", "file": "far-peaks.webp", "radius": 445, "span": 70.7, "azimuth": 80.7, "aspect": 6.4836, "y": -23.0, "order": -9, "gain": 0.5, "haze": 0.62, "mist": 1, "mistLo": -9.0, "mistHi": 9.0, "mistHaze": 1, "tintNight": [0.92, 0.97, 1.06], "tintDay": [2.6, 1.9, 1.6], "satDay": 0.5},
+    {"type": "bank", "file": "cloud-bank.webp", "rows": [[-9, 1.9, 60], [-16, 2.4, 82], [-25, 2.9, 108], [-37, 3.5, 142], [-53, 4.3, 188], [-74, 5.3, 250], [-102, 6.6, 330], [-140, 8.3, 440], [-192, 10.6, 590], [-238, 12.5, 720]], "aspect": 5.324, "gain": 0.56, "haze": 0.5, "mist": 0, "edge": 0.05, "tintNight": [0.93, 0.97, 1.05], "tintDay": [2.4, 1.8, 1.5], "satDay": 0.5},
+    {"type": "card", "file": "sword.webp", "w": 11.0, "h": 3.099, "x": 4.55, "y": 2.295, "z": 0.6, "order": 2.2, "gain": 0.55, "haze": 0.25, "mist": 0, "aura": 0.5, "tintDay": [2.0, 1.8, 1.5], "satDay": 0.7}
+  ],
+  "cameras": {
+    "idle": {"wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36], "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]},
+    "read": {"wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36], "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]},
+    "sheet": {"wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34], "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]},
+    "cult": {"wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33], "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]},
+    "close": {"wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34], "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]},
+    "cine1": {"wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40], "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]},
+    "cine2": {"wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40], "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]}
+  },
+  "anchors": {"player": [4.0, 4.0, 0.6], "aura": [4.0, 4.02, 0.5499999999999999]},
+  "hours": {},
+  "weather": ["clear", "cloud", "mist"],
+  "ambience": {"night": "amb.wind", "dawn": "amb.wind", "day": "amb.wind", "dusk": "amb.wind"},
+  "mood": "calm",
+  "floor": {"kind": "clouds"},
+  "protagonist": {"pose": "stand"}
+}

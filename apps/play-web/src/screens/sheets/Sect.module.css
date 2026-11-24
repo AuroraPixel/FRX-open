@@ -1,0 +1,256 @@
+/* 宗门: the sect's seal and name with the player's rung, the ladder of six rungs (the player's gilded,
+   the ones below inked, the ones above dashed), the purse of contribution and stipend, then the
+   sections: 晋升, 差事, 比试 and 兑换 by hall. A row is at least 56 px tall on phones. */
+.sect {
+  display: grid;
+  gap: var(--s-16);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+}
+
+.head h3 {
+  margin: 0;
+  font: 400 var(--fs-22)/1.3 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.head p {
+  margin: 2px 0 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.seal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-seal);
+  background: var(--cin) var(--tex-seal) center / cover;
+  font: 400 var(--fs-24)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--seal-ink);
+}
+
+.rung {
+  margin-right: 2px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+/* the ladder: six rungs on one line, the player's gilded */
+.ladder {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ladder li {
+  padding: var(--s-6) 0;
+  border: var(--hair) dashed var(--line-soft);
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: .08em;
+  text-align: center;
+  color: var(--soft);
+}
+
+.ladder li[data-past] {
+  border-style: solid;
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.ladder li[data-at] {
+  border: var(--hair) solid var(--gold);
+  background: linear-gradient(180deg, var(--glow-soft), var(--tint));
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* the purse: contribution and stipend side by side, the number large */
+.purse {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-10);
+  margin: 0;
+}
+
+.purse > div {
+  padding: var(--s-10) var(--s-12);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+}
+
+.purse dt {
+  font: var(--type-note);
+  letter-spacing: .14em;
+  color: var(--soft);
+}
+
+.purse dd {
+  display: grid;
+  margin: 2px 0 0;
+}
+
+.purse dd b {
+  font: 400 var(--fs-22)/1.3 var(--f-brush);
+  color: var(--ink);
+}
+
+.purse dd small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.step,
+.line {
+  margin: 0;
+}
+
+.step {
+  display: grid;
+  gap: var(--s-10);
+  justify-items: start;
+}
+
+.step p,
+.line {
+  margin: 0;
+  font: 400 var(--fs-14)/1.8 var(--f-serif);
+  color: var(--text);
+}
+
+.step b,
+.line b {
+  margin: 0 2px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* a contest or a sect: its mark, its name and terms, and what can be done at the right */
+.contest,
+.offer {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--s-8) var(--s-6) var(--s-8) var(--s-2);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.offer:hover,
+.offer:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.offer[data-off] .what b,
+.offer[data-off] .price b {
+  color: var(--soft);
+}
+
+.mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: var(--hair) solid var(--gold);
+  border-radius: var(--r-seal);
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+}
+
+.what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.what b {
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.what small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.price {
+  flex: none;
+  display: grid;
+  justify-items: end;
+}
+
+.price b {
+  font: 400 var(--fs-18)/1.2 var(--f-brush);
+  color: var(--gold);
+}
+
+.price small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* 报名 and 入门: a small framed word, 44 px to touch */
+.enter {
+  flex: none;
+  min-width: 64px;
+  min-height: var(--hit);
+  padding: 0 var(--s-12);
+  border: var(--hair) solid var(--gold);
+  background: var(--tint);
+  font: 400 var(--fs-14)/1 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.enter:disabled {
+  border-style: dashed;
+  border-color: var(--line-soft);
+  color: var(--soft);
+}
+
+.entered {
+  flex: none;
+  padding: 2px var(--s-6);
+  border-radius: var(--r-seal);
+  background: var(--cin) var(--tex-seal) center / cover;
+  font: 400 var(--fs-13)/1.2 var(--f-brush);
+  font-style: normal;
+  color: var(--seal-ink);
+}
+
+/* why the fair would not take the player now: a reason edged in cinnabar, as the cultivation panel's */
+.why {
+  display: block;
+  margin-top: var(--s-4);
+  padding-left: var(--s-8);
+  border-left: 2px solid var(--cin);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+  text-align: left;
+}

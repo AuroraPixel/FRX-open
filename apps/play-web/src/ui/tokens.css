@@ -1,0 +1,194 @@
+/* Design tokens of the new interface: docs/play-ui-spec.md, section 二. Style files reference these
+   variables and never write a colour or a font size of their own.
+
+   Night is the default set. The day set applies to :root[data-light="day"]; it also applies to any
+   element marked data-light, so the gallery can show both sets side by side.
+
+   The colour tokens are registered so that switching sets fades over 0.5 s instead of jumping. */
+
+@property --bg { syntax: '<color>'; inherits: true; initial-value: #04070d; }
+@property --ink { syntax: '<color>'; inherits: true; initial-value: #e8edf4; }
+@property --text { syntax: '<color>'; inherits: true; initial-value: #ccd5e3; }
+@property --say { syntax: '<color>'; inherits: true; initial-value: #fff2d4; }
+@property --soft { syntax: '<color>'; inherits: true; initial-value: #aab6c8; }
+@property --faint { syntax: '<color>'; inherits: true; initial-value: #77859b; }
+@property --panel { syntax: '<color>'; inherits: true; initial-value: rgba(8, 13, 23, .68); }
+@property --panel-hi { syntax: '<color>'; inherits: true; initial-value: rgba(22, 31, 48, .74); }
+@property --tint { syntax: '<color>'; inherits: true; initial-value: rgba(150, 175, 215, .07); }
+@property --line { syntax: '<color>'; inherits: true; initial-value: rgba(227, 193, 120, .34); }
+@property --line-soft { syntax: '<color>'; inherits: true; initial-value: rgba(190, 205, 230, .16); }
+@property --gold { syntax: '<color>'; inherits: true; initial-value: #e3c178; }
+@property --jade { syntax: '<color>'; inherits: true; initial-value: #69d8c2; }
+@property --cin { syntax: '<color>'; inherits: true; initial-value: #d9573f; }
+@property --seal-ink { syntax: '<color>'; inherits: true; initial-value: #fff3e4; }
+@property --mp { syntax: '<color>'; inherits: true; initial-value: #6aa8ee; }
+@property --hp-a { syntax: '<color>'; inherits: true; initial-value: #c9482f; }
+@property --hp-b { syntax: '<color>'; inherits: true; initial-value: #f0a070; }
+@property --mp-a { syntax: '<color>'; inherits: true; initial-value: #3c78d2; }
+@property --mp-b { syntax: '<color>'; inherits: true; initial-value: #8fd0f4; }
+@property --halo { syntax: '<color>'; inherits: true; initial-value: rgba(2, 5, 10, .92); }
+@property --shade { syntax: '<color>'; inherits: true; initial-value: rgba(0, 0, 0, .5); }
+@property --glow { syntax: '<color>'; inherits: true; initial-value: rgba(227, 193, 120, .5); }
+@property --glow-soft { syntax: '<color>'; inherits: true; initial-value: rgba(227, 193, 120, .16); }
+@property --veil { syntax: '<color>'; inherits: true; initial-value: rgba(2, 5, 10, .6); }
+@property --sweep { syntax: '<color>'; inherits: true; initial-value: rgba(227, 193, 120, .2); }
+@property --foil { syntax: '<color>'; inherits: true; initial-value: #f6e3ae; }
+@property --bar { syntax: '<color>'; inherits: true; initial-value: #000; }
+@property --page { syntax: '<color>'; inherits: true; initial-value: #03060b; }
+
+/* ---- colour: night (and dusk) ---- */
+:root,
+[data-light='night'] {
+  --bg: #04070d;         /* behind everything when there is no picture */
+  --ink: #e8edf4;        /* titles, names, numbers */
+  --text: #ccd5e3;       /* story text */
+  --say: #fff2d4;        /* spoken words */
+  --soft: #aab6c8;       /* secondary text */
+  --faint: #77859b;      /* the weakest captions */
+  --panel: rgba(8, 13, 23, .68);
+  --panel-hi: rgba(22, 31, 48, .74);
+  --tint: rgba(150, 175, 215, .07);
+  --line: rgba(227, 193, 120, .34);
+  --line-soft: rgba(190, 205, 230, .16);
+  --gold: #e3c178;
+  --jade: #69d8c2;
+  --cin: #d9573f;        /* cinnabar: seals and the player's own stroke */
+  --seal-ink: #fff3e4;
+  --mp: #6aa8ee;
+  --hp-a: #c9482f; --hp-b: #f0a070;
+  --mp-a: #3c78d2; --mp-b: #8fd0f4;
+  --halo: rgba(2, 5, 10, .92);
+  --shade: rgba(0, 0, 0, .5);
+  --glow: rgba(227, 193, 120, .5);
+  --glow-soft: rgba(227, 193, 120, .16);
+  --veil: rgba(2, 5, 10, .6);
+  --sweep: rgba(227, 193, 120, .2);
+  --foil: #f6e3ae;
+  --bar: #000;
+  /* The colour the stage's veil pushes the picture toward under the book page (spec 九, 罩色).
+     Pages without a stage, such as the gallery, stand on it. */
+  --page: #03060b;
+  color-scheme: dark;
+}
+
+/* ---- colour: day (dawn and daytime) ---- */
+:root[data-light='day'],
+[data-light='day'] {
+  --bg: #e6d6ba;
+  --ink: #241c12; --text: #3f3325; --say: #170d05; --soft: #4d4233; --faint: #74664f;
+  --panel: rgba(246, 237, 219, .78); --panel-hi: rgba(255, 250, 238, .86); --tint: rgba(110, 80, 30, .07);
+  --line: rgba(140, 98, 28, .45); --line-soft: rgba(60, 45, 25, .2);
+  /* --gold is the sample's #8a5e0c made darker twice, for the spec's own 4.5:1 (section 十二): first
+     10% (#7c550b), as gold text on the tinted and hovered surfaces and the dark text of a solid gold
+     button measured 3.98 to 4.47:1; then another 13%, as a translucent panel over a darker part of the
+     stage (a figure's robe) left the 13 px gold buttons and the 12 px gold headings at 4.05 to 4.48:1
+     and the saves panel's 「凡人」 at 4.29 to 4.49 (walkthroughs A and B); #6c4a0a reads 4.9 and 5.2
+     there. --jade is the sample's #0f7d6c made 15% darker for the same reason: a jade bonus (「+5」) on
+     a panel's light top read 4.4:1, on a hovered row 3.9:1. The spec gives these values. */
+  --gold: #6c4a0a; --jade: #0d6a5c; --cin: #b03a26; --seal-ink: #fff3e4; --mp: #245fa8;
+  --hp-a: #b03a26; --hp-b: #e08a52; --mp-a: #245fa8; --mp-b: #5aa6d8;
+  --halo: rgba(255, 246, 228, .95); --shade: rgba(70, 45, 20, .24);
+  --glow: rgba(255, 236, 190, .85); --glow-soft: rgba(160, 110, 30, .14);
+  --veil: rgba(255, 243, 222, .24); --sweep: rgba(138, 94, 12, .16);
+  --foil: #5a1e12;
+  --page: #f6ecd7;
+  color-scheme: light;
+}
+
+:root {
+  transition-property: --bg, --ink, --text, --say, --soft, --faint, --panel, --panel-hi, --tint, --line,
+    --line-soft, --gold, --jade, --cin, --seal-ink, --mp, --hp-a, --hp-b, --mp-a, --mp-b, --halo, --shade,
+    --glow, --glow-soft, --veil, --sweep, --foil, --page;
+  transition-duration: var(--d-swap);
+  transition-timing-function: ease;
+
+  /* ---- typefaces ---- */
+  --f-brush: "Ma Shan Zheng", "Xingkai SC", "STXingkai", "Kaiti SC", "STKaiti", serif;
+  --f-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --f-note: "FangSong", "STFangsong", "Noto Serif SC", serif;
+  --f-ui: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  /* ---- font sizes: every size the spec names ---- */
+  --fs-11: 11px;   --fs-11h: 11.5px; --fs-12: 12px;   --fs-12h: 12.5px; --fs-13: 13px;
+  --fs-14: 14px;   --fs-14h: 14.5px; --fs-15: 15px;   --fs-15h: 15.5px; --fs-16: 16px;
+  --fs-16h: 16.5px; --fs-17: 17px;  --fs-18: 18px;   --fs-20: 20px;   --fs-21: 21px;
+  --fs-22: 22px;   --fs-23: 23px;   --fs-24: 24px;   --fs-26: 26px;   --fs-27: 27px;
+  --fs-30: 30px;   --fs-34: 34px;   --fs-38: 38px;   --fs-40: 40px;
+
+  /* The story's size is a setting (15 to 20 px); the line length stays. */
+  --read-size: var(--fs-17);
+  --read-leading: 1.94;
+
+  /* ---- the spec's type table ---- */
+  --type-body: 400 var(--read-size)/var(--read-leading) var(--f-serif);
+  --type-me: 400 var(--fs-16h)/1.75 var(--f-note);
+  --type-hui: 700 var(--fs-12)/1 var(--f-serif);
+  --type-title: 400 var(--fs-27)/1 var(--f-brush);
+  --type-sheet-title: 400 var(--fs-30)/1 var(--f-brush);
+  --type-sub: 600 var(--fs-12)/1 var(--f-serif);
+  --type-name: 700 var(--fs-18)/1.1 var(--f-serif);
+  --type-realm: 400 var(--fs-21)/1 var(--f-brush);
+  --type-hour: 400 var(--fs-34)/1 var(--f-brush);
+  --type-place: 700 var(--fs-13)/1.4 var(--f-serif);
+  --type-speaker: 400 var(--fs-18)/1.25 var(--f-brush);
+  --type-card-title: 700 var(--fs-14h)/1.5 var(--f-serif);
+  --type-card: 400 var(--fs-13)/1.7 var(--f-serif);
+  --type-opt: 400 var(--fs-16)/1.5 var(--f-serif);
+  --type-kv: 400 var(--fs-13)/1.5 var(--f-ui);
+  --type-note: 400 var(--fs-12)/1.6 var(--f-ui);
+  --type-big: 400 clamp(86px, 15.5vw, 210px)/1.02 var(--f-brush);
+  /* the title page's vertical 云汀修行录 (spec 七, 标题页) */
+  --type-title-page: 400 clamp(72px, 12vw, 160px)/1 var(--f-brush);
+  /* the first-meeting close-up: the vertical name, and the line spoken (spec 六) */
+  --meet-size: clamp(64px, 8.4vw, 122px);
+  --type-meet: 400 var(--meet-size)/1.04 var(--f-brush);
+  --type-meet-line: 400 var(--fs-24)/1.9 var(--f-serif);
+
+  --ls-hui: .34em; --ls-title: .06em; --ls-sub: .3em; --ls-name: .14em; --ls-place: .32em;
+  --ls-speaker: .12em; --ls-card: .14em; --ls-me: .02em; --ls-label: .24em; --ls-btn: .2em;
+
+  /* ---- spacing: only these steps ---- */
+  --s-2: 2px; --s-4: 4px; --s-6: 6px; --s-8: 8px; --s-10: 10px; --s-12: 12px; --s-14: 14px;
+  --s-16: 16px; --s-18: 18px; --s-22: 22px; --s-28: 28px; --s-36: 36px; --s-46: 46px;
+
+  /* ---- lines, corners, layers ---- */
+  --hair: 1px;
+  --r-seal: 3px;
+  --hit: 44px;          /* the smallest touch target on phones */
+  --z-stage: 0; --z-veil: 1; --z-ui: 2; --z-sheet: 5; --z-cine: 20; --z-toast: 30; --z-dialog: 40;
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --d-float: .7s;   /* a new paragraph or card floats up */
+  --d-slide: .45s;  /* desktop panels slide in from the right */
+  --d-rise: .45s;   /* phone panels rise from the bottom */
+  --d-value: .7s;   /* bars and the ring change length */
+  --d-focus: .25s;  /* labels appear, outlines turn gold */
+  --d-sweep: .6s;   /* the light across an action button */
+  --d-swap: .5s;    /* switching between the night and day sets */
+  --d-bars: .7s;    /* the black bars of a cut scene */
+  --d-press: 80ms;  /* touch feedback */
+}
+
+/* Phones: the spec's section 十一 overrides */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  :root {
+    --read-size: var(--fs-16h);
+    --read-leading: 1.9;
+    --type-title: 400 var(--fs-23)/1 var(--f-brush);
+    --type-hour: 400 var(--fs-26)/1 var(--f-brush);
+    --type-opt: 400 var(--fs-15h)/1.5 var(--f-serif);
+    --meet-size: clamp(48px, 15vw, 72px);
+    --type-meet: 400 var(--meet-size)/1.04 var(--f-brush);
+    --type-meet-line: 400 var(--fs-20)/1.9 var(--f-serif);
+  }
+}
+
+/* Reduced motion, from the system or from the setting (data-motion on the root) */
+@media (prefers-reduced-motion: reduce) {
+  :root { --d-float: .01s; --d-slide: .01s; --d-rise: .01s; }
+}
+:root[data-motion='weak'],
+:root[data-motion='off'] {
+  --d-float: .01s; --d-slide: .01s; --d-rise: .01s;
+}

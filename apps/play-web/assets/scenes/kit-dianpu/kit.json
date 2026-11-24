@@ -1,0 +1,127 @@
+{
+ "id": "kit-dianpu",
+ "family": "dianpu",
+ "name": "店铺内堂",
+ "layout": "room",
+ "ground": 4.0,
+ "base": {
+  "kind": "shop",
+  "indoor": true,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36],
+    "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]
+   },
+   "read": {
+    "wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36],
+    "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]
+   },
+   "sheet": {
+    "wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34],
+    "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]
+   },
+   "cult": {
+    "wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33],
+    "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]
+   },
+   "close": {
+    "wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34],
+    "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]
+   },
+   "cine1": {
+    "wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40],
+    "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]
+   },
+   "cine2": {
+    "wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40],
+    "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear"
+  ],
+  "ambience": {
+   "night": "amb.insects",
+   "dawn": "amb.wind",
+   "day": "amb.wind",
+   "dusk": "amb.wind"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "none"
+  },
+  "protagonist": {
+   "pose": "stand"
+  },
+  "hours": {
+   "dawn": {
+    "exposure": 0.8
+   },
+   "day": {
+    "exposure": 0.74,
+    "tint": [2.1, 2.0, 1.9]
+   },
+   "dusk": {
+    "exposure": 1.0
+   }
+  }
+ },
+ "room": {
+  "wallZ": -11,
+  "furniture": {
+   "z": [-4, -2.5],
+   "at": [0.66, 0.8]
+  },
+  "plaque": [0.15, 0.13, 0.17, 0.11, 0.19]
+ },
+ "elements": [
+  {"id": "wall-timber", "file": "wall-timber.webp", "role": "wall", "px": [2172, 724], "bytes": [186242, 58716], "v": "c4a86039", "height": 0, "foot": 0.79, "width": 40, "shade": 1.8, "tags": ["jieshi", "town", "city", "market", "capital", "medicine"], "avoid": ["tavern", "teahouse", "inn", "private"], "weight": 1.2, "lights": [[0.33, 0.15], [0.57, 0.15], [0.81, 0.15], [0.09, 0.15]]},
+  {"id": "wall-plaster", "file": "wall-plaster.webp", "role": "wall", "px": [2172, 724], "bytes": [178420, 52672], "v": "d8d4d476", "height": 0, "foot": 0.8, "width": 40, "shade": 1.8, "tags": ["jieshi", "clan", "hall", "village", "rustic", "tower", "grace", "water"], "avoid": ["tavern", "teahouse", "inn", "private"], "keep": [[0.12, 0.31, 0.1, 0.64]], "lights": [[0.215, 0.37]]},
+  {"id": "wall-plank", "file": "wall-plank.webp", "role": "wall", "px": [2172, 724], "bytes": [226558, 69286], "v": "813fa292", "height": 0, "foot": 0.8, "width": 40, "shade": 1.8, "tags": ["haian", "island", "fishing", "port"], "avoid": ["capital", "grand", "tower", "tavern", "teahouse", "inn", "private"], "need": ["haian", "fishing", "water"], "weight": 1.2, "keep": [[0.175, 0.285, 0.05, 0.32], [0.32, 0.405, 0.12, 0.47], [0.605, 0.675, 0.12, 0.42], [0.71, 0.82, 0.05, 0.32]], "lights": [[0.23, 0.18], [0.765, 0.18]]},
+  {"id": "wall-stone", "file": "wall-stone.webp", "role": "wall", "px": [2172, 724], "bytes": [222278, 72324], "v": "30fad569", "height": 0, "foot": 0.8, "width": 40, "shade": 1.8, "refuse": ["scroll", "doorway"], "tags": ["fangshi", "grand", "capital", "sect", "palace", "market", "tower"], "avoid": ["village", "rustic", "fishing", "tavern", "teahouse", "inn", "private"], "weight": 0.8, "keep": [[0.2, 0.265, 0.5, 0.68], [0.47, 0.53, 0.5, 0.68], [0.74, 0.805, 0.5, 0.68]], "lights": [[0.36, 0.2], [0.64, 0.2]]},
+  {"id": "wall-tavern", "file": "wall-tavern.webp", "role": "wall", "px": [2172, 724], "bytes": [187328, 57230], "v": "1185c3ee", "height": 0, "foot": 0.8, "width": 40, "shade": 1.8, "refuse": ["doorway"], "tags": ["tavern", "inn"], "need": ["tavern", "inn"], "avoid": ["private"], "weight": 3, "keep": [[0.14, 0.195, 0.0, 0.56], [0.775, 0.83, 0.0, 0.56], [0.82, 0.945, 0.35, 0.8]], "lights": [[0.25, 0.15], [0.36, 0.15], [0.47, 0.15], [0.58, 0.15], [0.69, 0.15]]},
+  {"id": "wall-teahouse", "file": "wall-teahouse.webp", "role": "wall", "px": [2171, 724], "bytes": [262064, 75602], "v": "ec287f14", "height": 0, "foot": 0.77, "width": 40, "shade": 1.8, "refuse": ["scroll", "doorway"], "tags": ["teahouse"], "need": ["teahouse"], "avoid": ["private"], "weight": 3, "keep": [[0.055, 0.115, 0.1, 0.56]], "lights": [[0.22, 0.33], [0.36, 0.33], [0.5, 0.33], [0.64, 0.33], [0.78, 0.33]]},
+  {"id": "wall-private", "file": "wall-private.webp", "role": "wall", "px": [2172, 724], "bytes": [171956, 56496], "v": "1b7cf548", "height": 0, "foot": 0.81, "width": 40, "shade": 1.8, "refuse": ["scroll", "doorway"], "tags": ["private"], "need": ["private"], "weight": 4, "keep": [[0.49, 0.77, 0.04, 0.82], [0.22, 0.285, 0.0, 0.42], [0.79, 0.85, 0.0, 0.42], [0.31, 0.37, 0.14, 0.66]], "lights": [[0.63, 0.45]]},
+  {"id": "plaque-gold", "file": "plaque-gold.webp", "role": "subject", "px": [1010, 357], "bytes": [86390, 28488], "v": "664ef923", "height": 1.5, "foot": 1.0, "plaque": {"box": [0.11, 0.33, 0.89, 0.86], "ink": "gold"}, "tags": ["town", "city", "capital", "market", "grand", "tower", "hall"], "weight": 1.2, "mask": "0600f03fcfffffffffffffffffffffffffff", "body": [0.029, 0.968], "crown": 0.0},
+  {"id": "plaque-wood", "file": "plaque-wood.webp", "role": "subject", "px": [996, 295], "bytes": [105504, 27858], "v": "072f95e1", "height": 1.25, "foot": 1.0, "plaque": {"box": [0.08, 0.17, 0.92, 0.85], "ink": "dark"}, "tags": ["haian", "village", "rustic", "island", "fishing"], "avoid": ["capital", "grand"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.035, 0.964], "crown": 0.025},
+  {"id": "cabinet", "file": "cabinet.webp", "role": "unit", "px": [1100, 924], "bytes": [312582, 98428], "v": "265496bb", "height": 6.6, "foot": 0.971, "tags": ["medicine", "market", "town", "city", "valley"], "avoid": ["tavern", "teahouse", "inn"], "weight": 1.2, "mask": "068fffffffffffffffffffffffffffffffff", "body": [0.05, 0.951], "crown": 0.0},
+  {"id": "curio", "file": "curio.webp", "role": "unit", "px": [725, 1100], "bytes": [243748, 74944], "v": "a7d5f786", "height": 6.4, "foot": 0.962, "tags": ["grand", "capital", "market", "city", "tower"], "avoid": ["tavern", "inn"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.034, 0.967], "crown": 0.0},
+  {"id": "weapons", "file": "weapons.webp", "role": "unit", "px": [875, 1100], "bytes": [267064, 83552], "v": "6bbd4ad1", "height": 5.4, "foot": 0.969, "tags": ["sword", "wall", "city", "dark", "beast"], "avoid": ["tavern", "teahouse", "inn"], "mask": "0000640643243bc7fe7fe7feffffffffffff", "body": [0.007, 0.992], "crown": 0.0},
+  {"id": "cloth", "file": "cloth.webp", "role": "unit", "px": [706, 1100], "bytes": [264234, 79588], "v": "4746798f", "height": 6.6, "foot": 0.96, "tags": ["town", "market", "clan", "city", "grace"], "avoid": ["tavern", "teahouse", "inn"], "mask": "1f8fffffffff7fe7fe7fe7fe7fe7fe7fefff", "body": [0.065, 0.936], "crown": 0.0},
+  {"id": "wine-shelf", "file": "wine-shelf.webp", "role": "unit", "px": [1100, 931], "bytes": [282206, 86426], "v": "b145fea9", "height": 4.6, "foot": 0.969, "tags": ["town", "village", "water", "rustic", "port", "tavern", "inn", "jars"], "mask": "1f8fffffffffffffffffffffffffffffffff", "body": [0.03, 0.97], "crown": 0.0},
+  {"id": "talisman", "file": "talisman.webp", "role": "unit", "px": [768, 1100], "bytes": [273728, 85140], "v": "214fe4b2", "height": 6.4, "foot": 0.968, "tags": ["fangshi", "market", "sect", "tower", "hall", "temple"], "avoid": ["tavern", "teahouse", "inn"], "mask": "3fcfffffffffffffffffffffffffffffffff", "body": [0.022, 0.978], "crown": 0.0},
+  {"id": "doorway", "file": "doorway.webp", "role": "unit", "px": [651, 1100], "bytes": [118384, 38614], "v": "684f8df4", "height": 6.2, "foot": 0.984, "weight": 0.8, "mask": "1f87fc7fefffffffffffffffffffffffffff", "body": [0.055, 0.942], "crown": 0.0},
+  {"id": "scroll", "file": "scroll.webp", "role": "unit", "px": [724, 1100], "bytes": [217068, 69020], "v": "7f2e7636", "height": 6.6, "foot": 0.99, "tags": ["hall", "clan", "grand", "tower", "grace", "teahouse", "inn"], "mask": "1f87fe7fe7fe7fe7fe7fe7fe098fff606606", "body": [0.109, 0.888], "crown": 0.0},
+  {"id": "nets", "file": "nets.webp", "role": "unit", "px": [1014, 1100], "bytes": [370646, 116560], "v": "e19254eb", "height": 6.0, "foot": 0.97, "tags": ["haian", "fishing", "island", "port"], "avoid": ["capital", "dry", "grand", "tavern", "teahouse", "inn"], "need": ["haian", "fishing", "water"], "mask": "204fff7fe7fc7fc3fc3bc3de7fe7fe7fe606", "body": [0.117, 0.887], "crown": 0.0},
+  {"id": "herbs", "file": "herbs.webp", "role": "unit", "px": [601, 1100], "bytes": [292492, 93056], "v": "3332a054", "height": 6.0, "foot": 0.982, "tags": ["village", "rustic", "medicine", "valley", "mountain"], "avoid": ["tavern", "teahouse", "inn"], "mask": "7fe6d67fe7fe7fe7fe7fe7fe7fe7fe7fefff", "body": [0.06, 0.94], "crown": 0.0},
+  {"id": "tea-shelf", "file": "tea-shelf.webp", "role": "unit", "px": [694, 1100], "bytes": [215138, 70372], "v": "ed92d1a0", "height": 6.0, "foot": 0.98, "tags": ["teahouse"], "need": ["teahouse"], "mask": "1f8fffffffffffffffffffffffffffffffff", "body": [0.016, 0.977], "crown": 0.0},
+  {"id": "screen", "file": "screen.webp", "role": "unit", "px": [1100, 1043], "bytes": [320776, 98144], "v": "79cb0404", "height": 4.8, "foot": 0.975, "tags": ["private", "teahouse"], "need": ["teahouse", "tavern", "private"], "mask": "0f0fffffffffffffffffffffffffffffffff", "body": [0.027, 0.974], "crown": 0.0},
+  {"id": "counter", "file": "counter.webp", "role": "furniture", "px": [1400, 536], "bytes": [205200, 65326], "v": "a0aafef1", "height": 2.87, "foot": 0.942, "tags": ["market", "town", "city", "medicine"], "avoid": ["tavern", "teahouse", "private"], "mask": "0020066feffffffffffffffffffffffffffe"},
+  {"id": "counter-wine", "file": "counter-wine.webp", "role": "furniture", "px": [1400, 591], "bytes": [238352, 73842], "v": "3eafff12", "height": 2.9, "foot": 0.951, "tags": ["haian", "town", "village", "water", "rustic", "port", "island", "tavern", "inn", "teahouse"], "avoid": ["private"], "mask": "31839c3bc3fcffffffffffffffffffffffff"},
+  {"id": "tea-low", "file": "tea-low.webp", "role": "furniture", "px": [1400, 401], "bytes": [161312, 48872], "v": "3a92e5d5", "height": 1.8, "foot": 0.97, "tags": ["private"], "need": ["private"], "mask": "0200a01f81f81f8fffffffffffffff3fc060"},
+  {"id": "counter-display", "file": "counter-display.webp", "role": "furniture", "px": [1400, 554], "bytes": [229480, 73164], "v": "bf28e460", "height": 2.9, "foot": 0.958, "tags": ["grand", "capital", "market", "tower", "city"], "avoid": ["tavern", "inn", "private"], "mask": "0406127defffffffffffffffffffffffffff"},
+  {"id": "crates", "file": "crates.webp", "role": "prop", "px": [800, 635], "bytes": [151144, 46394], "v": "d29daa47", "height": 2.2, "foot": 0.956, "tags": ["market", "port", "water", "town"], "avoid": ["teahouse"], "mask": "3e03fc7fc7fc7fcffeffeffffffffffff3fe"},
+  {"id": "plant", "file": "plant.webp", "role": "prop", "px": [642, 800], "bytes": [103412, 33330], "v": "51ee41c4", "height": 2.4, "foot": 0.966, "tags": ["hall", "grand", "clan", "grace", "tower", "teahouse"], "mask": "01c07e07f03c07e07e06606606607e07e07e"},
+  {"id": "lamp", "file": "lamp.webp", "role": "prop", "px": [332, 870], "bytes": [75680, 25706], "v": "1cb36bf8", "height": 3.0, "foot": 0.974, "mask": "0607fe3fc3fc3fc1f80600600600607fe7fe"},
+  {"id": "censer", "file": "censer.webp", "role": "prop", "px": [404, 811], "bytes": [98914, 33534], "v": "8b0164a1", "height": 2.2, "foot": 0.962, "tags": ["temple", "hall", "sect", "grand"], "avoid": ["tavern", "inn"], "mask": "0000000400601f83fcfff7feffffff7fe7fe"},
+  {"id": "tea-table", "file": "tea-table.webp", "role": "prop", "px": [800, 597], "bytes": [150062, 47240], "v": "0996ba6c", "height": 2.0, "foot": 0.96, "tags": ["town", "water", "village", "clan", "teahouse", "tavern", "inn"], "mask": "0200701f83fc3fc7feffff2ffffffffff3fc"},
+  {"id": "barrels", "file": "barrels.webp", "role": "prop", "px": [800, 690], "bytes": [146682, 48264], "v": "af2889cc", "height": 2.2, "foot": 0.959, "tags": ["haian", "fishing", "island", "port"], "avoid": ["capital", "grand"], "mask": "0f01f01f01fc1fe7fe7fe7ff7ff7ff7ff0fe"},
+  {"id": "dining-table", "file": "dining-table.webp", "role": "prop", "px": [900, 647], "bytes": [146638, 46946], "v": "ff8dd124", "height": 2.3, "foot": 0.95, "tags": ["tavern", "inn"], "need": ["tavern", "inn"], "avoid": ["private"], "mask": "0600601f83fc7fefffffffffffff0fffe1f8"},
+  {"id": "tea-round", "file": "tea-round.webp", "role": "prop", "px": [846, 592], "bytes": [135478, 45874], "v": "28759640", "height": 2.2, "foot": 0.97, "tags": ["teahouse", "private"], "need": ["teahouse", "tavern", "inn"], "mask": "0100381fc1fc1fc0703f73f77ff3ff3ff3ff"},
+  {"id": "name-screen", "file": "name-screen.webp", "role": "prop", "px": [900, 508], "bytes": [99418, 32856], "v": "60a8f084", "height": 1.2, "foot": 0.97, "plaque": {"box": [0.16, 0.13, 0.84, 0.65], "ink": "dark"}, "only": "name", "tone": 0.7, "mask": "7fe7fe7fe7fe7fefffffffffffffffffffff"},
+  {"id": "column", "file": "column.webp", "role": "near", "px": [385, 1774], "bytes": [165150, 51640], "v": "dbb4465e", "height": 13.0, "foot": 0.978, "hold": [0.4, 0.978], "weight": 1.2, "mask": "7f87f87fc7fc7f87f07f87fe7ff7fe7fcffc"},
+  {"id": "jars", "file": "jars.webp", "role": "near", "px": [733, 675], "bytes": [159894, 47948], "v": "f57d4ea3", "height": 2.6, "foot": 0.967, "hold": [0.3, 0.967], "tags": ["village", "rustic", "water", "tavern", "jars"], "weight": 0.6, "mask": "3c07c0fe0fe0ffeffffff7ff7ff7ff7fe1be"},
+  {"id": "lantern", "file": "lantern.webp", "role": "hang", "px": [282, 800], "bytes": [65828, 22086], "v": "226615c7", "height": 3.2, "foot": 0.66, "mask": "0600603fc7fe7fe7ff7fe3fc060060060060"},
+  {"id": "valance", "file": "valance.webp", "role": "hang", "px": [2172, 318], "bytes": [142916, 52318], "v": "93154230", "height": 4.0, "foot": 0.53, "mask": "ffffffffffedffffff90b108000000000000"}
+ ]
+}

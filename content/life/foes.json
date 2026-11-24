@@ -1,0 +1,1148 @@
+{
+  "version": 1,
+  "description": "斗法里的对手（玩法设计第六节「对手」「一手怎么走」「怎么收场」「斗法里的本钱」「遭遇战」，执行计划第 19、31 项）。每类对手一张打算的表：intents 是几组，从上往下取第一组条件成立的（when.hpBelow：自己的气血低于最大值的这个百分比），组里按 weight 抽一个；cycle 的那一类照固定的次序循环。act 是引擎怎么结算这个打算（acts 里写着），name 是给玩家看的。蓄势之后再抽不出蓄势。ambushes 是这一类先发现你时会不会偷袭。species 把 content/art/species.json 的每一种妖兽归进一类；people 按名字和身份里的字把人归类，都不中时妖兽归 beast、人归 fallback.people。loss 是输给这一类的后果（losses）：劫财、擒走不取命，玩家留着 spared 里的气血醒来，状态从重伤倒地改成 spared.status；补刀不留，极限模式里接着走现有的死亡流程（核心的判死是气血 10 及以下，所以 spared.least 要比它大）；补刀只在极限模式有（content/life/world.json 的难度），别的难度改成 escape：侥幸逃生，和劫财、擒走一样留着 spared 的气血。输了都留下内伤（injury）。rules 是御和「和」的数，还有斗法里的八种状态（rules.statuses），commands 是七个指令在状态里的写法。tiers、encounters、beat 是遭遇战：对手的阶、各地撞上谁、撞上之后的那一拍。elements 是五行。fromAct 是行动卡进斗法时谁被打个措手不及。story 是行动卡要打的是剧情带出来、还没登记的对手时，引擎怎么照它的名字认出它。数都是初值；命中、伤害、境界压制只读 content/combat.json。",
+  "acts": {
+    "strike": "照物攻打一手",
+    "cast": "催动法术打一手，耗法力（combat.json 的 spellCostPercent），照法攻；法力不够或没有法攻就照物攻；带着自己的五行（elements）",
+    "poison": "用毒：照物攻打一手，打中了对方中毒",
+    "charge": "蓄势：不出手，下一次出手的伤害加倍",
+    "guard": "守：这一回合受的伤害减半",
+    "wait": "游走：这一回合不出手",
+    "flee": "要逃：离开这场斗法"
+  },
+  "classes": {
+    "beast": {
+      "name": "野兽、妖兽",
+      "loss": "finish",
+      "ambushes": true,
+      "intents": [
+        {
+          "when": {
+            "hpBelow": 30
+          },
+          "pick": [
+            {
+              "name": "要逃",
+              "act": "flee",
+              "weight": 1
+            },
+            {
+              "name": "拼命",
+              "act": "strike",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "pick": [
+            {
+              "name": "扑咬",
+              "act": "strike",
+              "weight": 6
+            },
+            {
+              "name": "蓄势",
+              "act": "charge",
+              "weight": 2
+            },
+            {
+              "name": "游走",
+              "act": "wait",
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    "rogue": {
+      "name": "散修",
+      "loss": "rob",
+      "ambushes": true,
+      "intents": [
+        {
+          "when": {
+            "hpBelow": 30
+          },
+          "pick": [
+            {
+              "name": "遁走",
+              "act": "flee",
+              "weight": 2
+            },
+            {
+              "name": "杀招",
+              "act": "charge",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "pick": [
+            {
+              "name": "试探",
+              "act": "strike",
+              "weight": 4
+            },
+            {
+              "name": "祭器",
+              "act": "cast",
+              "weight": 3
+            },
+            {
+              "name": "杀招",
+              "act": "charge",
+              "weight": 2
+            },
+            {
+              "name": "守",
+              "act": "guard",
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    "disciple": {
+      "name": "宗门弟子",
+      "loss": "capture",
+      "ambushes": false,
+      "intents": [
+        {
+          "when": {
+            "hpBelow": 30
+          },
+          "pick": [
+            {
+              "name": "遁走",
+              "act": "flee",
+              "weight": 3
+            },
+            {
+              "name": "守",
+              "act": "guard",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "pick": [
+            {
+              "name": "试探",
+              "act": "strike",
+              "weight": 3
+            },
+            {
+              "name": "祭器",
+              "act": "cast",
+              "weight": 3
+            },
+            {
+              "name": "杀招",
+              "act": "charge",
+              "weight": 2
+            },
+            {
+              "name": "守",
+              "act": "guard",
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    "evil": {
+      "name": "邪修、魔修",
+      "loss": "finish",
+      "ambushes": true,
+      "intents": [
+        {
+          "when": {
+            "hpBelow": 30
+          },
+          "pick": [
+            {
+              "name": "拼命",
+              "act": "strike",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "pick": [
+            {
+              "name": "偷袭",
+              "act": "strike",
+              "weight": 3
+            },
+            {
+              "name": "用毒",
+              "act": "poison",
+              "weight": 3
+            },
+            {
+              "name": "蓄势",
+              "act": "charge",
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    "puppet": {
+      "name": "傀儡、邪物",
+      "loss": "finish",
+      "ambushes": false,
+      "cycle": [
+        {
+          "name": "蓄势",
+          "act": "charge"
+        },
+        {
+          "name": "重击",
+          "act": "strike"
+        },
+        {
+          "name": "守",
+          "act": "guard"
+        }
+      ]
+    }
+  },
+  "species": {
+    "beast": [
+      "cat",
+      "snake",
+      "deer",
+      "jiao",
+      "roc",
+      "crane",
+      "eagle",
+      "crow",
+      "bat",
+      "fox",
+      "wolf",
+      "tiger",
+      "leopard",
+      "bear",
+      "ape",
+      "ox",
+      "horse",
+      "boar",
+      "rat",
+      "turtle",
+      "carp",
+      "toad",
+      "scorpion",
+      "spider",
+      "centipede",
+      "insect",
+      "treant"
+    ],
+    "puppet": [
+      "golem",
+      "skeleton"
+    ],
+    "evil": [
+      "fiend"
+    ]
+  },
+  "people": [
+    {
+      "class": "evil",
+      "words": [
+        "邪修",
+        "魔修",
+        "魔道",
+        "邪道",
+        "魔头",
+        "血魔",
+        "渡夜门",
+        "鸣佩楼",
+        "错墨社",
+        "晦灯社"
+      ]
+    },
+    {
+      "class": "disciple",
+      "words": [
+        "弟子",
+        "门人",
+        "执事",
+        "护法",
+        "长老",
+        "听澜院",
+        "银栖阁",
+        "青埕院",
+        "叠锋堂",
+        "铜栈营",
+        "砺背坞",
+        "鸣鹤庭"
+      ]
+    },
+    {
+      "class": "rogue",
+      "words": [
+        "散修",
+        "劫修",
+        "游方"
+      ]
+    }
+  ],
+  "fallback": {
+    "people": "rogue"
+  },
+  "losses": {
+    "rob": {
+      "name": "劫财",
+      "stonesPercent": 100,
+      "spared": true,
+      "grace": {
+        "notes": "头一年的劫财（执行计划第 50 项的修补）：这一世的头一年里（injury.grace 的 within）输了被劫，最多拿走钱袋里百分之 stonesPercent 的灵石（50 是一半），新来的人不至于一块不剩（头一年模拟里年末灵石最少的是零）。",
+        "stonesPercent": 50
+      },
+      "safe": {
+        "notes": "不凶险之地的劫财（执行计划第 50 项的修补）：在危险不到 encounters.cap.dangerous 的地方（城镇、坊市、宗门、山野、灵地……，赶路的路上也算）输了被劫，不论哪一年，最多拿走钱袋里百分之 stonesPercent 的灵石；凶险之地照旧全拿（头一年照 grace 一半）。回合线的真模型长线里，炼气十三层的主角在泊灯城输给一个窃贼，攒着买筑基丹的 1484 块灵石被一次拿光。",
+        "stonesPercent": 50
+      }
+    },
+    "capture": {
+      "name": "擒走",
+      "spared": true
+    },
+    "finish": {
+      "name": "补刀"
+    },
+    "escape": {
+      "name": "侥幸逃生",
+      "spared": true
+    }
+  },
+  "spared": {
+    "percent": 10,
+    "least": 11,
+    "status": "重伤"
+  },
+  "rules": {
+    "notes": "guard：御的这一回合受的伤害乘这个数（向下取整，至少 1）；talkBelow：有对手的气血低于最大值的这个百分比，才能「和」；statuses：斗法里的八种状态，见它自己的 notes。",
+    "guard": 0.5,
+    "talkBelow": 50,
+    "statuses": {
+      "notes": "斗法里的八种状态（玩法设计第六节「斗法里的本钱」）：how 是怎么来，其余是效果的数。rounds 是挂上之后还管几回合：挂上的那一回合照样算数，从下一回合起每到回合末减一，减完就消；没有 rounds 的一直挂着。蓄势：下一次出手的伤害乘 damage，出了手就消。破绽：打它的命中加 hit。灼烧：回合末掉最大气血的 hpPercent（向上取整）。迟缓：脚力乘 agility（命中的身法修正和脱身、潜行这些检定都按它算）。定身：跳过下一手，跳过了就消。护盾：抵掉出手的一方最大气血 hpPercent 那么多的伤害，抵完就消。中毒：回合末掉最大气血的 hpPercent，斗法完了不消：玩家的状态栏写着「中毒」，下一场照样挂着，用了效用里有 cure 里的字的东西才解。内伤：攻击乘 attack，养伤的日子见 injury。几种状态从哪来：灼烧、迟缓、定身、护盾跟着术法的五行（elements.statuses），破绽来自御着时对方落空和被五行所克，中毒来自对手的「用毒」。",
+      "蓄势": {
+        "how": "花一手",
+        "damage": 2
+      },
+      "破绽": {
+        "how": "落空、被克",
+        "hit": 4,
+        "rounds": 1
+      },
+      "灼烧": {
+        "how": "火系的术",
+        "hpPercent": 5,
+        "rounds": 3
+      },
+      "迟缓": {
+        "how": "水系、冰系的术",
+        "agility": 0.5,
+        "rounds": 3
+      },
+      "定身": {
+        "how": "雷系的术",
+        "rounds": 1
+      },
+      "护盾": {
+        "how": "土系、金系的术",
+        "hpPercent": 20,
+        "rounds": 3
+      },
+      "中毒": {
+        "how": "毒物、暗器、用毒",
+        "hpPercent": 3,
+        "cure": [
+          "解毒"
+        ]
+      },
+      "内伤": {
+        "how": "重伤倒地之后",
+        "attack": 0.8
+      }
+    }
+  },
+  "elements": {
+    "notes": "五行（玩法设计第六节，初值）。技能和对手各有五行：技能看名字，再看类型和效果的说明；对手看名字，再看身份；都取最先出现的那个字（words）。冰、雷、风按 base 归进五行算生克。出手的五行克挨打的一方，伤害乘 strong；被它克，乘 weak；玩家自己没有五行。技能的五行（或它归进的那一行）在玩家的灵根里，法力消耗乘 rootCost（向上取整，至少 1）。statuses 是这一行的术、对手的法术打中之后带出的状态：在 self 里的落在出手的一方，其余落在挨打的一方；克了对方，对方再挂一个破绽。",
+    "words": {
+      "金": [
+        "金",
+        "庚"
+      ],
+      "木": [
+        "木",
+        "藤"
+      ],
+      "水": [
+        "水",
+        "浪",
+        "潮"
+      ],
+      "火": [
+        "火",
+        "炎",
+        "焰"
+      ],
+      "土": [
+        "土",
+        "岩",
+        "石"
+      ],
+      "冰": [
+        "冰",
+        "雪",
+        "霜",
+        "寒"
+      ],
+      "雷": [
+        "雷",
+        "电",
+        "霆"
+      ],
+      "风": [
+        "风"
+      ]
+    },
+    "base": {
+      "冰": "水",
+      "雷": "金",
+      "风": "木"
+    },
+    "overcomes": {
+      "金": "木",
+      "木": "土",
+      "土": "水",
+      "水": "火",
+      "火": "金"
+    },
+    "strong": 1.25,
+    "weak": 0.8,
+    "rootCost": 0.8,
+    "statuses": {
+      "火": "灼烧",
+      "水": "迟缓",
+      "冰": "迟缓",
+      "雷": "定身",
+      "土": "护盾",
+      "金": "护盾"
+    },
+    "self": [
+      "护盾"
+    ]
+  },
+  "injury": {
+    "notes": "内伤（玩法设计第六节「战前和战后」）：输了一场斗法、重伤倒地之后留下，斗法里攻击乘 rules.statuses.内伤.attack，不能修炼。养的日数：打倒你的对手一阶 days 日，每高一阶乘 perTier（零阶按一阶算）；身上带着对症的丹药（名字或效用里有 pill.words 里的字）就当场服下一枚，日数乘 pill.factor（向上取整）。养伤的期限进日历（自己的事 injury，content/life/calendar.json），日子到了内伤消掉；没好又受内伤时取晚的那一天。",
+    "days": 10,
+    "perTier": 3,
+    "grace": {
+      "notes": "头一年的宽限（执行计划第 50 项的修补）：这一世的头 within 日里（从存档的头一日 0001 年正月初一算起；传人从前人坐化的那一日算起）输了斗法，只留轻伤，养 days 日，不论对手几阶（身上有对症的丹药照旧服下、减半）；没好又输的照旧取晚的那一天。所有者的头一回试玩里一次大失败引出一场输掉的斗法，留下内伤，十日不能修炼：「开局太容易卡死」；头一年的模拟里十个人里有四个多因内伤停了十日以上。",
+      "within": 360,
+      "days": 2
+    },
+    "heal": {
+      "notes": "养伤（执行计划第 50 项的修补）：内伤未愈时在原地静候、调息（verbs 里的指令）就是闭门养伤。野外的人和兽找不上门：被打扰的由头里会撞上人或兽的那几样（encounters.causes 里有的）这段日子不出，别的照旧（异象、来访、告示、传闻、日历和钟）；一样也不剩的地方这段日子不会被骰子打扰。静候的每一日照 content/combat.json recovery 里 kind 那一种回复 hours 小时的气血和法力；气血回满时，状态里输了斗法留下的「重伤」（spared.status）去掉，调息回满也一样。地点线的一场长线试玩里，筑基的主角在转潮山输了一场，气血剩六十（上限六百），照「接下来」静候养伤，八个月里被妖兽和劫修找上门十回，回回一下打倒、内伤再加三个月，九个月用了一百五十一回操作。",
+      "verbs": [
+        "wait",
+        "rest"
+      ],
+      "kind": "睡眠",
+      "hours": 8,
+      "line": "内伤未愈，闭门养伤：野外的人和兽找不上门。"
+    },
+    "pill": {
+      "words": [
+        "疗伤",
+        "内伤",
+        "伤药"
+      ],
+      "factor": 0.5
+    }
+  },
+  "tiers": {
+    "notes": "对手的阶（玩法设计第六节「对手的阶不跟着玩家走」）：0 是凡俗的野兽和人，1 起照妖兽的阶。beast 是这一阶妖兽的境界写法，people 是同一阶的人的境界（content/combat.json 的 beasts 把一阶妖兽折成炼气四层、二阶炼气十层、三阶筑基初期……）。一个人或妖兽的阶，是境界离它最近的那一阶（一样近取低的）。养伤的日数、狩猎、战利品都按阶。",
+    "list": [
+      {
+        "tier": 0,
+        "beast": "凡兽",
+        "people": "凡人"
+      },
+      {
+        "tier": 1,
+        "beast": "一阶妖兽",
+        "people": "炼气四层"
+      },
+      {
+        "tier": 2,
+        "beast": "二阶妖兽",
+        "people": "炼气十层"
+      },
+      {
+        "tier": 3,
+        "beast": "三阶妖兽",
+        "people": "筑基初期"
+      },
+      {
+        "tier": 4,
+        "beast": "四阶妖兽",
+        "people": "结丹初期"
+      },
+      {
+        "tier": 5,
+        "beast": "五阶妖兽",
+        "people": "结丹中期"
+      },
+      {
+        "tier": 6,
+        "beast": "六阶妖兽",
+        "people": "结丹后期"
+      },
+      {
+        "tier": 7,
+        "beast": "七阶妖兽",
+        "people": "元婴初期"
+      },
+      {
+        "tier": 8,
+        "beast": "八阶妖兽",
+        "people": "元婴中期"
+      },
+      {
+        "tier": 9,
+        "beast": "九阶妖兽",
+        "people": "元婴后期"
+      },
+      {
+        "tier": 10,
+        "beast": "十阶妖兽",
+        "people": "化神初期"
+      }
+    ]
+  },
+  "encounters": {
+    "notes": "遭遇（玩法设计第六节「遭遇战」，执行计划第 31 项）。tables 按地点的种类（places.factsOf 读出的 kind）列在这里撞上的是谁、几阶、多大权重，没有表的地方（城镇、坊市、宗门、家族）撞不上；regions 按地点所在的地域把阶往上抬 up 阶（先比 sub，再比 main：地图地点用地图上的地域，地图之外用时间行写的地域；都不中按 fallback），抬过了 tiers 的最高一阶就停在那里。对手的阶由地点定，不跟着主角往上走；只是不凶险的地方给低境界的人留条活路（cap）：地点的危险低于 cap.dangerous（places.json 的妖兽出没之地）时，过日子被打扰撞上的阶不高过主角自己这一阶（fight 的 tierOf：凡人零阶，炼气一到七层一阶），至少 cap.least 阶，表里高过的那几行按这一阶算，所以凡人、炼气低层在城镇附近、路上、矿上、药山上最多撞上一阶。凶险的地方（妖兽之地、秘境、遗迹、禁地）不封顶，表里多高就撞上多高；这时这里最高的那一阶高过主角这一阶，过日子的预览在被打扰的那一句后面接 cap.warning（{险} 是此地危险的说法，{阶} 最高那一阶，{境} 那一阶的人的境界）。狩猎是自己挑的阶，不封顶。who 是撞上的是哪一种：class 是 classes 里的哪一类，people 是不是人，hostile 是不是来者不善（同道、商队不先动手），names 从里面按种子挑一个名字。causes 是过日子被打扰的来由（content/life/interruptions.json）能变成哪几种遭遇：这里的表里有这几种时就变成遭遇，按表里的权重定是谁；别的来由照旧只开一场戏。一段日子最多被打扰一次，所以最多撞上一场。他派弟子只在秘境里撞上（content/life/realms.json）。",
+    "who": {
+      "妖兽": {
+        "class": "beast",
+        "people": false,
+        "hostile": true,
+        "names": [
+          "山狼",
+          "花斑豹",
+          "铁背野猪",
+          "青鳞蟒",
+          "黑熊",
+          "火鸦",
+          "冰蟾",
+          "金背猿",
+          "土甲龟",
+          "雷鹰"
+        ]
+      },
+      "海兽": {
+        "class": "beast",
+        "people": false,
+        "hostile": true,
+        "names": [
+          "铁甲鲨",
+          "海蛇",
+          "巨鳌",
+          "冰鱼"
+        ]
+      },
+      "劫修": {
+        "class": "rogue",
+        "people": true,
+        "hostile": true,
+        "names": [
+          "劫修",
+          "黑衣劫修",
+          "蒙面劫修",
+          "独眼劫修"
+        ]
+      },
+      "邪修": {
+        "class": "evil",
+        "people": true,
+        "hostile": true,
+        "names": [
+          "邪修",
+          "魔道修士",
+          "炼尸人"
+        ]
+      },
+      "傀儡": {
+        "class": "puppet",
+        "people": false,
+        "hostile": true,
+        "names": [
+          "守墓傀儡",
+          "石傀儡",
+          "铜甲尸"
+        ]
+      },
+      "他派弟子": {
+        "class": "disciple",
+        "people": true,
+        "hostile": true,
+        "names": [
+          "银栖阁弟子",
+          "鸣鹤庭弟子",
+          "叠锋堂弟子",
+          "砺背坞弟子",
+          "铜栈营弟子",
+          "青埕院弟子"
+        ]
+      },
+      "同道": {
+        "class": "rogue",
+        "people": true,
+        "hostile": false,
+        "names": [
+          "散修",
+          "游方修士",
+          "采药的修士",
+          "猎妖人"
+        ]
+      },
+      "商队": {
+        "class": "rogue",
+        "people": true,
+        "hostile": false,
+        "names": [
+          "行商",
+          "跑商的修士",
+          "商队管事"
+        ]
+      }
+    },
+    "tables": {
+      "山野": [
+        {
+          "who": "妖兽",
+          "tier": 0,
+          "weight": 5
+        },
+        {
+          "who": "妖兽",
+          "tier": 1,
+          "weight": 1
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "商队",
+          "tier": 1,
+          "weight": 1
+        }
+      ],
+      "药山": [
+        {
+          "who": "妖兽",
+          "tier": 0,
+          "weight": 3
+        },
+        {
+          "who": "妖兽",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 3
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 1
+        }
+      ],
+      "妖兽之地": [
+        {
+          "who": "妖兽",
+          "tier": 0,
+          "weight": 4
+        },
+        {
+          "who": "妖兽",
+          "tier": 1,
+          "weight": 4
+        },
+        {
+          "who": "妖兽",
+          "tier": 2,
+          "weight": 1
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 1
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 1
+        }
+      ],
+      "灵地": [
+        {
+          "who": "妖兽",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "邪修",
+          "tier": 2,
+          "weight": 1
+        }
+      ],
+      "矿": [
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 3
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "妖兽",
+          "tier": 1,
+          "weight": 1
+        }
+      ],
+      "禁地": [
+        {
+          "who": "妖兽",
+          "tier": 2,
+          "weight": 3
+        },
+        {
+          "who": "妖兽",
+          "tier": 3,
+          "weight": 1
+        },
+        {
+          "who": "邪修",
+          "tier": 2,
+          "weight": 2
+        },
+        {
+          "who": "劫修",
+          "tier": 2,
+          "weight": 2
+        }
+      ],
+      "遗迹": [
+        {
+          "who": "傀儡",
+          "tier": 2,
+          "weight": 3
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "同道",
+          "tier": 1,
+          "weight": 1
+        },
+        {
+          "who": "邪修",
+          "tier": 2,
+          "weight": 1
+        }
+      ],
+      "秘境": [
+        {
+          "who": "傀儡",
+          "tier": 2,
+          "weight": 2
+        },
+        {
+          "who": "妖兽",
+          "tier": 2,
+          "weight": 2
+        },
+        {
+          "who": "劫修",
+          "tier": 2,
+          "weight": 2
+        }
+      ],
+      "海域": [
+        {
+          "who": "海兽",
+          "tier": 1,
+          "weight": 4
+        },
+        {
+          "who": "海兽",
+          "tier": 2,
+          "weight": 1
+        },
+        {
+          "who": "商队",
+          "tier": 1,
+          "weight": 2
+        },
+        {
+          "who": "劫修",
+          "tier": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "regions": [
+      {
+        "name": "云汀湾",
+        "sub": [
+          "云汀湾"
+        ],
+        "up": 0
+      },
+      {
+        "name": "潮岚道",
+        "main": [
+          "潮岚道",
+          "风盐原",
+          "长汛海"
+        ],
+        "up": 2
+      },
+      {
+        "name": "落灯海",
+        "main": [
+          "落灯海"
+        ],
+        "up": 3
+      },
+      {
+        "name": "长圃",
+        "main": [
+          "长圃帝国",
+          "南海",
+          "东海",
+          "冰海"
+        ],
+        "up": 4
+      },
+      {
+        "name": "灵界",
+        "main": [
+          "晾云洲",
+          "雷炉洲",
+          "赤圃洲",
+          "浮沙洲",
+          "远潮海"
+        ],
+        "up": 6
+      }
+    ],
+    "fallback": "云汀湾",
+    "cap": {
+      "least": 1,
+      "dangerous": 35,
+      "warning": "此地{险}，撞上的对手可能高过你，最高到{阶}（约{境}）。",
+      "newcomer": {
+        "notes": "初来乍到（执行计划第 50 项的修补）：这一世的头一年里（同 injury.grace 的 within），在不算凶险的地方（危险低于 dangerous）偶然撞上的对手照主角自己的那一层：人和主角同一个境界（layer 是往下几层，0 是同一层），妖兽是境界不高过主角的最高一阶（凡人和炼气三层以下撞上的是凡兽）。只认偶然撞上的，狩猎点名要哪一阶的照旧；凶险的地方照旧。头一年模拟里照「接下来」走的人斗法输了九成一：凡人和炼气一层偶然撞上的都是一阶妖兽（约炼气四层）。",
+        "layer": 0
+      }
+    },
+    "causes": {
+      "野兽": [
+        "妖兽",
+        "海兽"
+      ],
+      "妖兽": [
+        "妖兽",
+        "海兽"
+      ],
+      "兽潮": [
+        "妖兽"
+      ],
+      "守护兽": [
+        "妖兽",
+        "傀儡"
+      ],
+      "海兽": [
+        "海兽"
+      ],
+      "古阵": [
+        "傀儡"
+      ],
+      "路人": [
+        "劫修",
+        "同道",
+        "商队"
+      ],
+      "采药人": [
+        "同道"
+      ],
+      "猎妖人": [
+        "同道"
+      ],
+      "同道": [
+        "同道",
+        "劫修"
+      ],
+      "寻宝人": [
+        "同道",
+        "劫修"
+      ],
+      "截杀": [
+        "劫修",
+        "邪修"
+      ],
+      "争宝": [
+        "劫修",
+        "邪修",
+        "同道"
+      ],
+      "争矿": [
+        "劫修"
+      ],
+      "来船": [
+        "商队",
+        "劫修"
+      ]
+    }
+  },
+  "beat": {
+    "notes": "撞上之后先有一拍，不直接开打（玩法设计第六节「遭遇战」「战前和战后」）。谁先发现谁：玩家的探查（神识）对对方的潜行（脚力，按它那一阶的基准属性），各掷一次 1d10 加修正，玩家不低于对方算玩家先发现。这一拍给几张卡，放进 frxPlay.cards，玩家照常用 act 选：kind 是行动的类型（标价、掷骰、花的时间照 content/life/actions.json，只是不会「办不到」），title 是卡上的字。ok、miss、fumble 是成功（含大成功）、失败、大失败之后怎样，plain 是不掷骰的卡做了怎样：seen 看清了来者，再来一拍；stay 再来一拍；gone 事了，各走各的；fight 动手，它先出手；ambush 动手，它先出手，会偷袭的种类（classes 的 ambushes）按偷袭；first 动手，你先出手，按偷袭；join 结伴；trade 买卖；spotted 被它发现。hidden 的卡只在你先发现时有；spotted 的卡只在它先发现时有；people 只对人；hostile 只对来者不善的；friendly 只对来者无害的（第八批：一拍里不掷骰的卡至多一张，对来者不善的是抢先手，对同道、商队这样的是结伴或买卖，抢先下手就掷一次潜行）；who 只对那几种。它先发现、又来者不善时，这一拍之后它就动手（seen、stay 都按 ambush），除非你走掉或说和了；不善的才会动手，同道、商队那里 fight、ambush 都是各走各的。results 是这些结果在卡上和回执里的说法。",
+    "cards": [
+      {
+        "beat": "察",
+        "kind": "探查",
+        "title": "察",
+        "ok": "seen",
+        "miss": "stay",
+        "fumble": "spotted"
+      },
+      {
+        "beat": "潜行绕开",
+        "kind": "潜行",
+        "title": "潜行绕开",
+        "hidden": true,
+        "ok": "gone",
+        "miss": "fight",
+        "fumble": "ambush"
+      },
+      {
+        "beat": "抢先手",
+        "kind": "强攻",
+        "title": "抢先手",
+        "hidden": true,
+        "hostile": true,
+        "plain": "first"
+      },
+      {
+        "beat": "抢先下手",
+        "kind": "潜行",
+        "title": "抢先下手",
+        "hidden": true,
+        "friendly": true,
+        "ok": "first",
+        "miss": "fight",
+        "fumble": "ambush"
+      },
+      {
+        "beat": "遁",
+        "kind": "脱身",
+        "title": "遁",
+        "ok": "gone",
+        "miss": "fight",
+        "fumble": "ambush"
+      },
+      {
+        "beat": "交涉",
+        "kind": "交涉",
+        "title": "交涉",
+        "people": true,
+        "ok": "gone",
+        "miss": "fight",
+        "fumble": "ambush"
+      },
+      {
+        "beat": "结伴",
+        "kind": "静观",
+        "title": "结伴",
+        "who": [
+          "同道"
+        ],
+        "plain": "join"
+      },
+      {
+        "beat": "买卖",
+        "kind": "买卖",
+        "title": "买卖",
+        "who": [
+          "商队"
+        ],
+        "plain": "trade"
+      },
+      {
+        "beat": "迎战",
+        "kind": "强攻",
+        "title": "迎战",
+        "spotted": true,
+        "hostile": true,
+        "plain": "ambush"
+      }
+    ],
+    "results": {
+      "seen": "看清来者",
+      "stay": "没看出什么",
+      "gone": "各走各的",
+      "fight": "它先出手",
+      "ambush": "它扑上来",
+      "ambushQuiet": "它先出手",
+      "first": "你先出手，按偷袭",
+      "join": "结伴同行",
+      "trade": "看看货",
+      "spotted": "被它发现"
+    },
+    "unknown": "来者"
+  },
+  "story": {
+    "notes": "剧情里带出来、还没登记的对手（第七批：行动卡的对象写的是它的名字，不是编号，例如「赤鳞毒蛇」「赤鳞毒蛇·一阶妖兽」「炼气五层的劫修」）：引擎照名字认出是兽是人、归哪一类（名字收尾的物种是妖兽；people 的字是那一类人；mortal 的说法是凡人，阶 0；名字收尾是 beast 的字是妖兽，是 suffix 的字是人），照写着的境界或阶定它的境界；没写的，取这个地方遭遇表里同一类对手离玩家自己的阶最近的那一阶（一样近取低的；遭遇表的封顶照样算），这里没有遭遇表就是玩家自己的阶。名字里认不出是兽还是人的（一块巨石、一处后院），不开打，照旧只记一笔「动起手来」。",
+    "mortal": [
+      "泼皮",
+      "无赖",
+      "地痞",
+      "恶霸",
+      "樵夫",
+      "猎户",
+      "农夫",
+      "村民",
+      "渔夫",
+      "家丁",
+      "护院",
+      "衙役",
+      "官兵",
+      "兵丁",
+      "打手",
+      "乞丐",
+      "书生",
+      "商贩",
+      "车夫",
+      "船夫",
+      "郎中",
+      "庄丁",
+      "喽啰"
+    ],
+    "beast": [
+      "兽",
+      "禽"
+    ],
+    "beastAnywhere": [
+      "妖"
+    ],
+    "suffix": [
+      "人",
+      "修",
+      "士",
+      "者",
+      "客",
+      "汉",
+      "匪",
+      "贼",
+      "盗",
+      "寇",
+      "卫",
+      "兵",
+      "夫",
+      "妇",
+      "女",
+      "僧",
+      "尼",
+      "翁",
+      "婆",
+      "姑",
+      "娘",
+      "郎",
+      "吏",
+      "丁",
+      "仆",
+      "奴",
+      "童",
+      "徒",
+      "师",
+      "侠",
+      "霸",
+      "棍",
+      "痞",
+      "主"
+    ]
+  },
+  "fromAct": {
+    "notes": "行动卡的后果是进斗法时（content/life/actions.json 的 fight）：卡的对象就是对手；这一掷的结果在这里的，那一边按偷袭（大失败是被人撞破，对方偷袭；大成功是你打对方一个措手不及）。不掷骰的强攻照脚力定先手。",
+    "大成功": "player",
+    "大失败": "foes"
+  },
+  "commands": {
+    "notes": "七个指令在状态里的样子：glyph 是钮上的字，note 是那一行小字的写法，{成} 换成几成（四舍五入到一成），{项} {数} 是花什么、花多少。",
+    "strike": {
+      "glyph": "攻",
+      "note": "命中{成}"
+    },
+    "skill": {
+      "glyph": "术",
+      "note": "耗{项}{数}",
+      "free": "不耗法力",
+      "none": "无术可施",
+      "short": "法力不足"
+    },
+    "item": {
+      "glyph": "物",
+      "note": "{数}样可用",
+      "none": "没有能用的"
+    },
+    "guard": {
+      "glyph": "御",
+      "note": "伤害减半"
+    },
+    "flee": {
+      "glyph": "遁",
+      "note": "成算{成}"
+    },
+    "probe": {
+      "glyph": "察",
+      "note": "成算{成}",
+      "used": "已用过"
+    },
+    "talk": {
+      "glyph": "和",
+      "note": "成算{成}"
+    }
+  }
+}

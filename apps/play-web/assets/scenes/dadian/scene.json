@@ -1,0 +1,43 @@
+{
+  "id": "dadian",
+  "name": "宗门大殿",
+  "kind": "hall",
+  "indoor": true,
+  "key": "key.webp",
+  "eye": [-3.2, 15.5],
+  "sky": {"set": "common", "azimuth": 13, "horizon": 0.17},
+  "layers": [
+    {"type": "card", "file": "wall.webp", "w": 420, "h": 140.0, "x": 4.0, "y": -120, "z": -60, "order": -9.5, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1]},
+    {"type": "card", "file": "wall.webp", "w": 420, "h": 140.0, "x": 4.0, "y": 19.5, "z": -60, "flip": true, "order": -9.5, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1]},
+    {"type": "card", "file": "wall.webp", "w": 40, "h": 13.333, "x": -37.158, "y": 1.333, "z": -12, "flip": true, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [1.333, 2.933]},
+    {"type": "card", "file": "wall.webp", "w": 40, "h": 13.333, "x": 2.842, "y": 1.333, "z": -12, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [1.333, 2.933]},
+    {"type": "card", "file": "wall.webp", "w": 40, "h": 13.333, "x": 42.842, "y": 1.333, "z": -12, "flip": true, "order": 1.0, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35, "sink": [1.333, 2.933]},
+    {"type": "card", "file": "wall.webp", "w": 120, "h": 60.0, "x": 2.842, "y": 12.667, "z": -11.95, "order": 1.05, "gain": 0.035, "haze": 0, "mist": 0, "tintNight": [0.8, 0.9, 1.1], "sink": [12.667, 14.667]},
+    {"type": "card", "file": "burner.webp", "w": 1.443, "h": 2.4, "x": 5.559, "y": 3.85, "z": -5.0, "order": 1.1, "aura": 0.3, "gain": 0.5, "haze": 0.3, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.4, "mistHaze": 0.0, "mistGain": 0.35},
+    {"type": "card", "file": "column.webp", "w": 6.434, "h": 13.0, "x": -3.243, "y": 0.8, "z": 5.0, "order": 2.3, "gain": 0.44, "haze": 0.15, "mist": 0.5, "mistLo": 0.7999999999999998, "mistHi": 4.8, "mistHaze": 0.0, "mistGain": 0.3},
+    {"type": "card", "file": "valance.webp", "w": 30.0, "h": 7.583, "x": 5.16, "y": 9.116, "z": -1.0, "order": 2.4, "gain": 0.42, "haze": 0.1, "mist": 0}
+  ],
+  "cameras": {
+    "idle": {"wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36], "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]},
+    "read": {"wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36], "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]},
+    "sheet": {"wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34], "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]},
+    "cult": {"wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33], "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]},
+    "close": {"wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34], "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]},
+    "cine1": {"wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40], "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]},
+    "cine2": {"wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40], "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]}
+  },
+  "anchors": {"player": [4.0, 4.0, 0.6], "aura": [4.0, 4.02, 0.5499999999999999]},
+  "hours": {"dawn": {"exposure": 0.8}, "day": {"exposure": 0.74, "tint": [2.1, 2.0, 1.9]}, "dusk": {"exposure": 1.0}},
+  "weather": ["clear"],
+  "ambience": {"night": "amb.wind", "dawn": "amb.wind", "day": "amb.wind", "dusk": "amb.wind"},
+  "mood": "solemn",
+  "floor": {"kind": "none"},
+  "protagonist": {"pose": "stand"},
+  "effects": {
+    "shafts": [
+      {"from": [13.5, 11.4, -12.0], "to": [9.0, 4.0, -5.5], "width": 1.8},
+      {"from": [17.5, 11.4, -12.0], "to": [13.0, 4.0, -5.5], "width": 1.6, "strength": 0.8},
+      {"from": [-6.5, 11.6, -12.0], "to": [-1.5, 4.0, -5.0], "width": 2.2}
+    ]
+  }
+}

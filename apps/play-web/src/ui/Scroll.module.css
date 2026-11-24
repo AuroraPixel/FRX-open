@@ -1,0 +1,66 @@
+.frame {
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.scroll {
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+.scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll:focus-visible {
+  outline-offset: -2px;
+}
+
+/* only the mask's alpha counts, so any opaque colour will do: the page colour. (Not currentColor: the
+   contrast audit makes every text colour transparent, which would hide the faded box's own backgrounds,
+   a solid button's gold among them, and measure the text against what lies behind.) */
+.scroll[data-fade] {
+  --fade: 64px;
+  -webkit-mask-image: linear-gradient(180deg, var(--page) 0, var(--page) calc(100% - var(--fade)), transparent 100%);
+  mask-image: linear-gradient(180deg, var(--page) 0, var(--page) calc(100% - var(--fade)), transparent 100%);
+}
+
+/* the reading thread on the right of the book */
+.thread {
+  position: absolute;
+  top: 18px;
+  bottom: 70px;
+  right: var(--s-6);
+  width: 1px;
+  background: var(--line-soft);
+  pointer-events: none;
+}
+.thread i {
+  --at: 0;
+  position: absolute;
+  left: -3px;
+  top: calc(var(--at) * 100% - 3px);
+  width: 7px;
+  height: 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .scroll[data-fade] {
+    --fade: 34px;
+  }
+}

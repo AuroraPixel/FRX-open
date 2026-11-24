@@ -1,0 +1,22 @@
+/* Under 「此处」: the arrays and the teleport array in small words, then 洞府 and 阵法 as text buttons, each
+   a finger whole. */
+.extras {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.words {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+}
+
+.links > button {
+  min-height: 44px;
+}

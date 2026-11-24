@@ -1,0 +1,111 @@
+/* 行囊 (spec 七): the stones, the tabs with the sort and tidy buttons, the slots and the detail. */
+.stones {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-12);
+  padding-bottom: var(--s-8);
+  border-bottom: var(--hair) dashed var(--line-soft);
+  font: 400 var(--fs-13)/1.4 var(--f-serif);
+  letter-spacing: .12em;
+  color: var(--soft);
+}
+
+.stones b {
+  font: 600 var(--fs-20)/1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+/* the nine kinds in two rows of six, all in sight at every width (a sideways-scrolling row would
+   hide most of them on a phone); the sort and tidy buttons fill the end of the second row */
+.bar {
+  position: relative;
+  min-width: 0;
+}
+
+.bar .tabs {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  overflow: visible;
+  padding-bottom: 0;
+  background: none;
+}
+
+.bar .tabs [role='tab'] {
+  min-width: 0;
+  padding-inline: 0;
+  text-indent: var(--ls-label);
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+.tools {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  height: 36px;
+}
+
+/* the name sits clear of the count in the bottom right corner; the picture gives way a little so
+   picture and name still fit the smallest slot (64 px on a 360 px phone) */
+button.slot {
+  padding-bottom: var(--s-14);
+}
+
+button.slot img {
+  width: 48%;
+}
+
+.effect {
+  color: var(--text);
+}
+
+.effect span {
+  margin-right: var(--s-8);
+  color: var(--soft);
+}
+
+.aside {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* the people a gift can go to, on its own line under the buttons */
+.gift {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-10);
+  padding-top: var(--s-10);
+  border-top: var(--hair) dashed var(--line-soft);
+}
+
+.giftLabel {
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  color: var(--soft);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  /* 44 px hit areas around the 34 px circles, 8 px apart (spec 十一, 触控) */
+  .tools {
+    gap: var(--s-18);
+    height: var(--hit);
+    padding-right: var(--s-4);
+  }
+  .gift {
+    gap: var(--s-12);
+  }
+}
+
+/* 耐药 spent: no more of this pill helps this realm (gameplay plan item 44) */
+.effect[data-spent] {
+  padding-left: var(--s-8);
+  border-left: 2px solid var(--cin);
+}

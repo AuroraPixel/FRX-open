@@ -1,0 +1,149 @@
+/* A piece's marks in the cultivation life: the rows, the refining bar, what holds it back (a cinnabar
+   diamond before each), then the action with its preview. The belt: five places in a row, the empty ones
+   dashed. */
+.life,
+.action {
+  display: grid;
+  gap: var(--s-10);
+  min-width: 0;
+}
+
+.action {
+  margin-top: var(--s-4);
+  justify-items: start;
+}
+
+.action > div {
+  justify-self: stretch;
+}
+
+.note {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.note::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 var(--s-8) 2px var(--s-2);
+  background: var(--cin);
+  transform: rotate(45deg);
+}
+
+.belt {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.belt li,
+.belt button {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 52px;
+  padding: var(--s-4);
+  border: var(--hair) solid var(--line);
+  background: var(--tint);
+  text-align: center;
+}
+
+/* a place that can be set: the whole place is the button */
+.belt li:has(> button) {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.belt button {
+  width: 100%;
+  min-width: 0;
+}
+
+.belt li[data-empty],
+.belt li[data-empty] > button {
+  border-style: dashed;
+  border-color: var(--line-soft);
+  background: none;
+}
+
+.belt li > button[data-picked] {
+  border-style: solid;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--glow-soft);
+}
+
+/* what goes in the place pressed: a row each, 44 px or taller */
+.choices {
+  display: grid;
+  gap: var(--s-6);
+  margin-top: var(--s-8);
+}
+
+.choices > p {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--gold);
+}
+
+.choices ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.choices button {
+  display: flex;
+  align-items: center;
+  gap: var(--s-10);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--s-6) var(--s-4);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.choices button:hover,
+.choices button:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.choices button[data-on] b {
+  color: var(--gold);
+}
+
+.choices b {
+  flex: 1;
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.choices span {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.belt b {
+  font: 400 var(--fs-12)/1.3 var(--f-serif);
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.belt span {
+  font: 400 var(--fs-11)/1.3 var(--f-ui);
+  color: var(--soft);
+}
+
+.beltNote {
+  margin: var(--s-6) 0 0;
+  font: var(--type-note);
+  color: var(--soft);
+}

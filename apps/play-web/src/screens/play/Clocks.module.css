@@ -1,0 +1,150 @@
+/* The pressure clocks (the mock-up's .fx-clock). Everything stands on the picture: the halo behind the
+   words, as the status bar has it. */
+.clocks {
+  position: absolute;
+  z-index: var(--z-ui);
+  left: 392px;
+  top: calc(22px + env(safe-area-inset-top, 0px));
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-28);
+  pointer-events: auto;
+}
+
+.clocks::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-12)) calc(-1 * var(--s-22));
+  background: radial-gradient(closest-side, var(--halo) 62%, transparent);
+  opacity: .85;
+  pointer-events: none;
+}
+
+/* desktops: a clock a column, the name over its segments over the words */
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  text-shadow: 0 1px 5px var(--halo);
+}
+
+.name {
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .22em;
+  margin-right: -.22em;
+  color: var(--cin);
+}
+
+.note {
+  font: 400 var(--fs-11)/1 var(--f-ui);
+  letter-spacing: .08em;
+  color: var(--soft);
+}
+
+/* 另有一口 · 收起: small words, a dotted gold line, a touch area of 44 px */
+.more {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-bottom: var(--hair) dotted var(--line);
+  background: none;
+  font: 400 var(--fs-11)/1.4 var(--f-ui);
+  letter-spacing: .12em;
+  color: var(--gold);
+  text-shadow: 0 1px 5px var(--halo);
+}
+
+.more::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
+}
+
+/* 「另有一口」 at a row's end stands on the picture: a strip of halo behind it, full under the words and fading
+   out at the sides, as the status corner's day lines have (「口」 was 4.19:1 at dusk on a 375 px phone) */
+.more::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -4px -10px;
+  background: var(--halo);
+  opacity: .72;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-10), var(--page) calc(100% - var(--s-10)), transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-10), var(--page) calc(100% - var(--s-10)), transparent);
+}
+
+.more,
+.fold {
+  display: none;
+}
+
+/* narrow desktops (a tablet upright, a phone on its side): rows under each other, as on phones, all shown */
+@media (min-width: 760px) and (max-width: 1099px), (max-width: 759px) and (min-aspect-ratio: 131/100) {
+  .clocks {
+    flex-direction: column;
+    gap: var(--s-6);
+  }
+  .clock {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* short screens: the book starts at 84 px, so one row, its words left out */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .clock:not([data-at='0']) {
+    display: none;
+  }
+  .clock .note {
+    display: none;
+  }
+}
+
+/* phones: under the status bar, a row each, two rows at most until 另有一口 opens the rest */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .clocks {
+    left: max(var(--s-16), env(safe-area-inset-left, 0px));
+    top: calc(106px + env(safe-area-inset-top, 0px));
+    flex-direction: column;
+    gap: var(--s-6);
+  }
+  .clock {
+    flex-direction: row;
+    align-items: center;
+  }
+  .clocks:not([data-open]) .clock:not([data-at='0']):not([data-at='1']) {
+    display: none;
+  }
+  .clocks[data-more]:not([data-open]) .clock[data-at='1'] .note {
+    display: none;
+  }
+  /* each row stands on the sky with a strip of the halo colour behind it, from the screen's edge, fading
+     out past its end (one glow for all of them leaves the first row's name on bright cloud) */
+  .clocks::before {
+    display: none;
+  }
+  .clock {
+    position: relative;
+  }
+  .clock::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -3px calc(-1 * var(--s-36)) -3px calc(-1 * var(--s-16));
+    background: linear-gradient(90deg, var(--halo), var(--halo) 76%, transparent);
+    opacity: .95;
+    pointer-events: none;
+  }
+  .more,
+  .fold {
+    display: inline-block;
+  }
+  .fold {
+    align-self: flex-start;
+  }
+}

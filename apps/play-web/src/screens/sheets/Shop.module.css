@@ -1,0 +1,175 @@
+/* 买卖: the place and the stones held, the 买 and 卖 tabs, a row each good at least 52 px tall (a whole row
+   is the button): its name and small words at the left, its price in large figures at the right. A good:
+   its name in brush and price, a stepper, 讨价, the preview, 买下 or 卖出. */
+.shop,
+.detail {
+  display: grid;
+  gap: var(--s-12);
+  min-width: 0;
+}
+
+.where {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.where b {
+  margin-right: .7em;
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+/* 买 and 卖 are one character each: their tabs still take a 44 px finger */
+.sides [role='tab'] {
+  min-width: 44px;
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--s-6) var(--s-6) var(--s-6) var(--s-2);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.row:hover,
+.row:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.what b {
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.what small {
+  min-height: 1em;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.price {
+  display: grid;
+  flex: none;
+  justify-items: end;
+}
+
+.price b {
+  font: 600 var(--fs-17)/1.2 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.price small {
+  font: 400 var(--fs-11)/1.3 var(--f-ui);
+  color: var(--soft);
+}
+
+.none {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* the title and its small words beside it; small words too long for the line go under the title rather than
+   squeeze it onto two lines (「齐管事之约」 and its window and place) */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-4) var(--s-12);
+}
+
+.head h3 {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+
+.head > span {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* how many: a stepper, 44 px a button */
+.count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-12);
+}
+
+.count button {
+  width: 44px;
+  height: 44px;
+  border: var(--hair) solid var(--line);
+  background: none;
+  font: 400 var(--fs-18)/1 var(--f-ui);
+  color: var(--gold);
+}
+
+.count button:disabled {
+  border-color: var(--line-soft);
+  color: var(--faint);
+}
+
+.count output {
+  min-width: 3ch;
+  text-align: center;
+  font: 600 var(--fs-18)/1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.count output small {
+  margin-left: 2px;
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  color: var(--soft);
+}
+
+.haggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8) var(--s-12);
+  font: var(--type-note);
+  color: var(--text);
+}
+
+.go {
+  display: grid;
+  gap: var(--s-12);
+  justify-items: start;
+}
+
+.go > span {
+  justify-self: stretch;
+}
+
+.problem {
+  margin: 0;
+  padding-left: var(--s-10);
+  border-left: 2px solid var(--cin);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}

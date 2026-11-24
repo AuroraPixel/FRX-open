@@ -1,0 +1,411 @@
+/* The settings panel (spec 七, 设置): sections of rows, each a name on the left and a control on the
+   right; sliders and fields take the width under their name. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-6) var(--s-12);
+  padding-bottom: var(--s-10);
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.row[data-wide] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* the name and, beside it, the value: siblings, so the name keeps its serif and the figures theirs */
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-10);
+  min-width: 0;
+}
+
+.label {
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  letter-spacing: .08em;
+  color: var(--text);
+}
+
+.value {
+  margin-left: auto;
+  font: 600 var(--fs-13)/1.5 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.control {
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.row[data-wide] .control {
+  justify-content: stretch;
+}
+
+.hint,
+.note {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.hint {
+  grid-column: 1 / -1;
+}
+
+/* a slider beside its own small control (默认, 开 关) */
+.sliderRow {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+}
+
+/* the slider: a 1 px gold line, brighter up to the value, with a small gold diamond */
+.slider {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  --fill: 50%;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) var(--fill), var(--line) var(--fill));
+}
+
+.slider::-moz-range-track {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold) var(--fill), var(--line) var(--fill));
+}
+
+.slider::-webkit-slider-thumb {
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
+  border: 0;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--glow);
+  transform: rotate(45deg);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.slider::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 0;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--glow);
+  transform: rotate(45deg);
+}
+
+.slider:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+.slider:focus-visible {
+  outline-offset: 2px;
+}
+
+/* text buttons side by side; the chosen one is solid */
+.choice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--s-8);
+}
+
+.choice > button {
+  min-width: 46px;
+  padding-inline: var(--s-12);
+}
+
+/* fields: the name above, a gold line under the words (spec 七, 账号 · 输入框) */
+.field {
+  display: grid;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.field label {
+  font: var(--type-note);
+  letter-spacing: .12em;
+  color: var(--soft);
+}
+
+.field input,
+.textarea {
+  width: 100%;
+  min-width: 0;
+  padding: var(--s-6) 0;
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 var(--fs-15)/1.5 var(--f-ui);
+  transition: border-color var(--d-focus);
+}
+
+.field input::placeholder,
+.textarea::placeholder {
+  color: var(--faint);
+}
+
+.field input:focus,
+.textarea:focus {
+  border-bottom-color: var(--gold);
+}
+
+.field input:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+}
+
+.field input:disabled {
+  color: var(--soft);
+  border-bottom-style: dashed;
+}
+
+.field input[aria-invalid='true'] {
+  border-bottom-color: var(--cin);
+}
+
+.fieldNote {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.fieldNote[data-wrong] {
+  color: var(--cin);
+}
+
+.textarea {
+  min-height: 7.5em;
+  padding: var(--s-8) var(--s-10);
+  border: var(--hair) solid var(--line-soft);
+  border-bottom-color: var(--line);
+  background: var(--tint);
+  font: 400 var(--fs-15)/1.7 var(--f-serif);
+  resize: vertical;
+}
+
+/* a player's view of the models (accounts mode): each profile's name whole on the left, its model on the
+   right, where the key-value rows would break a long name in two. Two classes, so it wins over the rows'
+   own 5em column whatever order the build puts the two sheets in (it lost: 「日报与小剧」 over 「场」) */
+.readRows.readRows > div {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* a model connection or profile: its name, and the model it uses on the right */
+.linkRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+}
+
+.linkRow[aria-expanded='true'] {
+  border-left-color: var(--gold);
+}
+
+.linkName {
+  flex: none;
+  font: 700 var(--fs-14)/1.4 var(--f-serif);
+  letter-spacing: .1em;
+}
+
+.linkModel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font: 400 var(--fs-12h)/1.4 var(--f-ui);
+  color: var(--soft);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 未配置: the words in the panel's own ink (cinnabar text on the night panel reads 4.47:1, under
+   4.5), marked by a small cinnabar diamond */
+.linkModel[data-missing] {
+  color: var(--ink);
+}
+
+.linkModel[data-missing]::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--s-8);
+  background: var(--cin);
+  transform: translateY(-1px) rotate(45deg);
+}
+
+/* the models a connection offers, under the field that filters them */
+.modelPick {
+  display: grid;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.model {
+  max-width: 100%;
+  overflow: hidden;
+  padding: var(--s-4) var(--s-10);
+  border: var(--hair) solid var(--line-soft);
+  background: none;
+  color: var(--text);
+  font: 400 var(--fs-12h)/1.6 var(--f-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model:hover {
+  border-color: var(--line);
+  background: var(--glow-soft);
+}
+
+.problem {
+  margin: 0;
+  padding-left: var(--s-10);
+  border-left: 2px solid var(--cin);
+  font: var(--type-note);
+  color: var(--text);
+}
+
+.failed {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: var(--s-8) var(--s-12);
+  border-left: 2px solid var(--cin);
+  background: var(--tint);
+  font: var(--type-note);
+  color: var(--text);
+}
+
+.failed span {
+  flex: 1;
+}
+
+/* 关于: the licences of what is handed out, a group per heading of THIRD-PARTY-NOTICES.md */
+.licences {
+  display: grid;
+  gap: var(--s-14);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.licenceGroup {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.licenceGroup strong {
+  font: 700 var(--fs-13)/1.5 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.licenceGroup ul {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.licenceGroup li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-8);
+  padding-bottom: var(--s-4);
+  border-bottom: var(--hair) dashed var(--line-soft);
+  font: 400 var(--fs-12h)/1.5 var(--f-ui);
+  color: var(--text);
+}
+
+.licenceGroup li em {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--soft);
+  text-align: right;
+}
+
+.licenceVersion {
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+}
+
+/* phones: 44 px targets; inputs at 16 px so iOS does not zoom (spec 十一) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .slider {
+    height: var(--hit);
+  }
+  .field input,
+  .textarea {
+    font-size: var(--fs-16);
+  }
+  .field input {
+    min-height: var(--hit);
+  }
+  .linkRow {
+    min-height: var(--hit);
+  }
+  .model {
+    min-height: var(--hit);
+    padding-inline: var(--s-12);
+  }
+  .choice {
+    gap: var(--s-8);
+  }
+  .licenceGroup li {
+    flex-wrap: wrap;
+  }
+}
+
+/* a finger on the desktop layout (a phone on its side, a tablet): the same 44 px targets and 16 px fields */
+@media (pointer: coarse) {
+  .slider {
+    height: var(--hit);
+  }
+  .field input,
+  .textarea {
+    font-size: var(--fs-16);
+  }
+  .field input,
+  .linkRow,
+  .model {
+    min-height: var(--hit);
+  }
+}

@@ -1,0 +1,508 @@
+/* A fight's commands and belt (the mock-up's .fx-cmds, .fx-cmd, .fx-belt, .fx-slot, .fx-cap). */
+.bar {
+  display: grid;
+  gap: var(--s-8);
+  min-width: 0;
+  /* the commands' row asks how wide the bar is (seven or eight that do not fit scroll; see below) */
+  container-type: inline-size;
+}
+
+.bar[data-spread] {
+  flex: 1;
+  gap: var(--s-4);
+  padding: var(--s-4) 0 var(--s-6);
+}
+
+/* the commands: a diamond each, 48 px (44 on phones), its line of small words under it */
+.commands {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  padding: var(--s-8) 0 var(--s-6);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+/* seven or eight (和 or 降服, 破 while the foes' array stands, item 43): one row, each never narrower than a
+   finger (46 px); where the bar is too narrow for them all (a phone on its side, eight on a small phone) the
+   row scrolls sideways, below */
+.commands[data-count='7'],
+.commands[data-count='8'] {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.commands[data-count='7']::-webkit-scrollbar,
+.commands[data-count='8']::-webkit-scrollbar {
+  display: none;
+}
+
+.commands[data-count='7'] > .command,
+.commands[data-count='8'] > .command {
+  flex: 1 0 46px;
+}
+
+/* too many for the bar: the row is as wide as its whole commands and a 12 px sliver of the next (only the
+   tip of its diamond, never its glyph), which fades out; it scrolls a command at a time, and once scrolled
+   the row fades at its start too, and at its end no longer. FightBar marks data-scrolled and data-end. */
+@container (max-width: 321.9px) {
+  .commands[data-count='7'] {
+    width: calc(round(down, 100% - 12px, 46px) + 12px);
+    scroll-snap-type: x mandatory;
+    -webkit-mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .commands[data-count='7'][data-scrolled] {
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .commands[data-count='7'][data-scrolled][data-end] {
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22));
+    mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22));
+  }
+  .commands[data-count='7'] > .command {
+    flex: none;
+    width: 46px;
+    scroll-snap-align: start;
+  }
+}
+
+@container (max-width: 367.9px) {
+  .commands[data-count='8'] {
+    width: calc(round(down, 100% - 12px, 46px) + 12px);
+    scroll-snap-type: x mandatory;
+    -webkit-mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .commands[data-count='8'][data-scrolled] {
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-22)), transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-22)), transparent);
+  }
+  .commands[data-count='8'][data-scrolled][data-end] {
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22));
+    mask-image: linear-gradient(90deg, transparent, var(--page) var(--s-22));
+  }
+  .commands[data-count='8'] > .command {
+    flex: none;
+    width: 46px;
+    scroll-snap-align: start;
+  }
+}
+
+.bar[data-spread] .commands {
+  padding: 0;
+  border: 0;
+}
+
+.command {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.d {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  color: var(--ink);
+}
+
+.d::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: var(--hair) solid var(--line);
+  background: var(--panel);
+  transform: rotate(45deg);
+  transition: border-color var(--d-focus), background-color var(--d-press);
+}
+
+.d > span {
+  position: relative;
+}
+
+.command em {
+  max-width: 100%;
+  overflow: hidden;
+  font: 400 var(--fs-11)/1.35 var(--f-ui);
+  font-style: normal;
+  color: var(--faint);
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.command:not(:disabled):not([aria-disabled]):hover .d::before,
+.command[data-hover] .d::before,
+.command:focus-visible .d::before {
+  border-color: var(--gold);
+}
+
+.command:not(:disabled):not([aria-disabled]):active .d::before,
+.command[data-active] .d::before {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+/* the one to use now: gilded */
+.command[data-hint] .d,
+.command[data-hint] em {
+  color: var(--gold);
+}
+
+.command[data-hint] .d::before {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px var(--glow-soft), inset 0 0 8px var(--glow-soft);
+}
+
+/* spent this fight: dashed; cannot be used now: faded */
+.command[data-used] .d,
+.command[data-off] .d,
+.command[data-off] em,
+.command:disabled .d {
+  color: var(--faint);
+}
+
+.command[data-used] .d::before {
+  border-style: dashed;
+}
+
+.command[data-off] .d::before,
+.command:disabled .d::before {
+  border-color: var(--line-soft);
+}
+
+.command:disabled {
+  cursor: default;
+}
+
+/* the belt: 腰带 in two gold characters, five slots */
+.beltRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.belt {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.belt > b {
+  flex: none;
+  width: 2.2em;
+  font: 600 var(--fs-12)/1.3 var(--f-serif);
+  letter-spacing: .3em;
+  color: var(--gold);
+}
+
+.slot {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: var(--hair) solid var(--line-soft);
+  background: var(--panel);
+}
+
+.slot img {
+  width: 36px;
+  height: 36px;
+}
+
+.slot i {
+  font: 400 var(--fs-20)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+}
+
+.slot u {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  text-decoration: none;
+  font: 600 var(--fs-11)/1.2 var(--f-ui);
+  color: var(--ink);
+  text-shadow: 0 1px 3px var(--page);
+}
+
+.slot[data-empty] {
+  border-style: dashed;
+}
+
+.slot[data-empty]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--faint);
+  opacity: .6;
+  transform: rotate(45deg);
+}
+
+.panels {
+  flex: none;
+}
+
+.caption {
+  margin: 0;
+  font: 400 var(--fs-11h)/1.5 var(--f-ui);
+  letter-spacing: .06em;
+  color: var(--faint);
+}
+
+/* the pickers: a skill or a thing a row, each at least 48 px tall */
+.choices {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-6) var(--s-6);
+  border: 0;
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.choice img {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+
+.choice b {
+  flex: none;
+  font: 400 var(--fs-15)/1.4 var(--f-serif);
+  color: var(--ink);
+}
+
+.choice span {
+  flex: 1;
+  min-width: 0;
+  font: var(--type-note);
+  color: var(--soft);
+  text-align: right;
+}
+
+.choice:not([aria-disabled]):hover,
+.choice:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.choice[aria-disabled] b,
+.choice[aria-disabled] span {
+  color: var(--faint);
+}
+
+.none {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* short screens (a phone on its side): the commands and the line of words only, so the story keeps room;
+   the belt is still a press of 物 away */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .beltRow {
+    display: none;
+  }
+  .commands {
+    padding: var(--s-4) 0;
+  }
+  .d {
+    width: 40px;
+    height: 40px;
+    font-size: var(--fs-20);
+  }
+  .d::before {
+    inset: 6px;
+  }
+}
+
+/* phones: 44 px diamonds and slots, the belt's 卷 at its end; the pickers as tall as their rows */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .d {
+    width: 44px;
+    height: 44px;
+    font-size: var(--fs-20);
+  }
+  .d::before {
+    inset: 6px;
+  }
+  .belt {
+    gap: var(--s-6);
+  }
+  .slot {
+    width: 40px;
+    height: 40px;
+  }
+  .slot img {
+    width: 30px;
+    height: 30px;
+  }
+  section.picker,
+  section.picker[data-stop] {
+    height: auto;
+    max-height: 60dvh;
+  }
+}
+
+/* the cultivation life's spirit beast out with the player: its picture in a 40 px circle, its name, temperament
+   and whether it heeds, a thin 气血 line under them; its three orders (44 px each, the one given gilded); and
+   驯 at the row's end while a beast foe is worn down enough. With no beast out, 驯 alone with its words. */
+.beastRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-10);
+  min-width: 0;
+  padding: var(--s-4) 0;
+}
+
+.beastPic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: var(--hair) solid var(--gold);
+  border-radius: 50%;
+  background: var(--tint);
+  overflow: hidden;
+}
+
+.beastPic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.beastPic:not([data-known]) img {
+  opacity: .55;
+}
+
+.beastWords {
+  position: relative;
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 5px;
+}
+
+.beastWords b {
+  font: 400 var(--fs-16)/1.25 var(--f-brush);
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+
+.beastWords span {
+  overflow: hidden;
+  font: 400 var(--fs-11)/1.35 var(--f-ui);
+  color: var(--soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.beastHp {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  max-width: 100%;
+  background: linear-gradient(90deg, var(--hp-a), var(--hp-b));
+}
+
+.orders {
+  display: flex;
+  flex: none;
+  gap: var(--s-2);
+}
+
+.order {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: var(--hair) solid var(--line);
+  border-radius: 50%;
+  background: none;
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  color: var(--soft);
+}
+
+.order[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: var(--glow-soft);
+  color: var(--gold);
+}
+
+.order[data-off] {
+  border-style: dashed;
+  color: var(--faint);
+}
+
+/* beside a beast, 驯 is a command: its diamond over its line of small words; alone, its words at its right */
+.tame {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.beastRow[data-tame-only] .tame {
+  flex: 1;
+  flex-direction: row;
+  gap: var(--s-6);
+}
+
+.tame em {
+  font: 400 var(--fs-11)/1.35 var(--f-ui);
+  font-style: normal;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.beastRow[data-tame-only] .tame em {
+  font-size: var(--fs-13);
+}
+
+/* 驯's diamond edged in cinnabar, its glyph gold (cinnabar letters this size miss 4.5:1) */
+.tame .d {
+  color: var(--gold);
+}
+
+.tame .d::before {
+  border-color: var(--cin);
+}
+
+.tame[data-off] .d,
+.tame[data-off] em {
+  color: var(--faint);
+}

@@ -1,0 +1,29 @@
+# The multi-user deployment's reverse proxy (compose.multiuser.yaml): HTTPS for FRX_HOST, with
+# a certificate from Let's Encrypt for a public name, or Caddy's own for *.localhost.
+{$FRX_HOST} {
+	# Compress pages, scripts and JSON; the turn event streams (text/event-stream) are not
+	# listed, so they go out as they come. One type a line: lines of the same field are any of
+	# them, while more words on one line are read as further field-value pairs that must all
+	# hold, and then nothing is ever compressed (tests/test_deploy.py).
+	encode zstd gzip {
+		match {
+			header Content-Type text/html*
+			header Content-Type text/css*
+			header Content-Type text/plain*
+			header Content-Type text/javascript*
+			header Content-Type application/javascript*
+			header Content-Type application/json*
+			header Content-Type image/svg+xml*
+		}
+	}
+	# Bodies up to a full backup (the server's own limit is 256 MiB, a save file 41 MiB). Caddy
+	# reads MB as a million bytes: 260MB would be less than the server's 256 MiB.
+	request_body {
+		max_size 260MiB
+	}
+	# The server sees the browser's Host, and X-Forwarded-For / X-Forwarded-Proto from here,
+	# the only address it trusts them from. Events of a turn are passed on at once.
+	reverse_proxy app:8787 {
+		flush_interval -1
+	}
+}

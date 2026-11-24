@@ -1,0 +1,52 @@
+/* A small framed list under the 「⋯」, right-aligned with the turn's rule. It stands over text, so the
+   page colour goes under the frame's translucent panel and nothing shows through. */
+.menu.menu {
+  position: absolute;
+  z-index: var(--z-sheet);
+  top: calc(100% + var(--s-4));
+  right: 0;
+  min-width: 150px;
+  display: grid;
+  padding: var(--s-6) 0;
+  background: linear-gradient(180deg, var(--panel-hi), var(--panel)), var(--page);
+  animation: global(float-up) var(--d-focus) var(--ease) both;
+}
+
+/* the blur off: its more opaque panel would take the place of this one, the page colour gone from under it
+   (the documents pass, #18) */
+:global(:root[data-blur='off']) .menu.menu {
+  background: linear-gradient(180deg, var(--panel-hi), var(--panel)), var(--page);
+}
+
+.item {
+  min-height: 36px;
+  padding: var(--s-6) var(--s-18);
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 var(--fs-14)/1.4 var(--f-serif);
+  letter-spacing: var(--ls-btn);
+  text-align: left;
+  transition: background-color var(--d-focus);
+}
+
+.item:hover,
+.item:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 90%);
+}
+
+.item:focus-visible {
+  outline-offset: -2px;
+}
+
+.item:disabled {
+  cursor: default;
+  color: var(--faint);
+  background: none;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .item {
+    min-height: var(--hit);
+  }
+}

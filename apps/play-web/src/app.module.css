@@ -1,0 +1,27 @@
+/* Notices stand over the top of the book on desktops and above the bottom bar on phones (spec 三). */
+.notices {
+  position: fixed;
+  z-index: var(--z-toast);
+  left: var(--s-46);
+  top: 116px;
+  width: min(588px, 100% - 92px);
+  display: grid;
+  gap: var(--s-8);
+  pointer-events: none;
+}
+
+.notices > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .notices {
+    top: auto;
+    left: var(--s-16);
+    right: var(--s-16);
+    width: auto;
+    /* over the bar as tall as it is now and over the keyboard (--bar-h and --kb, which the play screen puts on
+       the root); elsewhere the bar's own 56 px and the safe area */
+    bottom: calc(var(--bar-h, calc(56px + env(safe-area-inset-bottom, 0px))) + var(--kb, 0px) + var(--s-12));
+  }
+}

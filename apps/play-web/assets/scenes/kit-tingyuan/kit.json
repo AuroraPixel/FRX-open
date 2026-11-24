@@ -1,0 +1,102 @@
+{
+ "id": "kit-tingyuan",
+ "family": "tingyuan",
+ "name": "庭院",
+ "layout": "street",
+ "ground": 4.0,
+ "base": {
+  "kind": "manor",
+  "indoor": false,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36],
+    "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]
+   },
+   "read": {
+    "wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36],
+    "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]
+   },
+   "sheet": {
+    "wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34],
+    "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]
+   },
+   "cult": {
+    "wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33],
+    "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]
+   },
+   "close": {
+    "wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34],
+    "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]
+   },
+   "cine1": {
+    "wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40],
+    "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]
+   },
+   "cine2": {
+    "wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40],
+    "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear",
+   "cloud",
+   "mist",
+   "rain",
+   "snow"
+  ],
+  "ambience": {
+   "night": "amb.insects",
+   "dawn": "amb.wind",
+   "day": "amb.insects",
+   "dusk": "amb.insects"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "haze"
+  },
+  "protagonist": {
+   "pose": "stand"
+  }
+ },
+ "names": "house",
+ "elements": [
+  {"id": "far-manor", "file": "far-manor.webp", "role": "far", "px": [2172, 490], "bytes": [263314, 83088], "v": "60b21487", "height": 0, "foot": 0.58, "top": 0.2, "feature": 0.47, "tags": ["manor", "courtyard", "clan"], "weight": 1.2},
+  {"id": "far-roofs", "file": "far-roofs.webp", "role": "far", "px": [2172, 344], "bytes": [209222, 64076], "v": "6e807496", "height": 0, "foot": 0.78, "top": 0.1, "feature": 0.3, "tags": ["sect", "shanmen", "hall", "temple", "tower", "mountain", "valley"]},
+  {"id": "far-hills", "file": "far-hills.webp", "role": "far", "px": [2172, 359], "bytes": [157072, 48888], "v": "a7373a2c", "height": 0, "foot": 0.5, "top": 0.12, "feature": 0.55, "tags": ["mountain", "valley", "rustic", "village", "sect"]},
+  {"id": "ground-court", "file": "ground-court.webp", "role": "ground", "px": [2172, 539], "bytes": [346322, 80644], "v": "7e8032cd", "height": 5.5, "foot": 0, "top": 0.02, "stretch": 2.4, "weight": 1.2},
+  {"id": "ground-pond", "file": "ground-pond.webp", "role": "ground", "px": [2172, 549], "bytes": [392386, 90702], "v": "6f3df246", "height": 5.5, "foot": 0, "top": 0.03, "stretch": 2.4, "tags": ["pond", "water", "flowers"], "need": ["pond", "water", "lake", "stream", "flowers"], "weight": 0.5},
+  {"id": "gate-tower", "file": "gate-tower.webp", "role": "front", "px": [1273, 1055], "bytes": [378328, 112310], "v": "a5b2ed33", "height": 16.5, "foot": 0.91, "plaque": {"box": [0.295, 0.245, 0.695, 0.325], "ink": "gold"}, "tags": ["courtyard", "manor", "gate", "grand"], "avoid": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "only": "hero", "mask": "30c7fe7fe3fc7fe7feffffffffffffffffff", "body": [0.004, 0.995], "crown": 0.0},
+  {"id": "main-hall", "file": "main-hall.webp", "role": "front", "px": [1300, 839], "bytes": [294636, 92788], "v": "95194400", "height": 16.0, "foot": 0.9, "plaque": {"box": [0.335, 0.22, 0.675, 0.31], "ink": "gold"}, "tags": ["courtyard", "hall", "manor", "sect", "shanmen", "palace", "temple", "grand"], "avoid": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "weight": 0.7, "only": "hero", "mask": "3fc7fffff7fefffffffffffffffffffff7fe", "body": [0.015, 0.986], "crown": 0.0},
+  {"id": "ancestral-hall", "file": "ancestral-hall.webp", "role": "front", "px": [1216, 1020], "bytes": [352760, 112752], "v": "ead88ac5", "height": 16.0, "foot": 0.92, "plaque": {"box": [0.315, 0.18, 0.675, 0.265], "ink": "gold"}, "tags": ["courtyard", "clan", "manor"], "avoid": ["sect", "palace", "temple", "jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "weight": 0.9, "only": "hero", "mask": "1f83fc3fc7feffffffffffffffffffffffff", "body": [0.018, 0.98], "crown": 0.0},
+  {"id": "tower", "file": "tower.webp", "role": "front", "px": [1300, 973], "bytes": [350756, 113654], "v": "6453a421", "height": 17.0, "foot": 0.91, "plaque": {"box": [0.38, 0.205, 0.64, 0.285], "ink": "gold"}, "tags": ["tower", "study", "dormitory", "room"], "avoid": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "only": "hero", "mask": "3fcffffff7fe7fe7fe7ff7fe7fe7feffffff", "body": [0.04, 0.96], "crown": 0.0},
+  {"id": "kitchen", "file": "kitchen.webp", "role": "front", "px": [1300, 948], "bytes": [299320, 100842], "v": "07c4cc5b", "height": 14.0, "foot": 0.92, "plaque": {"box": [0.36, 0.265, 0.65, 0.355], "ink": "gold"}, "tags": ["courtyard", "jars", "tavern", "inn", "storeroom", "workshop", "cellar", "alchemy_room"], "need": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar", "alchemy_room"], "only": "hero", "mask": "0003fcfff7fe7fefff7ff7fe7fe7fefff7fe", "body": [0.043, 0.959], "crown": 0.025},
+  {"id": "side-hall", "file": "side-hall.webp", "role": "front", "px": [1200, 646], "bytes": [249320, 82658], "v": "e811c024", "height": 9.5, "foot": 0.9, "eave": 0.31, "tags": ["courtyard", "room", "dormitory", "study", "storeroom", "manor", "sect"], "weight": 1.2, "mask": "402ffffffffffffffffffffffffffffff7fe", "body": [0.014, 0.984], "crown": 0.0},
+  {"id": "moon-wall", "file": "moon-wall.webp", "role": "front", "px": [1200, 731], "bytes": [239686, 74658], "v": "d95eba0c", "height": 10.0, "foot": 0.88, "eave": 0.2, "tags": ["courtyard", "manor", "flowers", "bamboo"], "weight": 0.9, "mask": "fffffffffffff9ff9ff9ff9ff9fffffff7fe", "body": [0.028, 0.968], "crown": 0.0},
+  {"id": "corridor", "file": "corridor.webp", "role": "front", "px": [1200, 615], "bytes": [241554, 75792], "v": "93842abd", "height": 9.5, "foot": 0.9, "eave": 0.25, "tags": ["corridor", "pond", "water", "hall", "sect"], "weight": 0.9, "mask": "402fffffffffd6bc63c63fffffffffffffff", "body": [0.036, 0.966], "crown": 0.0},
+  {"id": "screen-wall", "file": "screen-wall.webp", "role": "front", "px": [1200, 890], "bytes": [301912, 96000], "v": "fd3dd3e9", "height": 10.0, "foot": 0.9, "eave": 0.22, "tags": ["manor", "clan", "grand", "hall"], "weight": 0.7, "mask": "402ffffff7fe7fe7fe7fe7fe7fe7fefff7fe", "body": [0.028, 0.972], "crown": 0.0},
+  {"id": "houses", "file": "houses.webp", "role": "front", "px": [1200, 735], "bytes": [276806, 81840], "v": "7a2a84d4", "height": 15.0, "foot": 0.86, "eave": 0.5, "tags": ["manor", "clan", "rustic", "town", "market"], "avoid": ["sect", "shanmen", "simiao", "palace", "temple", "grand"], "weight": 0.6, "mask": "422fe3fffffffffffffffffffffffffff7fe", "body": [0.033, 0.964], "crown": 0.0},
+  {"id": "stone-lantern", "file": "stone-lantern.webp", "role": "prop", "px": [548, 824], "bytes": [127304, 42918], "v": "2f039055", "height": 3.4, "foot": 0.98, "depths": ["mid", "near"], "tags": ["courtyard", "lanterns", "sect", "hall", "temple"], "mask": "0600e07fe7fc1f01f81f80f03f87fe7fe7fe"},
+  {"id": "vat", "file": "vat.webp", "role": "prop", "px": [717, 621], "bytes": [155638, 47474], "v": "69f0364f", "height": 2.0, "foot": 0.97, "depths": ["mid", "near"], "tags": ["courtyard", "hall", "grand", "pond"], "mask": "3fc7feffffffffffffffffff7fe7fe3fe1fc"},
+  {"id": "stone-table", "file": "stone-table.webp", "role": "prop", "px": [803, 625], "bytes": [153832, 47824], "v": "500534e3", "height": 2.2, "foot": 0.97, "depths": ["mid", "near"], "tags": ["courtyard", "manor", "study", "flowers"], "mask": "3fc7fe7fe1f8ef7ffffffffffff3fc0f0060"},
+  {"id": "bonsai", "file": "bonsai.webp", "role": "prop", "px": [811, 804], "bytes": [240636, 73282], "v": "319d7bba", "height": 2.6, "foot": 0.96, "depths": ["mid", "near"], "tags": ["courtyard", "manor", "study", "flowers"], "avoid": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "weight": 0.8, "mask": "0380fe3fffdc7f83fc3fe3fe3fe3fc3fe3fe"},
+  {"id": "rockery", "file": "rockery.webp", "role": "prop", "px": [1100, 837], "bytes": [279074, 84592], "v": "c173015f", "height": 5.5, "foot": 0.94, "depths": ["mid"], "tags": ["courtyard", "manor", "pond", "water", "rocks"], "avoid": ["jars", "tavern", "inn", "storeroom", "workshop", "cellar"], "weight": 0.8, "mask": "03807c07e0fe13e03e0ff1ff7ffffffff3fc"},
+  {"id": "lion", "file": "lion.webp", "role": "prop", "px": [720, 770], "bytes": [178720, 54190], "v": "a41465f5", "height": 4.2, "foot": 0.93, "depths": ["mid"], "tags": ["manor", "clan", "grand", "hall", "gate"], "weight": 0.7, "mask": "1e03f03f01f03fc3fc3fe7fe7feffefff7fe"},
+  {"id": "well", "file": "well.webp", "role": "prop", "px": [747, 754], "bytes": [192060, 63432], "v": "04eb7168", "height": 4.0, "foot": 0.92, "depths": ["mid"], "tags": ["well", "manor", "clan", "rustic"], "weight": 0.7, "mask": "3fe7fe7fe37c3fe32f7fc7fc7fe7fe7ff3fe"},
+  {"id": "jars-heap", "file": "jars-heap.webp", "role": "prop", "px": [816, 632], "bytes": [172916, 55208], "v": "4a39de8c", "height": 2.8, "foot": 0.93, "depths": ["mid", "near"], "tags": ["jars", "tavern", "inn", "cellar"], "need": ["jars", "tavern", "inn", "cellar", "storeroom"], "weight": 1.4, "mask": "1e03f07fe7ff7ff7fffffffffffffffff7fe"},
+  {"id": "woodpile", "file": "woodpile.webp", "role": "prop", "px": [825, 508], "bytes": [166200, 54784], "v": "2a5f0ce3", "height": 2.4, "foot": 0.94, "depths": ["mid", "near"], "tags": ["storeroom", "tavern", "inn", "jars"], "need": ["storeroom", "tavern", "inn", "jars", "workshop", "cellar", "rustic"], "weight": 1.4, "mask": "19c7fe7fe7fe7fe7ff7ff7fefffffffff7fe"},
+  {"id": "yard-well", "file": "yard-well.webp", "role": "prop", "px": [808, 746], "bytes": [196766, 64788], "v": "cec8e681", "height": 3.4, "foot": 0.94, "depths": ["mid"], "tags": ["well", "tavern", "inn", "jars", "rustic"], "need": ["well", "tavern", "inn", "jars", "storeroom", "rustic"], "weight": 1.2, "mask": "6f47fc7fe66f6047fc7fc7fe7feffeffe3f8"},
+  {"id": "buckets", "file": "buckets.webp", "role": "prop", "px": [802, 683], "bytes": [157866, 49660], "v": "26b6bb3e", "height": 1.8, "foot": 0.93, "depths": ["mid", "near"], "tags": ["well", "tavern", "inn", "jars"], "need": ["well", "tavern", "inn", "jars", "storeroom", "workshop", "rustic"], "weight": 1.2, "mask": "0f01f81f80f03fe7fe7feffe7fffff7ff0fc"},
+  {"id": "bamboo", "file": "bamboo.webp", "role": "near", "px": [788, 887], "bytes": [269654, 86742], "v": "b097d4a8", "height": 11.0, "foot": 0.97, "hold": [0.45, 0.97], "tags": ["bamboo", "courtyard", "manor"], "mask": "7fe7f83fcff83fc1f43f01e01e01c01e01c0"},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [900, 627], "bytes": [186720, 59332], "v": "4b124c72", "height": 2.6, "foot": 0.95, "plaque": {"box": [0.25, 0.43, 0.7, 0.75], "ink": "dark"}, "only": "name", "mask": "00c03e3fe7fe7ff7feffe7fe7fe7fe7fe7fe"}
+ ]
+}

@@ -1,0 +1,160 @@
+{
+ "species": {
+  "wolf": {
+   "file": "wolf.webp",
+   "label": "狼",
+   "size": 1.0
+  },
+  "tiger": {
+   "file": "tiger.webp",
+   "label": "虎",
+   "size": 1.25
+  },
+  "leopard": {
+   "file": "leopard.webp",
+   "label": "豹",
+   "size": 1.05
+  },
+  "bear": {
+   "file": "bear.webp",
+   "label": "熊",
+   "size": 1.35
+  },
+  "fox": {
+   "file": "fox.webp",
+   "label": "狐",
+   "size": 0.75
+  },
+  "snake": {
+   "file": "snake.webp",
+   "label": "蛇",
+   "size": 1.0
+  },
+  "jiao": {
+   "file": "jiao.webp",
+   "label": "蛟",
+   "size": 1.8
+  },
+  "eagle": {
+   "file": "eagle.webp",
+   "label": "鹰",
+   "size": 1.0
+  },
+  "crane": {
+   "file": "crane.webp",
+   "label": "鹤",
+   "size": 1.0
+  },
+  "crow": {
+   "file": "crow.webp",
+   "label": "鸦",
+   "size": 0.7
+  },
+  "roc": {
+   "file": "roc.webp",
+   "label": "巨鹏",
+   "size": 1.8
+  },
+  "ape": {
+   "file": "ape.webp",
+   "label": "猿",
+   "size": 1.3
+  },
+  "deer": {
+   "file": "deer.webp",
+   "label": "鹿",
+   "size": 1.1
+  },
+  "ox": {
+   "file": "ox.webp",
+   "label": "牛",
+   "size": 1.4
+  },
+  "horse": {
+   "file": "horse.webp",
+   "label": "马",
+   "size": 1.3
+  },
+  "turtle": {
+   "file": "turtle.webp",
+   "label": "龟",
+   "size": 1.2
+  },
+  "scorpion": {
+   "file": "scorpion.webp",
+   "label": "蝎",
+   "size": 0.9
+  },
+  "spider": {
+   "file": "spider.webp",
+   "label": "蛛",
+   "size": 0.9
+  },
+  "centipede": {
+   "file": "centipede.webp",
+   "label": "蜈蚣",
+   "size": 1.1
+  },
+  "bat": {
+   "file": "bat.webp",
+   "label": "蝙蝠",
+   "size": 0.8
+  },
+  "carp": {
+   "file": "carp.webp",
+   "label": "鲤",
+   "size": 0.8
+  },
+  "toad": {
+   "file": "toad.webp",
+   "label": "蟾",
+   "size": 0.7
+  },
+  "cat": {
+   "file": "cat.webp",
+   "label": "灵猫",
+   "size": 0.65
+  },
+  "boar": {
+   "file": "boar.webp",
+   "label": "野猪",
+   "size": 1.1
+  },
+  "rat": {
+   "file": "rat.webp",
+   "label": "鼠",
+   "size": 0.5
+  },
+  "insect": {
+   "file": "insect.webp",
+   "label": "灵虫",
+   "size": 0.5
+  },
+  "golem": {
+   "file": "golem.webp",
+   "label": "石傀",
+   "size": 1.6
+  },
+  "skeleton": {
+   "file": "skeleton.webp",
+   "label": "骨妖",
+   "size": 1.1
+  },
+  "treant": {
+   "file": "treant.webp",
+   "label": "树妖",
+   "size": 1.7
+  },
+  "fiend": {
+   "file": "fiend.webp",
+   "label": "魔物",
+   "size": 1.4
+  },
+  "silhouette": {
+   "file": "silhouette.webp",
+   "label": "妖兽",
+   "size": 1.0
+  }
+ },
+ "fallback": "silhouette"
+}

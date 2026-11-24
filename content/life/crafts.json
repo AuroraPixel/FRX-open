@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "description": "技艺和炼制（玩法设计第八节「技艺」，执行计划第 42 项）：炼丹、炼器、制符、布阵、驭兽五门手艺用同一套规则。熟练度四档（mastery）：做成（精或常）满 from 次升到这一档，检定的修正加 modifier，能做到的最高品阶是 top；熟练度记在 frxPlay.crafts。方子是图鉴里的东西（content/life/goods.json 里 kind 方的：丹方、器谱、符谱、阵图），每张写明每炉的材料、几日、出什么。指令 craft 选一张方子、做几炉：要在 crafts 里写的处所（content/life/places.json 的 venues），或在自己的洞府；手里要有这张方子；扣材料、花时间，每炉掷一次 check.attribute 的检定（content/checks.json 的十面骰和四种结果，难度按方子的品阶取 check.tiers），结果照 results 定成色（大失败的那一炉材料全毁，什么也不出）；一炉用的材料全是「残」的，成色降一等（ladder 往下一格，残再降就没了）。请人做（hire）：不要方子，交出材料、付 fee（按方子的品阶，每炉）块灵石，等方子的日数再加 wait 日，进日历（自己的事 craft），到了日子东西进储物袋，成色是 quality。布阵、驭兽的熟练度给第 43、41 项的检定加修正（crafts.cjs 的 modifier）。数都是初值。",
+  "mastery": [
+    { "name": "入门", "from": 0, "modifier": 0, "top": "一阶" },
+    { "name": "熟手", "from": 10, "modifier": 1, "top": "二阶" },
+    { "name": "名家", "from": 40, "modifier": 2, "top": "三阶" },
+    { "name": "宗师", "from": 120, "modifier": 3, "top": "四阶" }
+  ],
+  "crafts": {
+    "炼丹": { "venues": ["丹房"], "recipe": "丹方", "verb": "炼丹" },
+    "炼器": { "venues": ["器室"], "recipe": "器谱", "verb": "炼器" },
+    "制符": { "venues": ["器室", "丹房"], "recipe": "符谱", "verb": "制符" },
+    "布阵": { "venues": ["器室"], "recipe": "阵图", "verb": "炼制阵盘" },
+    "驭兽": { "venues": [], "recipe": null, "verb": "驭兽" }
+  },
+  "check": { "attribute": "神识", "tiers": { "一阶": "中", "二阶": "难", "三阶": "极难", "四阶": "极难" } },
+  "results": { "大成功": "精", "成功": "常", "失败": "残", "大失败": null },
+  "ladder": ["残", "常", "精"],
+  "most": 10,
+  "hire": { "fee": [5, 50, 500, 5000], "wait": 3, "quality": "常" },
+  "verb": { "glyph": "炼", "label": "炼制" }
+}

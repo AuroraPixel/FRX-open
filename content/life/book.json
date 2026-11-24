@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "description": "章回（玩法设计第十一节「怎么讲：卷、回、年谱」，执行计划第 38 项）。frxPlay.book 记第几卷、第几回：一场戏开场是新的一回，年谱行不算回。回目：一场戏收场的那一拍，模型在 <title> 里给一对句子，中间用全角空格隔开；引擎核对：两句，每句 couplet.lengths 里的字数（七个或八个汉字，只有汉字），两句一样长；不合格就用引擎自己的一行 couplet.fallback（{地点}{戏名}），并在收场的回执里记一笔。卷：过了一道大境界的关（冲关成了），或者一桩只来一次的世界大事走到余波（content/life/saga.json 里不接日历、不是 stub 的），开新的一卷；上一卷出一页卷末语：引擎挑这一卷的年谱（annals.kinds 那几种行：过的关、故人的大事、钟的了结、世界大事），至多 annals.most 条；冲关的那一回合，模型在大场面的同一次调用里写 <volume>卷末语</volume>，至多 volume.most 字；大事开的卷，卷末语是余波的那一行年谱。出关见闻：一次指令跨了 emerge.years 年以上，出来先出一页：这些年日历上过去了的事（固定的、值得记的，同一件事合成一行，写几次），人物的大事（frxPlay.news），世界大事的年谱行，至多 emerge.most 条，不调模型。数都是初值。",
+  "couplet": { "lengths": [7, 8], "separator": "　", "fallback": "{地点}{戏名}" },
+  "annals": {
+    "kinds": ["breakthrough", "personRise", "personDeath", "personFeud", "clockFull", "clockGone", "saga"],
+    "most": 12
+  },
+  "volume": { "most": 300 },
+  "emerge": { "years": 3, "most": 20, "repeat": "{事}（{次}次）" },
+  "refused": {
+    "none": "没有回目",
+    "lines": "回目要两句，中间用全角空格隔开",
+    "chars": "回目只能是汉字，不带标点",
+    "length": "每句要七个或八个字",
+    "same": "两句要一样长"
+  }
+}

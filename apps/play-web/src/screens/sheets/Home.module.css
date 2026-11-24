@@ -1,0 +1,93 @@
+/* 洞府: the home's name in brush with its 灵气 and how it was had, the rooms and the garden's beds as rows
+   (a row at least 52 px, its name and small words at the left, a quiet 修一间 at the right), the free plots,
+   then 种药, 收药, 阵法 and 弃了它 as text buttons. */
+.home {
+  display: grid;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+.head {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.head h3 {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+
+.head p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-10);
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.away {
+  padding-left: var(--s-8);
+  border-left: 2px solid var(--cin);
+  color: var(--text);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  min-height: 52px;
+  padding: var(--s-6) var(--s-2);
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.row[data-ripe] {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.what {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.what b {
+  font: 400 var(--fs-15)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.what small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.row[data-ripe] .what small {
+  color: var(--gold);
+}
+
+.plots {
+  margin: var(--s-6) 0 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-10);
+  margin-top: var(--s-6);
+}
+
+/* a text button takes a finger whole */
+.actions > button,
+.row > button {
+  min-height: 44px;
+}

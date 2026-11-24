@@ -1,0 +1,206 @@
+/* The gallery scrolls itself (the page never does). Each pane stands on --page, the colour the
+   stage's veil gives the picture under the book, so the components are seen as in the game. */
+.gallery {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  background: var(--page);
+  color: var(--ink);
+}
+
+.head {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-ui);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-12) var(--s-22);
+  padding: var(--s-14) var(--s-22) var(--s-10);
+  border-bottom: var(--hair) solid var(--line);
+  background: var(--page);
+}
+
+.title {
+  margin: 0;
+  font: var(--type-sheet-title);
+  color: var(--ink);
+}
+
+.switch {
+  display: flex;
+  gap: var(--s-8);
+  margin-left: auto;
+}
+
+.panes {
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.panes[data-show='both'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pane {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: var(--s-18);
+  padding: var(--s-18) var(--s-22) var(--s-36);
+  background: var(--page);
+  color: var(--ink);
+}
+
+.paneTitle {
+  margin: 0;
+  font: var(--type-hui);
+  letter-spacing: var(--ls-hui);
+  color: var(--gold);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-14);
+}
+
+.label {
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--soft);
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-18);
+  min-width: 0;
+}
+
+.bars {
+  display: grid;
+  gap: var(--s-8);
+  width: min(240px, 100%);
+}
+
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-18);
+  padding: var(--s-8) var(--s-6);
+}
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-12) var(--s-8);
+  width: 100%;
+  justify-items: center;
+}
+
+.acts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-10);
+  width: 100%;
+}
+
+.stack {
+  display: grid;
+  gap: var(--s-10);
+  width: 100%;
+}
+
+.book {
+  display: grid;
+  gap: 0;
+  width: min(588px, 100%);
+}
+
+.panel {
+  width: min(420px, 100%);
+  display: grid;
+  gap: var(--s-16);
+  padding: var(--s-16) 20px var(--s-22);
+}
+
+.scrollDemo {
+  width: min(360px, 100%);
+  height: 150px;
+}
+
+.scrollDemo > div {
+  padding-right: var(--s-22);
+}
+
+.storyLine {
+  margin: 0 0 .58em;
+  font: var(--type-body);
+  color: var(--text);
+  text-indent: 2em;
+  text-align: justify;
+}
+
+/* the overlay sections: something to stand behind the sheet or the dialog */
+.behind {
+  display: grid;
+  place-items: start;
+  padding: var(--s-46);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .head {
+    padding: var(--s-10) var(--s-16) var(--s-8);
+  }
+  .switch {
+    margin-left: 0;
+  }
+  .panes[data-show='both'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pane {
+    padding: var(--s-16) var(--s-16) var(--s-28);
+  }
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-8);
+  }
+  .acts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .behind {
+    padding: var(--s-22) var(--s-16);
+  }
+}
+
+/* the pressure clocks stand on the page where the play page puts them over the stage */
+.clocksDemo {
+  margin: var(--s-10) 0 var(--s-22);
+}
+
+.clocksDemo > [role='group'] {
+  position: relative;
+  left: 0;
+  top: 0;
+}
+
+/* the phone's bar of a fight, as wide as the phone: seven commands keep 44 px each on a 360 px phone */
+.verbBar[data-wide] {
+  margin-inline: calc(-1 * var(--s-16));
+  padding-inline: var(--s-10);
+}
+
+/* the phone's bottom bar, for the standing commands */
+.verbBar {
+  margin: var(--s-16) 0;
+  padding: 0 var(--s-16) var(--s-6);
+  border-top: var(--hair) solid var(--line-soft);
+  background: var(--panel-hi);
+}

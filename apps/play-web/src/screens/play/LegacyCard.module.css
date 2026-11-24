@@ -1,0 +1,71 @@
+/* 传承: the next gate's card in cinnabar: the 传 in a seal-red diamond, the title, who died, the way on. */
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  width: 100%;
+  min-height: 64px;
+  margin: var(--s-8) 0;
+  padding: var(--s-12) var(--s-12) var(--s-12) var(--s-8);
+  border: 0;
+  border-top: var(--hair) solid var(--cin);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--cin) 12%, transparent), var(--tint) 70%);
+  text-align: left;
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.card:hover,
+.card:focus-visible {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--cin) 22%, transparent), var(--tint) 70%);
+}
+
+.card:focus-visible {
+  outline-offset: -2px;
+}
+
+.kind {
+  flex: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  color: var(--seal-ink);
+}
+
+.kind::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  background: var(--cin) var(--tex-seal) center / cover;
+  transform: rotate(45deg);
+}
+
+.kind > span {
+  position: relative;
+}
+
+.words {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.words strong {
+  font: 700 var(--fs-14h)/1.5 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--ink);
+}
+
+.words small {
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.words em {
+  font: var(--type-note);
+  font-style: normal;
+  color: var(--soft);
+}

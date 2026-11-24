@@ -1,0 +1,52 @@
+.row {
+  display: grid;
+  grid-template-columns: 2.4em minmax(0, 1fr) 5.4em;
+  align-items: center;
+  gap: var(--s-8);
+  font: 400 var(--fs-11)/1.4 var(--f-ui);
+  color: var(--soft);
+  text-shadow: 0 1px 8px var(--halo);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  height: 11px;
+  background: var(--line-soft);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  transition: width var(--d-value) var(--ease);
+}
+
+.bar[data-tone='hp'] .fill {
+  background: linear-gradient(90deg, var(--hp-a), var(--hp-b));
+}
+.bar[data-tone='mp'] .fill {
+  background: linear-gradient(90deg, var(--mp-a), var(--mp-b));
+}
+.bar[data-tone='gold'] .fill {
+  background: linear-gradient(90deg, var(--line), var(--gold));
+}
+
+.value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .row {
+    grid-template-columns: 2.4em minmax(0, 1fr) 4.6em;
+    gap: var(--s-6);
+  }
+}

@@ -1,0 +1,43 @@
+.tool {
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: var(--hair) solid var(--line);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 var(--fs-17)/1 var(--f-brush);
+  text-shadow: none;
+  transition: border-color var(--d-focus), background-color var(--d-press);
+}
+
+.tool:hover,
+.tool[data-hover] {
+  border-color: var(--gold);
+}
+
+.tool:active,
+.tool[data-active] {
+  background: var(--glow-soft);
+  transition-duration: 0s;
+}
+
+.tool:disabled {
+  cursor: default;
+  color: var(--faint);
+  border-color: var(--line-soft);
+}
+
+/* phones, and a finger anywhere: the touch target reaches 44 px around the 34 px circle (32 px inside
+   its border) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .tool::after {
+    content: '';
+    position: absolute;
+    inset: calc((32px - var(--hit)) / 2);
+  }
+}

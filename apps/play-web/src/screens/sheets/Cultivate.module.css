@@ -1,0 +1,114 @@
+/* 修炼, 调息, 静候: the panel's existing parts (小标题, 文字钮, the settings' rows, 键值表, 行动钮), tight
+   enough that on a 360 × 640 phone the choices, the preview and 「开始」 stand in one sheet. */
+.panel {
+  display: grid;
+  gap: var(--s-14);
+  min-width: 0;
+}
+
+.part {
+  display: grid;
+  gap: var(--s-10);
+  min-width: 0;
+}
+
+/* the lengths: text buttons in rows from the left, the chosen one solid */
+.lengths,
+.marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+.lengths > button,
+.marks > button {
+  min-width: 46px;
+  padding-inline: var(--s-12);
+  letter-spacing: .12em;
+}
+
+.until {
+  display: grid;
+  gap: var(--s-10);
+}
+
+/* what it would bring: the server's lines, the facts, the speed's terms; dimmed while asked again */
+.preview {
+  display: grid;
+  gap: var(--s-10);
+  min-height: 0;
+  padding: var(--s-12) var(--s-14);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  transition: opacity var(--d-focus);
+}
+
+.preview[data-stale] {
+  opacity: .6;
+}
+
+.lines p {
+  margin: 0;
+  font: 400 var(--fs-14)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+.facts {
+  margin: 0;
+}
+
+.short {
+  color: var(--cin);
+}
+
+.reason {
+  margin: 0;
+  padding-left: var(--s-10);
+  border-left: 2px solid var(--cin);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.formula {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-10);
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.formula b {
+  font-weight: 600;
+  letter-spacing: .2em;
+  color: var(--gold);
+}
+
+.formula em {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.go {
+  padding-top: var(--s-2);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .preview {
+    padding: var(--s-10) var(--s-12);
+  }
+}
+
+/* a finger: each text button's touch area reaches 8 px past its edge (Btn), so rows of them, and what
+   comes after them, stand 16 px apart: the 44 px areas meet and never cover each other */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .panel {
+    gap: var(--s-16);
+  }
+  .lengths,
+  .marks {
+    gap: var(--s-16) var(--s-8);
+  }
+}

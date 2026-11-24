@@ -1,0 +1,128 @@
+/* The book's own pages (章回, gameplay plan item 38): a volume's closing page and 出关见闻, in the look of a
+   journey's passage (Shows.module.css .passage, .journey, .placeName, .where) laid in the book's column:
+   the ink pressed in around the words, a short gold rule over a line in gold, the big brush characters
+   with their glow, the small line under them; the lines after them a gold diamond each (the mock-up's
+   .fx-news), and a volume's 「翻到卷三」 at the end (.fx-end). */
+.page {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-14);
+  margin: var(--s-16) 0 var(--s-22);
+  padding: var(--s-28) var(--s-14) var(--s-22);
+  text-align: center;
+  text-shadow: 0 1px 10px var(--halo);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+/* the ink: darkest behind the brush words, gone at the page's edges */
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse 72% 58% at 50% 34%, var(--veil), transparent 78%);
+  pointer-events: none;
+}
+
+.lead {
+  margin: 0;
+  font: var(--type-me);
+  letter-spacing: var(--ls-me);
+  color: var(--gold);
+}
+
+.lead::before {
+  content: '';
+  display: block;
+  width: 54px;
+  height: 1px;
+  margin: 0 auto var(--s-14);
+  background: var(--gold);
+}
+
+.big {
+  margin: 0 calc(-1 * .2em) 0 0;
+  font: 400 var(--fs-40)/1.08 var(--f-brush);
+  letter-spacing: .2em;
+  color: var(--foil);
+  text-shadow: 0 0 34px var(--glow), 0 1px 10px var(--halo);
+}
+
+.span {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--text);
+}
+
+.lines {
+  display: grid;
+  gap: var(--s-2);
+  width: min(100%, 31em);
+  margin: var(--s-8) 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.lines li {
+  position: relative;
+  padding: var(--s-6) 0 var(--s-6) var(--s-22);
+  font: 400 var(--fs-14)/1.75 var(--f-serif);
+  color: var(--ink);
+}
+
+.lines li::before {
+  content: '';
+  position: absolute;
+  left: var(--s-4);
+  top: calc(var(--s-6) + .78em);
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.lines time {
+  margin-right: .7em;
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.words {
+  width: min(100%, 31em);
+  margin: var(--s-4) 0 0;
+  text-align: left;
+  text-indent: 2em;
+  font: 400 var(--fs-15)/1.9 var(--f-serif);
+  color: var(--text);
+}
+
+.quiet {
+  margin: 0;
+  font: 400 var(--fs-14)/1.75 var(--f-serif);
+  color: var(--soft);
+}
+
+.next {
+  margin: var(--s-10) calc(-1 * .4em) 0 0;
+  font: 700 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .4em;
+  color: var(--gold);
+}
+
+/* phones: the column is narrower, the brush a size smaller */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .page {
+    padding: var(--s-22) var(--s-6) var(--s-18);
+  }
+  .big {
+    font-size: var(--fs-34);
+  }
+  .span {
+    letter-spacing: .12em;
+  }
+}

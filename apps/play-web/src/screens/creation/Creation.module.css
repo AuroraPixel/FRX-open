@@ -1,0 +1,839 @@
+/* 建角 (spec 七): a large centred frame, 880 px, over the scene on desktops; the whole window on phones. The
+   steps as small diamonds, a body that scrolls, 上一步 and 下一步 at the foot. */
+.page {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ui);
+  display: grid;
+  /* one row the window's height: the frame's height resolves against it, never against its own content */
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  padding: var(--s-36) var(--s-28);
+}
+
+.frame {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  width: min(880px, 100%);
+  height: min(100%, 860px);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  padding: var(--s-18) var(--s-22) var(--s-10);
+}
+
+.heading {
+  display: grid;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font: var(--type-sheet-title);
+  color: var(--ink);
+}
+
+.stepNo {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.points {
+  margin-left: auto;
+  padding: var(--s-6) var(--s-12);
+  border: var(--hair) solid var(--line);
+  font: 400 var(--fs-13)/1.2 var(--f-ui);
+  letter-spacing: .08em;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.points b {
+  margin-left: var(--s-4);
+  font: 600 var(--fs-16)/1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.points[data-short] b {
+  color: var(--cin);
+}
+
+/* the steps: small diamonds on a gold line, the walked ones solid, the current one glowing */
+.diamonds {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 var(--s-22);
+  padding: 0;
+  list-style: none;
+  background: linear-gradient(var(--line-soft), var(--line-soft)) center / 100% 1px no-repeat;
+  border-bottom: var(--hair) solid var(--line-soft);
+}
+
+.diamonds li {
+  display: grid;
+  place-items: center;
+}
+
+.diamond {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.diamond i {
+  width: 11px;
+  height: 11px;
+  border: var(--hair) solid var(--line);
+  background: var(--panel-hi);
+  transform: rotate(45deg);
+  transition: background-color var(--d-focus), box-shadow var(--d-focus);
+}
+
+li[data-state='walked'] .diamond i {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+li[data-state='here'] .diamond i {
+  border-color: var(--gold);
+  background: var(--panel-hi);
+  box-shadow: 0 0 0 3px var(--glow-soft), 0 0 12px var(--glow);
+}
+
+.diamond:disabled {
+  cursor: default;
+}
+
+.diamond:disabled i {
+  border-color: var(--line-soft);
+}
+
+.body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  align-content: start;
+  gap: var(--s-14);
+  padding: var(--s-18) var(--s-28) var(--s-22);
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-12);
+  padding: var(--s-12) var(--s-22) var(--s-16);
+  border-top: var(--hair) solid var(--line-soft);
+}
+
+.lead,
+.note {
+  margin: 0;
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--soft);
+}
+
+.note {
+  font: var(--type-note);
+}
+
+/* the choices: large list entries, two to a row on desktops */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-10);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-10);
+}
+
+/* the 人称: three small choices side by side */
+.trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-8);
+}
+
+/* 初始年龄: the caption, a short field for up to three digits, and its unit */
+.ageField {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.ageField .input {
+  width: 4.5em;
+  text-align: center;
+}
+
+.ageUnit {
+  font: var(--type-note);
+  letter-spacing: 0;
+  color: var(--soft);
+}
+
+.choice {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--d-press);
+}
+
+.choice:hover {
+  background: var(--glow-soft);
+}
+
+.choice[aria-pressed='true'] {
+  border-left-color: var(--gold);
+  outline: var(--hair) solid var(--gold);
+  outline-offset: 2px;
+  background: var(--glow-soft);
+}
+
+.choice[aria-pressed='true']:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.choice[data-edge] {
+  border-left-width: 3px;
+}
+
+.choice[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.choice[aria-disabled='true'] strong,
+.choice[aria-disabled='true'] .choiceText,
+.choice[aria-disabled='true'] .bonus,
+.choice[aria-disabled='true'] .cost {
+  color: var(--faint);
+}
+
+.choiceHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-10);
+}
+
+.choiceHead strong {
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+}
+
+.cost {
+  flex: none;
+  font: 400 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .1em;
+  color: var(--soft);
+}
+
+.bonus {
+  font: 400 var(--fs-12h)/1.5 var(--f-serif);
+  color: var(--gold);
+}
+
+.choiceText {
+  font: 400 var(--fs-12h)/1.6 var(--f-serif);
+  color: var(--soft);
+}
+
+.blocked {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* 灵根: the result in large brush strokes, or the elements turning while it is drawn */
+.root {
+  display: grid;
+  place-items: center;
+  min-height: 190px;
+  padding: var(--s-14);
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line);
+  background: var(--tint);
+}
+
+.rootResult {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-8);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.rootResult strong {
+  font: var(--type-meet);
+  font-size: min(var(--fs-40) * 2.2, 15vw);
+  letter-spacing: .1em;
+  color: var(--foil);
+  text-shadow: 0 0 26px var(--glow);
+}
+
+.rootResult span {
+  font: 400 var(--fs-34)/1 var(--f-brush);
+  letter-spacing: .3em;
+  color: var(--gold);
+}
+
+.rootResult small {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.rootEmpty {
+  margin: 0;
+  font: 400 var(--fs-24)/1 var(--f-brush);
+  letter-spacing: .2em;
+  color: var(--soft);
+}
+
+.rootShow {
+  display: flex;
+  gap: var(--s-10);
+}
+
+.rootShow i {
+  font: 400 var(--fs-34)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--gold);
+  opacity: .25;
+  animation: glimmer 1s ease-in-out infinite;
+}
+
+@keyframes glimmer {
+  0%, 100% { opacity: .2; transform: translateY(2px); }
+  50% { opacity: 1; transform: none; text-shadow: 0 0 14px var(--glow); }
+}
+
+.drawRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-14);
+}
+
+.drawRow > span {
+  flex: 0 1 340px;
+  min-width: 260px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+/* 属性: one row each, the name and its meaning, − value ＋ and the bonus in jade */
+.attributes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6) var(--s-22);
+  margin: 0;
+}
+
+.attribute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-10);
+  min-width: 0;
+  padding: var(--s-4) 0 var(--s-6);
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.attribute dt {
+  display: grid;
+  min-width: 0;
+}
+
+.attribute dt span {
+  font: 600 var(--fs-14)/1.4 var(--f-serif);
+  color: var(--ink);
+}
+
+.attribute dt small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.attribute dd {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-6);
+  margin: 0;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: var(--hair) solid var(--line);
+  background: var(--panel);
+  color: var(--gold);
+  font: 400 var(--fs-16)/1 var(--f-ui);
+}
+
+.step:hover {
+  background: var(--glow-soft);
+}
+
+.step:disabled {
+  cursor: default;
+  border-color: var(--line-soft);
+  color: var(--faint);
+}
+
+.value {
+  min-width: 2.2em;
+  font: 600 var(--fs-16)/1 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--ink);
+}
+
+.delta {
+  min-width: 2.4em;
+  font: 600 var(--fs-13)/1 var(--f-ui);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--jade);
+}
+
+/* a bonus that takes away: not in jade, which says more */
+.delta[data-negative] {
+  color: var(--soft);
+}
+
+/* 形象: the figure on the left, the rows on the right */
+.look {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: var(--s-22);
+  align-items: start;
+}
+
+.lookFigure {
+  position: sticky;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-10);
+  height: min(560px, 62dvh);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.lookFigure canvas {
+  height: 100%;
+  width: auto;
+  -webkit-mask: linear-gradient(180deg, var(--ink) 86%, transparent);
+  mask: linear-gradient(180deg, var(--ink) 86%, transparent);
+}
+
+.lookRows {
+  min-width: 0;
+}
+
+/* 名字与出生地 */
+.field {
+  display: grid;
+  gap: var(--s-6);
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.input {
+  width: 100%;
+  padding: var(--s-8) 0;
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  background: none;
+  color: var(--ink);
+  font: 400 var(--fs-18)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+  outline: none;
+  transition: border-color var(--d-focus);
+}
+
+.input::placeholder {
+  color: var(--faint);
+  font-size: var(--fs-16);
+}
+
+.input:focus {
+  border-bottom-color: var(--gold);
+  box-shadow: 0 1px 0 var(--gold);
+}
+
+.problem {
+  margin: 0;
+  font: var(--type-note);
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--cin);
+}
+
+.place {
+  color: var(--gold);
+}
+
+.tabsRow {
+  min-width: 0;
+}
+
+/* thirteen regions: the row wraps rather than scrolls, so no tab stands half cut at the row's edge */
+.tabsRow [role='tablist'] {
+  flex-wrap: wrap;
+  overflow: visible;
+  row-gap: var(--s-2);
+}
+
+.mapPane {
+  display: grid;
+  gap: var(--s-12);
+  min-width: 0;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: 300px;
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+}
+
+.mapRegion {
+  fill: var(--tint);
+  stroke: var(--line);
+  stroke-width: 1.4px;
+  vector-effect: non-scaling-stroke;
+}
+
+.mapArea {
+  fill: none;
+  stroke: var(--line-soft);
+  stroke-width: 1px;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.mapPoi {
+  cursor: pointer;
+}
+
+.mapPoi rect {
+  fill: var(--panel-hi);
+  stroke: var(--soft);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.mapPoi[data-on] rect {
+  fill: var(--gold);
+  stroke: var(--gold);
+  filter: drop-shadow(0 0 4px var(--glow));
+}
+
+.mapPoi text {
+  fill: var(--gold);
+  font-family: var(--f-serif);
+  paint-order: stroke;
+  stroke: var(--panel-hi);
+  stroke-width: 3px;
+}
+
+.places {
+  display: grid;
+  gap: var(--s-12);
+}
+
+.area {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.area h5 {
+  margin: 0;
+  font: 600 var(--fs-12)/1.4 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--soft);
+}
+
+.placeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-6);
+}
+
+.placeButton {
+  position: relative;
+  padding: var(--s-4) var(--s-10);
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  color: var(--text);
+  font: 400 var(--fs-13)/1.5 var(--f-serif);
+  letter-spacing: .06em;
+}
+
+.placeButton:hover {
+  background: var(--glow-soft);
+}
+
+.placeButton[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* 确认 */
+.summaryTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+}
+
+.summaryTop > div {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.summaryName {
+  font: 400 var(--fs-30)/1.1 var(--f-brush);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.summary {
+  display: grid;
+  gap: var(--s-6);
+  margin: 0;
+}
+
+.summary > div {
+  display: grid;
+  grid-template-columns: 5.5em minmax(0, 1fr);
+  gap: var(--s-12);
+  align-items: baseline;
+  padding-bottom: var(--s-6);
+  border-bottom: var(--hair) dashed var(--line-soft);
+  font: var(--type-kv);
+}
+
+.summary dt {
+  color: var(--soft);
+}
+
+.summary dd {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-10);
+  margin: 0;
+  font: 600 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--ink);
+}
+
+.edit {
+  position: relative;
+  flex: none;
+  /* one line tall even beside a value of two lines, so its widened area stays in its own row */
+  align-self: center;
+  padding: 0 var(--s-4);
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.enter {
+  max-width: 360px;
+  margin-top: var(--s-6);
+}
+
+.failed {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-12);
+  padding: var(--s-28);
+}
+
+.failed p {
+  margin: 0;
+  font: 400 var(--fs-14)/1.7 var(--f-serif);
+  color: var(--text);
+}
+
+/* phones: the whole window; one column; the figure in the top 38% while the rows scroll under it */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .page {
+    padding: 0;
+    place-items: stretch;
+  }
+  .frame {
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+  }
+  /* the frame is the window itself: no corners to set */
+  .frame::before,
+  .frame::after {
+    display: none;
+  }
+  .head {
+    padding: calc(var(--s-14) + env(safe-area-inset-top, 0px)) var(--s-16) var(--s-6);
+    gap: var(--s-12);
+  }
+  .title {
+    font-size: var(--fs-24);
+  }
+  .points {
+    padding: var(--s-4) var(--s-8);
+    letter-spacing: .04em;
+  }
+  .diamonds {
+    margin: 0 var(--s-8);
+  }
+  .diamond {
+    width: 30px;
+    height: 34px;
+  }
+  .body {
+    padding: var(--s-14) var(--s-16) var(--s-22);
+  }
+  .foot {
+    padding: var(--s-10) var(--s-16) calc(var(--s-10) + env(safe-area-inset-bottom, 0px));
+  }
+  .foot > button {
+    flex: 1;
+  }
+  .choices,
+  .attributes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .choice {
+    min-height: var(--hit);
+  }
+
+  .step {
+    width: 44px;
+    height: 44px;
+  }
+  .look {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-12);
+  }
+  .lookFigure {
+    z-index: 1;
+    height: 38dvh;
+    margin: calc(-1 * var(--s-14)) calc(-1 * var(--s-16)) 0;
+    padding: var(--s-8) var(--s-16) var(--s-6);
+    border-bottom: var(--hair) solid var(--line-soft);
+    background: var(--panel-hi);
+  }
+  .random {
+    position: absolute;
+    right: var(--s-16);
+    bottom: var(--s-10);
+  }
+  .map {
+    height: 220px;
+  }
+  .placeList {
+    gap: var(--s-8);
+  }
+  .placeButton {
+    min-height: var(--hit);
+    padding: var(--s-6) var(--s-12);
+  }
+  /* a summary row as tall as a touch target, so each 改's widened area stays its own */
+  .summary {
+    gap: 0;
+  }
+  .summary > div {
+    min-height: var(--hit);
+    align-items: center;
+    padding-bottom: 0;
+  }
+  .edit::after {
+    content: '';
+    position: absolute;
+    inset: -12px -16px;
+  }
+  .drawRow > span {
+    flex: 1 1 100%;
+  }
+}
+
+/* a finger on the desktop layout (a phone on its side, a tablet): the step diamonds, the steppers and 改
+   answer a touch 44 px across without moving, and a choice is a 44 px row (spec 十一, 触控); phones have
+   their own sizes above */
+@media (pointer: coarse) and (min-width: 760px), (pointer: coarse) and (min-aspect-ratio: 131/100) {
+  .diamond,
+  .step {
+    position: relative;
+  }
+  .diamond::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+  /* 30 px with its border: 8 px around the 28 px inside make 44 */
+  .step::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+  .edit::after {
+    content: '';
+    position: absolute;
+    inset: -12px -16px;
+  }
+  .choice {
+    min-height: var(--hit);
+  }
+  /* the places to be born in, as on phones */
+  .placeList {
+    gap: var(--s-8);
+  }
+  .placeButton {
+    min-height: var(--hit);
+    padding: var(--s-6) var(--s-12);
+  }
+  /* a summary row as tall as a touch target, so each 改's widened area stays its own */
+  .summary > div {
+    min-height: var(--hit);
+    align-items: center;
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "description": "丹毒和耐药（玩法设计第八节「丹药和丹毒」，执行计划第 44 项）：修仙人生里服丹的两道看得见的限制，换掉修为类丹药原来看不见的次数限制（物品文字里的每日限量）；顿悟、奇遇这类不吃东西的机缘照旧。toxin 是丹毒：每服一枚丹药按它在图鉴里的品阶加 gain 里那一档（一阶到六阶，再高按最后一档；图鉴里没有的丹按 unknownTier），名字以 pill 里的字结尾的才算丹；到 max（悟得、天赋的 poisonCap 往上加）就服不下丹药（解毒的除外）；低于 decay.below 时每月自减 decay.per；到 mana.at，法力上限少 mana.share（记下减了多少，降回去或破境时还回来）；到 slow.at，修炼的加成池多一项 slow.value；破大境界时清零；detox 是解毒的丹按名字减多少，它自己不加。tolerance 是耐药：同名的修为丹（效果里有修为的），一个大境界里最多见效 most 枚，记在 frxPlay.pills；冲关的辅助丹药照 content/cultivation.json 最多计两枚。texts 是给玩家看的话，{服} 是已服几枚、{余} 是还能见效几枚。apps/engine/life/poison.cjs 读这份文件；数都是初值。",
+  "toxin": {
+    "gain": [3, 5, 8, 12, 16, 20],
+    "unknownTier": "一阶",
+    "pill": ["丹", "丸", "散"],
+    "max": 100,
+    "decay": { "below": 50, "per": 1 },
+    "mana": { "at": 50, "share": 0.1 },
+    "slow": { "at": 70, "value": -0.2 },
+    "detox": { "解毒丹": 10 }
+  },
+  "tolerance": { "most": 5 },
+  "texts": {
+    "fresh": "此丹尚未服过，可见效{余}枚",
+    "taken": "此丹已服{服}枚，尚可见效{余}枚",
+    "spent": "此丹已服{服}枚，再服不见效",
+    "useless": "「{丹}」这一境界已服{服}枚，再服也不见效",
+    "full": "丹毒已到{满}，服不下丹药了",
+    "mana": "法力上限少一成",
+    "slow": "修炼慢两成，不再自减",
+    "pool": "丹毒",
+    "cleared": "破境之后，丹毒尽消"
+  }
+}

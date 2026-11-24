@@ -1,0 +1,14 @@
+/* The phone's navigation sheet is as tall as its grid, never more than 60dvh (spec 十一, 导航). */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  section.nav,
+  section.nav[data-stop] {
+    height: auto;
+    max-height: 60dvh;
+  }
+  /* 修炼, 调息, 静候: as tall as the choices, the preview and 开始, up to the tall sheet's 92dvh */
+  section.days,
+  section.days[data-stop] {
+    height: auto;
+    max-height: 92dvh;
+  }
+}

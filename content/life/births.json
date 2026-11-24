@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "description": "示例世界的建角出身及其开局收益。",
+  "body": {
+    "notes": "凡人的身子（执行计划第 50 项的修补）：建角写进人物表的属性只是建角时分的那几点（常常物攻、物防、脚力都是零），修仙人生里这一世的主角一开始就是个凡人：建修仙人生的存档时，content/combat.json 里 realm 那一境的基准（血量除外，那是建角自己给的）每一项照它范围的 at 处（0 是下限，1 是上限）加在建角给的上面。头一年模拟里凡人偶然撞上凡人、凡兽，斗法输了八成八：手里是零，打不出伤。到引气入体照旧按境界长。",
+    "realm": "凡人",
+    "at": 0.5
+  },
+  "births": {
+    "凡人": {
+      "category": "无",
+      "start": "无"
+    },
+    "岩汀门弟子": {
+      "category": "宗门",
+      "start": {
+        "sect": {
+          "name": "岩汀门",
+          "status": "外门",
+          "duty": "patrol"
+        }
+      }
+    },
+    "汀集散修": {
+      "category": "散修",
+      "start": {
+        "clue": "白苇集的搬运工捡到一把打不开的铜锁，在找愿意鉴定的人"
+      }
+    },
+    "听澜院外门": {
+      "category": "宗门",
+      "start": {
+        "sect": {
+          "name": "听澜院",
+          "status": "外门",
+          "duty": "garden"
+        }
+      }
+    },
+    "鸣鹤庭弟子": {
+      "category": "宗门",
+      "start": {
+        "sect": {
+          "name": "鸣鹤庭",
+          "status": "外门",
+          "duty": "garden"
+        }
+      }
+    },
+    "锻潮坊匠人": {
+      "category": "宗门",
+      "start": {
+        "sect": {
+          "name": "锻潮坊",
+          "status": "外门",
+          "duty": "garden"
+        }
+      }
+    },
+    "练剑人": {
+      "category": "异类",
+      "start": {
+        "perk": "先声夺人"
+      }
+    },
+    "药坊学徒": {
+      "category": "异类",
+      "start": {
+        "effects": [
+          {
+            "type": "craft",
+            "kinds": [
+              "炼丹"
+            ],
+            "value": 1
+          }
+        ]
+      }
+    },
+    "阵师之后": {
+      "category": "异类",
+      "start": {
+        "effects": [
+          {
+            "type": "craft",
+            "kinds": [
+              "布阵"
+            ],
+            "value": 1
+          }
+        ]
+      }
+    },
+    "自定义": {
+      "category": "无",
+      "start": "无"
+    }
+  }
+}

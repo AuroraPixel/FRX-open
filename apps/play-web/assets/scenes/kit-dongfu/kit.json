@@ -1,0 +1,119 @@
+{
+ "id": "kit-dongfu",
+ "family": "dongfu",
+ "name": "洞府石室",
+ "layout": "room",
+ "ground": 4.0,
+ "base": {
+  "kind": "cave",
+  "indoor": true,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.978, 7.096, 14.938, 1.997, 6.586, 0.369, 36],
+    "tall": [2.911, 4.874, 16.177, 3.998, 3.693, 0.623, 50]
+   },
+   "read": {
+    "wide": [1.855, 6.993, 14.75, 2.856, 6.491, 0.433, 36],
+    "tall": [3.773, 4.404, 16.867, 4.872, 1.398, 1.159, 50]
+   },
+   "sheet": {
+    "wide": [4.514, 6.745, 13.2, 5.394, 6.304, 0.617, 34],
+    "tall": [2.804, 4.333, 17.706, 3.939, 0.392, 1.471, 50]
+   },
+   "cult": {
+    "wide": [1.88, 6.775, 12.858, 2.749, 6.34, 0.431, 33],
+    "tall": [3.058, 4.798, 14.068, 3.999, 3.793, 0.615, 48]
+   },
+   "close": {
+    "wide": [-6.084, 6.895, 11.181, -5.293, 6.499, -0.137, 34],
+    "tall": [3.284, 5.234, 10.846, 3.996, 5.59, 0.655, 50]
+   },
+   "cine1": {
+    "wide": [3.399, 5.903, 6.865, 3.829, 6.227, 0.705, 40],
+    "tall": [3.438, 5.925, 8.64, 3.988, 6.476, 0.773, 55]
+   },
+   "cine2": {
+    "wide": [1.15, 5.449, 10.591, 1.845, 6.321, 0.653, 40],
+    "tall": [3.302, 7.403, 10.576, 4.0, 7.403, 0.6, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear"
+  ],
+  "ambience": {
+   "night": "amb.drip",
+   "dawn": "amb.drip",
+   "day": "amb.drip",
+   "dusk": "amb.drip"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "none"
+  },
+  "protagonist": {
+   "pose": "sit"
+  },
+  "hours": {
+   "dawn": {
+    "exposure": 0.8
+   },
+   "day": {
+    "exposure": 0.74,
+    "tint": [2.1, 2.0, 1.9]
+   },
+   "dusk": {
+    "exposure": 1.0
+   }
+  }
+ },
+ "room": {
+  "wallZ": -8,
+  "furniture": {
+   "z": [0.2, 0.2],
+   "at": [0.5, 0.5]
+  },
+  "seat": true,
+  "plaque": [0.15, 0.13, 0.17, 0.11, 0.19]
+ },
+ "elements": [
+  {"id": "wall-rock", "file": "wall-rock.webp", "role": "wall", "px": [2172, 724], "bytes": [209368, 66112], "v": "a21fb440", "height": 0, "foot": 0.74, "width": 42, "shade": 1.2, "tags": ["guanyuntai", "mountain", "valley", "cave"], "avoid": ["tunnel", "shaft", "natural"], "weight": 1.2, "keep": [[0.43, 0.49, 0.26, 0.38], [0.505, 0.56, 0.48, 0.6], [0.665, 0.71, 0.36, 0.47], [0.71, 0.86, 0.03, 0.29]], "lights": [[0.78, 0.15]]},
+  {"id": "wall-ice", "file": "wall-ice.webp", "role": "wall", "px": [2172, 724], "bytes": [260614, 80134], "v": "8f954f07", "height": 0, "foot": 0.75, "width": 42, "shade": 1.2, "tags": ["bingyuan", "cold"], "need": ["bingyuan", "cold"], "avoid": ["tunnel", "shaft"], "weight": 3, "keep": [[0.74, 0.89, 0.03, 0.3]], "lights": [[0.81, 0.16]]},
+  {"id": "wall-sand", "file": "wall-sand.webp", "role": "wall", "px": [2172, 724], "bytes": [205920, 65228], "v": "22246da4", "height": 0, "foot": 0.75, "width": 42, "shade": 1.2, "tags": ["huangmo", "dry", "fire"], "need": ["huangmo", "dry"], "avoid": ["tunnel", "shaft", "natural"], "weight": 1.5, "keep": [[0.36, 0.43, 0.24, 0.39], [0.565, 0.63, 0.44, 0.59], [0.76, 0.88, 0.03, 0.22]], "lights": [[0.82, 0.12]]},
+  {"id": "wall-roots", "file": "wall-roots.webp", "role": "wall", "px": [2172, 724], "bytes": [279160, 86508], "v": "ee00e8cb", "height": 0, "foot": 0.77, "width": 42, "shade": 1.2, "tags": ["shandao", "forest", "beast", "vines"], "need": ["shandao", "forest", "vines"], "avoid": ["tunnel", "shaft"], "weight": 1.5, "keep": [[0.6, 0.68, 0.3, 0.78], [0.72, 0.9, 0.02, 0.27]], "lights": [[0.8, 0.12]]},
+  {"id": "wall-carved", "file": "wall-carved.webp", "role": "wall", "px": [2172, 724], "bytes": [199120, 61894], "v": "ccd9d757", "height": 0, "foot": 0.78, "width": 42, "shade": 1.2, "tags": ["guanyuntai", "sect", "palace", "grand", "grace", "tomb"], "avoid": ["tunnel", "shaft", "natural"], "keep": [[0.26, 0.49, 0.16, 0.8], [0.095, 0.145, 0.42, 0.56], [0.17, 0.23, 0.16, 0.3], [0.555, 0.605, 0.26, 0.41], [0.665, 0.715, 0.49, 0.63], [0.78, 0.9, 0.06, 0.32]], "lights": [[0.84, 0.18]]},
+  {"id": "wall-crevice", "file": "wall-crevice.webp", "role": "wall", "px": [2172, 724], "bytes": [235282, 71248], "v": "f11acbd0", "height": 0, "foot": 0.76, "width": 42, "shade": 1.2, "tags": ["tunnel", "stream", "rocks"], "need": ["tunnel"], "weight": 2, "keep": [[0.55, 0.65, 0.0, 0.15], [0.49, 0.52, 0.5, 0.76]], "lights": [[0.6, 0.05]]},
+  {"id": "wall-drain", "file": "wall-drain.webp", "role": "wall", "px": [2172, 724], "bytes": [236452, 72268], "v": "4f1a9791", "height": 0, "foot": 0.74, "width": 42, "shade": 1.2, "tags": ["tunnel", "stream", "desolate", "cellar"], "need": ["tunnel", "cellar"], "weight": 1.5},
+  {"id": "wall-well", "file": "wall-well.webp", "role": "wall", "px": [2172, 724], "bytes": [265634, 79198], "v": "325ad76f", "height": 0, "foot": 0.77, "width": 42, "shade": 1.2, "tags": ["shaft", "well"], "need": ["shaft"], "weight": 3, "keep": [[0.5, 0.7, 0.0, 0.2]], "lights": [[0.62, 0.03]]},
+  {"id": "wall-natural", "file": "wall-natural.webp", "role": "wall", "px": [2172, 724], "bytes": [248398, 73158], "v": "1d0096e1", "height": 0, "foot": 0.76, "width": 42, "shade": 1.2, "tags": ["cave", "natural", "rocks", "stream"], "need": ["natural"], "avoid": ["tunnel", "shaft"], "weight": 3, "keep": [[0.74, 0.88, 0.0, 0.24]], "lights": [[0.81, 0.08]]},
+  {"id": "plaque-stone", "file": "plaque-stone.webp", "role": "subject", "px": [990, 400], "bytes": [110222, 36834], "v": "448d16c7", "height": 1.6, "foot": 1.0, "plaque": {"box": [0.12, 0.31, 0.87, 0.79], "ink": "dark"}, "tags": ["mountain", "cold", "dry", "sect", "grand"], "weight": 1.2, "mask": "1c07fefffffffffffffffffffffffffff7fe", "body": [0.058, 0.945], "crown": 0.0},
+  {"id": "plaque-wood", "file": "plaque-wood.webp", "role": "subject", "px": [946, 282], "bytes": [87442, 25358], "v": "399964a9", "height": 1.2, "foot": 1.0, "plaque": {"box": [0.09, 0.16, 0.92, 0.86], "ink": "dark"}, "tags": ["forest", "beast", "rustic", "valley"], "mask": "ffffffffffffffffffffffffffffffffffff", "body": [0.005, 0.995], "crown": 0.025},
+  {"id": "table", "file": "table.webp", "role": "furniture", "px": [1200, 614], "bytes": [164348, 57058], "v": "b487026f", "height": 1.74, "foot": 0.941, "tags": ["guanyuntai", "huangmo", "mountain", "dry"], "avoid": ["cellar"], "weight": 1.2, "mask": "0080181fcffffffffffffffffff3fc1fc0f0"},
+  {"id": "seat-jade", "file": "seat-jade.webp", "role": "furniture", "px": [1200, 528], "bytes": [153616, 55232], "v": "bd6d0680", "height": 1.6, "foot": 0.93, "tags": ["bingyuan", "cold", "grace", "palace"], "avoid": ["cellar"], "mask": "7fefffffffffffffffffffff3f81f81f80f0"},
+  {"id": "seat-root", "file": "seat-root.webp", "role": "furniture", "px": [1200, 615], "bytes": [195804, 63482], "v": "b1cc3046", "height": 1.75, "foot": 0.941, "tags": ["shandao", "forest", "beast"], "avoid": ["cold", "dry", "cellar"], "mask": "0480f87fefffffe7fe7ffffffff3fc3fc1f0"},
+  {"id": "shelf", "file": "shelf.webp", "role": "unit", "px": [603, 790], "bytes": [121396, 37544], "v": "9494556b", "height": 3.4, "foot": 0.962, "tags": ["sect", "mountain"], "avoid": ["cellar"], "mask": "fff7fe7fe7fe7fe7fe7fe7fe7fe7fe7fe7fe", "body": [0.061, 0.935], "crown": 0.0},
+  {"id": "furnace", "file": "furnace.webp", "role": "unit", "px": [591, 759], "bytes": [129598, 40756], "v": "3d022150", "height": 2.7, "foot": 0.941, "tags": ["fire", "medicine", "sect", "dry"], "avoid": ["cellar"], "weight": 1.2, "mask": "0600e0dfb7fe7fe7fe7fe7fe7fe7fe7fe3fc", "body": [0.095, 0.9], "crown": 0.0},
+  {"id": "herbs", "file": "herbs.webp", "role": "unit", "px": [989, 1000], "bytes": [349400, 108182], "v": "be330a7f", "height": 3.2, "foot": 0.978, "tags": ["shandao", "medicine", "forest", "valley", "water"], "avoid": ["cellar"], "mask": "10038e7feffffff7feffffff7de7fffffe07", "body": [0.034, 0.972], "crown": 0.0},
+  {"id": "crystal", "file": "crystal.webp", "role": "unit", "px": [764, 918], "bytes": [199076, 60608], "v": "4c6bee5f", "height": 3.0, "foot": 0.978, "tags": ["bingyuan", "cold", "mountain", "grace"], "avoid": ["cellar"], "mask": "0600f00f03f83fe3fe7fe7ffffffff7fe7fe", "body": [0.081, 0.899], "crown": 0.0},
+  {"id": "swords", "file": "swords.webp", "role": "unit", "px": [1000, 797], "bytes": [191970, 61522], "v": "ab7a7011", "height": 2.8, "foot": 0.979, "tags": ["sword", "sect", "mountain"], "avoid": ["cellar"], "mask": "60060061077f7fe3ff7fe7ff7feffeffffff", "body": [0.026, 0.968], "crown": 0.0},
+  {"id": "alchemy", "file": "alchemy.webp", "role": "unit", "px": [1000, 477], "bytes": [157454, 47200], "v": "af734687", "height": 2.2, "foot": 0.964, "tags": ["medicine", "fire", "dry"], "avoid": ["cellar"], "mask": "2207767fe7feffffffffffffffffffffffff", "body": [0.036, 0.966], "crown": 0.0},
+  {"id": "spring", "file": "spring.webp", "role": "prop", "px": [900, 456], "bytes": [121464, 39612], "v": "a880e4f7", "height": 1.1, "foot": 0.932, "tags": ["shandao", "water", "forest", "grace"], "avoid": ["dry", "cellar"], "made": true, "mask": "0e01fc7fc7ffffffffffffffffffff7fe1f0"},
+  {"id": "incense", "file": "incense.webp", "role": "prop", "px": [830, 770], "bytes": [101224, 33582], "v": "0f25d176", "height": 1.6, "foot": 0.948, "tags": ["sect", "temple", "mountain"], "avoid": ["cellar"], "made": true, "mask": "00000000801003807e03c07e0ff0ff0ff07e"},
+  {"id": "jars", "file": "jars.webp", "role": "prop", "px": [732, 643], "bytes": [130828, 39486], "v": "bab577f5", "height": 1.4, "foot": 0.958, "tags": ["medicine", "dry", "rustic", "cellar", "jars"], "made": true, "mask": "0600f81fc1fe7fe7feffeffefffffffff7fe"},
+  {"id": "rocks", "file": "rocks.webp", "role": "prop", "px": [806, 604], "bytes": [182530, 55920], "v": "53211976", "height": 1.3, "foot": 0.96, "tags": ["forest", "beast", "valley", "mountain"], "mask": "0380f81fa3fe3fc7ff7fe7fe7ffffffff3fe"},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [900, 507], "bytes": [169240, 48280], "v": "e3623296", "height": 2.6, "foot": 0.95, "plaque": {"box": [0.235, 0.44, 0.755, 0.785], "ink": "dark"}, "only": "name", "mask": "1fc7fe7fe7fe7fe7fe7fe7feffeffffff7fe"},
+  {"id": "pillar", "file": "pillar.webp", "role": "near", "px": [631, 941], "bytes": [132174, 39506], "v": "62084c8f", "height": 12.0, "foot": 0.979, "hold": [0.41, 0.979], "mask": "fff7fe7fc3f83fc3f83f87fc7fc7fcffeffc"},
+  {"id": "stalactites", "file": "stalactites.webp", "role": "hang", "px": [647, 578], "bytes": [72144, 22882], "v": "5d2ca99d", "height": 3.6, "foot": 0.56, "tags": ["guanyuntai", "huangmo", "mountain", "dry"], "weight": 1.2, "mask": "fff7fe7fc3f83f81f81f80e0060060040040"},
+  {"id": "icicles", "file": "icicles.webp", "role": "hang", "px": [699, 811], "bytes": [91340, 31576], "v": "8dcde4ec", "height": 3.6, "foot": 0.48, "tags": ["bingyuan", "cold"], "need": ["bingyuan", "cold"], "weight": 1.5, "mask": "fff7fe3fc3fc1f81f0060060020020000020"},
+  {"id": "roots", "file": "roots.webp", "role": "hang", "px": [701, 812], "bytes": [159958, 55818], "v": "3fc97b60", "height": 3.6, "foot": 0.53, "tags": ["shandao", "forest", "beast"], "need": ["shandao", "forest"], "weight": 1.2, "mask": "fff7ff7fe7fe3fc1fc1f8048040000000060"}
+ ]
+}

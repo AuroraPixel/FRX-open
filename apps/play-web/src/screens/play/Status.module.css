@@ -1,0 +1,274 @@
+/* The status bar: top left, 14 px from the top and 16 from the left; the block right of the ring is
+   240 px wide (spec 四). Everything here stands on the picture, so every text has the halo. */
+.status {
+  position: absolute;
+  z-index: var(--z-ui);
+  top: calc(var(--s-14) + env(safe-area-inset-top, 0px));
+  left: max(var(--s-16), env(safe-area-inset-left, 0px));
+  display: flex;
+  align-items: center;
+  gap: var(--s-14);
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+/* the block stands on the picture, sometimes on the moon itself: a soft halo behind it keeps its
+   numbers readable */
+.status::before,
+.place::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-14)) calc(-1 * var(--s-22));
+  background: radial-gradient(closest-side, var(--halo) 62%, transparent);
+  opacity: .85;
+  pointer-events: none;
+}
+
+.lines {
+  width: 240px;
+  display: grid;
+  gap: 3px;
+}
+
+.who {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  margin: 0 0 var(--s-2);
+  white-space: nowrap;
+}
+
+.name {
+  font: var(--type-name);
+  letter-spacing: var(--ls-name);
+  color: var(--ink);
+}
+
+.realm {
+  font: var(--type-realm);
+  color: var(--gold);
+}
+
+.more {
+  display: flex;
+  gap: var(--s-12);
+  margin: var(--s-2) 0 0;
+  font: 400 var(--fs-12)/1.5 var(--f-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.more b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--s-6);
+  background: var(--gold);
+  transform: rotate(45deg) translateY(-1px);
+}
+
+/* the hour, the place and the day: top right, right-aligned */
+.place {
+  position: absolute;
+  z-index: var(--z-ui);
+  top: calc(var(--s-14) + env(safe-area-inset-top, 0px));
+  right: max(var(--s-16), env(safe-area-inset-right, 0px));
+  display: grid;
+  justify-items: end;
+  gap: var(--s-6);
+  text-align: right;
+  text-shadow: 0 1px 10px var(--halo);
+}
+
+.hour {
+  font: var(--type-hour);
+  color: var(--ink);
+}
+
+.where {
+  font: var(--type-place);
+  letter-spacing: var(--ls-place);
+  color: var(--ink);
+  margin-right: calc(-1 * var(--ls-place));
+}
+
+.short {
+  display: none;
+}
+
+.when {
+  position: relative;
+  font: 400 var(--fs-12)/1.5 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--soft);
+  margin-right: -.2em;
+}
+
+/* the day and the weather are the faintest words up here, and a long line reaches past the glow: a
+   strip of the halo colour behind them, full under the words and fading out past them, keeps them at
+   4.5:1 by day under a hall's dark beams (大殿 3.5:1 without it). The cultivation life's day and age
+   under the place (.cal) take the same strip: 「寿元一百」 alone on its line at 375 px stood on 泊灯城's
+   bright gate by dawn at 4.34:1 without it */
+.when::before,
+.cal::before,
+.lifeWords::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--s-6)) calc(-1 * var(--s-10)) calc(-1 * var(--s-6)) calc(-1 * var(--s-22));
+  background: var(--halo);
+  opacity: .72;
+  pointer-events: none;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-10)), transparent),
+    linear-gradient(180deg, transparent, var(--page) var(--s-6), var(--page) calc(100% - var(--s-6)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent, var(--page) var(--s-22), var(--page) calc(100% - var(--s-10)), transparent),
+    linear-gradient(180deg, transparent, var(--page) var(--s-6), var(--page) calc(100% - var(--s-6)), transparent);
+  mask-composite: intersect;
+}
+
+/* The cultivation life on phones (the mock-up's .fx-sub and .fx-cal): 修为 and 灵石 under the bars, and
+   the day and the age with the lifespan under the place. Desktops have them in their own lines. */
+.life,
+.cal {
+  display: none;
+}
+
+.life {
+  min-width: 0;
+  margin: var(--s-4) 0 0;
+  font: 400 var(--fs-11h)/1.3 var(--f-ui);
+  letter-spacing: .04em;
+  color: var(--soft);
+  white-space: normal;
+}
+
+/* Keep each full balance inside the status column, including seven-digit stone counts. */
+.lifeWords {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.lifeWords > span {
+  min-width: 0;
+}
+
+.stones {
+  flex-basis: 100%;
+}
+
+.life b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* 心境 short of this realm's threshold (cultivating at half speed): a cinnabar line under the number, as
+   the next gate's card marks what it lacks (cinnabar words this small do not reach 4.5:1 on the picture) */
+.life b[data-short],
+.more b[data-short] {
+  text-decoration: underline 2px var(--cin);
+  text-underline-offset: 3px;
+}
+
+.cal {
+  position: relative;
+  font: 400 var(--fs-11h)/1.4 var(--f-serif);
+  letter-spacing: .16em;
+  margin-right: -.16em;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.cal i {
+  font-style: normal;
+}
+
+/* short screens (phones turned sideways): no 修为 line, no weather (spec 四, 矮屏) */
+@media (max-height: 559px) and (min-aspect-ratio: 131/100) {
+  .more,
+  .weather {
+    display: none;
+  }
+}
+
+/* phones: a 54 px ring, a 168 px block, two bars; the hour and the place's own name (spec 十一) */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .status {
+    top: calc(var(--s-12) + env(safe-area-inset-top, 0px));
+    gap: var(--s-10);
+  }
+  .lines {
+    width: clamp(140px, calc(100vw - 222px), 168px);
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .who {
+    gap: var(--s-8);
+  }
+  .name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--fs-16);
+    letter-spacing: .1em;
+  }
+  .realm {
+    flex: none;
+    font-size: var(--fs-18);
+  }
+  .more,
+  .when {
+    display: none;
+  }
+  .place {
+    top: calc(var(--s-12) + env(safe-area-inset-top, 0px));
+    gap: var(--s-4);
+    /* Reserve the ring, bars, gutters and an 8 px gap; long places stay in their own column. */
+    max-width: calc(100% - 104px - clamp(140px, calc(100vw - 222px), 168px));
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .where {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    font-size: var(--fs-11);
+  }
+  .long {
+    display: none;
+  }
+  .short {
+    display: inline;
+  }
+  .life,
+  .cal {
+    display: block;
+  }
+}
+
+/* the narrowest phones: the place's column is under 120 px, 「廿七岁 · 寿元一百」 would push it off the screen */
+@media (max-width: 389px) and (max-aspect-ratio: 13/10) {
+  .cal i {
+    display: none;
+  }
+  .cal > span {
+    display: block;
+    white-space: normal;
+  }
+}

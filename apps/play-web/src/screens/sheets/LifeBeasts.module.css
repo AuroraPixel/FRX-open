@@ -1,0 +1,192 @@
+/* 灵兽 in the cultivation life: the count at the top; a beast a card as the old panel draws it (the picture
+   80 px at its left, a gold rule at the left when it is out), its marks a row of small words (the warning
+   ones in ink over a cinnabar line); opened, its bars, rows and the actions; the eggs a row each. */
+.kept {
+  margin: 0 0 var(--s-12);
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.kept b {
+  margin-right: .8em;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--gold);
+}
+
+.beast {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-14);
+  width: 100%;
+  padding: var(--s-10) var(--s-12);
+  border: 0;
+  border-left: 2px solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  text-align: left;
+  transition: background-color var(--d-press);
+}
+
+.beast:hover {
+  background: var(--glow-soft);
+}
+
+.beast[data-out],
+.beast[aria-expanded='true'] {
+  border-left-color: var(--gold);
+}
+
+.picture {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  overflow: hidden;
+}
+
+.picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.picture:not([data-known]) img {
+  opacity: .55;
+}
+
+.words {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.words strong {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: 700 var(--fs-15)/1.4 var(--f-serif);
+  letter-spacing: .08em;
+}
+
+/* 出战: a small cinnabar seal after the name */
+.words strong i {
+  padding: 1px var(--s-6);
+  border-radius: var(--r-seal);
+  background: var(--cin) var(--tex-seal) center / cover;
+  font: 400 var(--fs-12)/1.3 var(--f-brush);
+  font-style: normal;
+  letter-spacing: .06em;
+  color: var(--seal-ink);
+}
+
+.level {
+  font: 400 var(--fs-13)/1.5 var(--f-serif);
+  color: var(--text);
+}
+
+.marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--s-10);
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.marks span[data-tone='warn'] {
+  color: var(--ink);
+  text-decoration: underline 1px var(--cin);
+  text-underline-offset: 3px;
+}
+
+.more {
+  display: grid;
+  gap: var(--s-10);
+  padding: var(--s-12) var(--s-12) var(--s-14);
+  border-left: 2px solid var(--gold);
+  background: var(--tint);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+.note {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* what to feed, what lifts it a tier, the eggs to hatch: a row each, 44 px or taller */
+.choices {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.choices button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--s-6) var(--s-4);
+  border: 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+  background: none;
+  text-align: left;
+}
+
+.choices button:hover,
+.choices button:focus-visible {
+  background: linear-gradient(90deg, var(--glow-soft), transparent 70%);
+}
+
+.choices b {
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.choices span {
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+.bind {
+  display: grid;
+  gap: var(--s-10);
+  justify-items: start;
+}
+
+.bind > div {
+  justify-self: stretch;
+}
+
+.eggs {
+  margin: 0 0 var(--s-6);
+  padding: 0;
+  list-style: none;
+}
+
+.eggs li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  min-height: 44px;
+  padding: var(--s-8) 0;
+  border-bottom: var(--hair) dashed var(--line-soft);
+}
+
+.eggs b {
+  font: 400 var(--fs-14)/1.5 var(--f-serif);
+  color: var(--ink);
+}
+
+.eggs span {
+  font: var(--type-note);
+  color: var(--soft);
+}

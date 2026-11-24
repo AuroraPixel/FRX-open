@@ -1,0 +1,330 @@
+{
+ "icons": {
+  "sword": {
+   "file": "sword.webp",
+   "label": "长剑"
+  },
+  "dagger": {
+   "file": "dagger.webp",
+   "label": "短剑"
+  },
+  "saber": {
+   "file": "saber.webp",
+   "label": "刀"
+  },
+  "spear": {
+   "file": "spear.webp",
+   "label": "枪"
+  },
+  "bow": {
+   "file": "bow.webp",
+   "label": "弓"
+  },
+  "whip": {
+   "file": "whip.webp",
+   "label": "鞭"
+  },
+  "fan": {
+   "file": "fan.webp",
+   "label": "折扇"
+  },
+  "needle": {
+   "file": "needle.webp",
+   "label": "飞针"
+  },
+  "staff": {
+   "file": "staff.webp",
+   "label": "法杖"
+  },
+  "hammer": {
+   "file": "hammer.webp",
+   "label": "锤"
+  },
+  "flying-sword": {
+   "file": "flying-sword.webp",
+   "label": "飞剑"
+  },
+  "shield": {
+   "file": "shield.webp",
+   "label": "盾"
+  },
+  "robe": {
+   "file": "robe.webp",
+   "label": "道袍"
+  },
+  "soft-armor": {
+   "file": "soft-armor.webp",
+   "label": "软甲"
+  },
+  "bracer": {
+   "file": "bracer.webp",
+   "label": "护腕"
+  },
+  "boots": {
+   "file": "boots.webp",
+   "label": "靴"
+  },
+  "crown": {
+   "file": "crown.webp",
+   "label": "冠"
+  },
+  "cloak": {
+   "file": "cloak.webp",
+   "label": "斗篷"
+  },
+  "jade-slip": {
+   "file": "jade-slip.webp",
+   "label": "玉简"
+  },
+  "bamboo-slips": {
+   "file": "bamboo-slips.webp",
+   "label": "竹简"
+  },
+  "scroll": {
+   "file": "scroll.webp",
+   "label": "古卷"
+  },
+  "rubbing": {
+   "file": "rubbing.webp",
+   "label": "拓片"
+  },
+  "mirror": {
+   "file": "mirror.webp",
+   "label": "镜"
+  },
+  "bell": {
+   "file": "bell.webp",
+   "label": "铃"
+  },
+  "seal": {
+   "file": "seal.webp",
+   "label": "印"
+  },
+  "cauldron": {
+   "file": "cauldron.webp",
+   "label": "鼎"
+  },
+  "pearl": {
+   "file": "pearl.webp",
+   "label": "宝珠"
+  },
+  "banner": {
+   "file": "banner.webp",
+   "label": "阵旗"
+  },
+  "gourd": {
+   "file": "gourd.webp",
+   "label": "葫芦"
+  },
+  "umbrella": {
+   "file": "umbrella.webp",
+   "label": "伞"
+  },
+  "pagoda": {
+   "file": "pagoda.webp",
+   "label": "宝塔"
+  },
+  "ring": {
+   "file": "ring.webp",
+   "label": "环"
+  },
+  "bottle": {
+   "file": "bottle.webp",
+   "label": "丹瓶"
+  },
+  "pill": {
+   "file": "pill.webp",
+   "label": "丹丸"
+  },
+  "talisman": {
+   "file": "talisman.webp",
+   "label": "符箓"
+  },
+  "elixir": {
+   "file": "elixir.webp",
+   "label": "灵液"
+  },
+  "salve": {
+   "file": "salve.webp",
+   "label": "药膏"
+  },
+  "ration": {
+   "file": "ration.webp",
+   "label": "干粮"
+  },
+  "wine": {
+   "file": "wine.webp",
+   "label": "酒坛"
+  },
+  "herb": {
+   "file": "herb.webp",
+   "label": "灵草"
+  },
+  "flower": {
+   "file": "flower.webp",
+   "label": "灵花"
+  },
+  "fruit": {
+   "file": "fruit.webp",
+   "label": "灵果"
+  },
+  "ore": {
+   "file": "ore.webp",
+   "label": "矿石"
+  },
+  "crystal": {
+   "file": "crystal.webp",
+   "label": "晶石"
+  },
+  "bone": {
+   "file": "bone.webp",
+   "label": "兽骨"
+  },
+  "hide": {
+   "file": "hide.webp",
+   "label": "兽皮"
+  },
+  "core": {
+   "file": "core.webp",
+   "label": "妖丹"
+  },
+  "feather": {
+   "file": "feather.webp",
+   "label": "翎羽"
+  },
+  "wood": {
+   "file": "wood.webp",
+   "label": "灵木"
+  },
+  "thread": {
+   "file": "thread.webp",
+   "label": "丝线"
+  },
+  "token": {
+   "file": "token.webp",
+   "label": "令牌"
+  },
+  "letter": {
+   "file": "letter.webp",
+   "label": "信函"
+  },
+  "key": {
+   "file": "key.webp",
+   "label": "钥匙"
+  },
+  "map": {
+   "file": "map.webp",
+   "label": "地图"
+  },
+  "pendant": {
+   "file": "pendant.webp",
+   "label": "玉佩"
+  },
+  "pouch": {
+   "file": "pouch.webp",
+   "label": "储物袋"
+  },
+  "spirit-stone": {
+   "file": "spirit-stone.webp",
+   "label": "灵石"
+  },
+  "book": {
+   "file": "book.webp",
+   "label": "书册"
+  },
+  "bundle": {
+   "file": "bundle.webp",
+   "label": "包袱"
+  },
+  "unknown": {
+   "file": "unknown.webp",
+   "label": "未知之物"
+  },
+  "puppet": {
+   "file": "puppet.webp",
+   "label": "傀儡"
+  },
+  "array-disk": {
+   "file": "array-disk.webp",
+   "label": "阵盘"
+  },
+  "beast-bag": {
+   "file": "beast-bag.webp",
+   "label": "灵兽袋"
+  },
+  "silver": {
+   "file": "silver.webp",
+   "label": "银两"
+  },
+  "incense": {
+   "file": "incense.webp",
+   "label": "香"
+  },
+  "egg": {
+   "file": "egg.webp",
+   "label": "灵卵"
+  },
+  "flute": {
+   "file": "flute.webp",
+   "label": "笛"
+  },
+  "basket": {
+   "file": "basket.webp",
+   "label": "篮"
+  },
+  "brush": {
+   "file": "brush.webp",
+   "label": "笔"
+  },
+  "seed": {
+   "file": "seed.webp",
+   "label": "种子"
+  },
+  "tea": {
+   "file": "tea.webp",
+   "label": "茶"
+  },
+  "hoe": {
+   "file": "hoe.webp",
+   "label": "药锄"
+  },
+  "lamp": {
+   "file": "lamp.webp",
+   "label": "灯"
+  },
+  "compass": {
+   "file": "compass.webp",
+   "label": "罗盘"
+  },
+  "meat": {
+   "file": "meat.webp",
+   "label": "兽肉"
+  },
+  "scale": {
+   "file": "scale.webp",
+   "label": "鳞片"
+  },
+  "mask": {
+   "file": "mask.webp",
+   "label": "面具"
+  },
+  "qin": {
+   "file": "qin.webp",
+   "label": "琴"
+  },
+  "abacus": {
+   "file": "abacus.webp",
+   "label": "算盘"
+  }
+ },
+ "defaults": {
+  "武器": "sword",
+  "护甲": "robe",
+  "功法": "scroll",
+  "法宝": "pearl",
+  "消耗品": "pill",
+  "材料": "ore",
+  "重要物品": "token",
+  "其他物品": "unknown"
+ }
+}

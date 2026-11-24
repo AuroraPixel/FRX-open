@@ -1,0 +1,172 @@
+{
+ "id": "kit-wild",
+ "family": "shandao",
+ "name": "山野",
+ "layout": "wild",
+ "ground": 4.0,
+ "base": {
+  "kind": "forest",
+  "indoor": false,
+  "eye": [-3.2, 15.5],
+  "sky": {
+   "set": "common",
+   "azimuth": 13,
+   "horizon": 0.17
+  },
+  "cameras": {
+   "idle": {
+    "wide": [0.135, 5.467, 17.577, 1.633, 6.037, 0.461, 36],
+    "tall": [2.406, 5.987, 18.822, 4.003, 4.322, 0.571, 50]
+   },
+   "read": {
+    "wide": [1.171, 5.364, 17.369, 2.643, 5.944, 0.548, 36],
+    "tall": [3.421, 6.367, 19.487, 5.013, 1.663, 1.293, 50]
+   },
+   "sheet": {
+    "wide": [4.331, 5.152, 15.611, 5.623, 5.893, 0.837, 34],
+    "tall": [2.271, 6.787, 20.361, 3.9, 0.554, 1.745, 50]
+   },
+   "cult": {
+    "wide": [1.237, 5.005, 15.178, 2.513, 5.968, 0.6, 33],
+    "tall": [2.621, 5.733, 16.358, 4.002, 4.322, 0.571, 48]
+   },
+   "close": {
+    "wide": [-8.102, 4.94, 13.098, -6.943, 6.197, -0.149, 34],
+    "tall": [2.941, 5.508, 12.708, 3.986, 6.315, 0.755, 50]
+   },
+   "cine1": {
+    "wide": [3.151, 4.736, 8.104, 3.774, 6.108, 0.987, 40],
+    "tall": [3.144, 4.973, 10.386, 3.931, 7.21, 1.393, 55]
+   },
+   "cine2": {
+    "wide": [-3.647, 7.526, 25.849, -1.462, 10.417, 0.865, 40],
+    "tall": [1.323, 9.529, 31.197, 3.826, 14.816, 2.583, 56]
+   }
+  },
+  "anchors": {
+   "player": [4.0, 4.0, 0.6],
+   "aura": [4.0, 4.02, 0.5499999999999999]
+  },
+  "weather": [
+   "clear",
+   "cloud",
+   "mist",
+   "rain"
+  ],
+  "ambience": {
+   "night": "amb.insects",
+   "dawn": "amb.wind",
+   "day": "amb.insects",
+   "dusk": "amb.insects"
+  },
+  "mood": "calm",
+  "floor": {
+   "kind": "haze",
+   "tint": [0.85, 1.0, 0.92]
+  },
+  "protagonist": {
+   "pose": "stand"
+  }
+ },
+ "sounds": {
+  "ruins": {
+   "ambience": {
+    "night": "amb.wind",
+    "dawn": "amb.wind",
+    "day": "amb.wind",
+    "dusk": "amb.wind"
+   },
+   "mood": "tense"
+  },
+  "canyon": {
+   "ambience": {
+    "night": "amb.wind",
+    "dawn": "amb.wind",
+    "day": "amb.wind",
+    "dusk": "amb.wind"
+   },
+   "mood": "calm"
+  },
+  "grassland": {
+   "ambience": {
+    "night": "amb.wind",
+    "dawn": "amb.wind",
+    "day": "amb.wind",
+    "dusk": "amb.wind"
+   },
+   "mood": "tense"
+  }
+ },
+ "elements": [
+  {"id": "far-peaks", "file": "far-peaks.webp", "role": "far", "px": [2172, 448], "bytes": [237610, 71022], "v": "6a256993", "height": 0, "foot": 0.7, "top": 0.02, "feature": 0.5, "tags": ["mountain", "path", "forest", "waterfall", "canyon"], "avoid": ["ruins"]},
+  {"id": "far-valley", "file": "far-valley.webp", "role": "far", "px": [2172, 504], "bytes": [309086, 93488], "v": "05ed4796", "height": 0, "foot": 0.7, "top": 0.1, "feature": 0.5, "tags": ["valley", "field", "forest", "river", "swamp"], "avoid": ["ruins"]},
+  {"id": "far-floating", "file": "far-floating.webp", "role": "far", "px": [2172, 326], "bytes": [133018, 43730], "v": "4bfbd6a4", "height": 0, "foot": 0.65, "top": 0.03, "feature": 0.5, "tags": ["ruins"], "need": ["ruins"]},
+  {"id": "far-colonnade", "file": "far-colonnade.webp", "role": "far", "px": [2172, 368], "bytes": [160834, 50526], "v": "5aab2ca5", "height": 0, "foot": 0.65, "top": 0.03, "feature": 0.5, "tags": ["ruins"], "need": ["ruins"]},
+  {"id": "far-grassland", "file": "far-grassland.webp", "role": "far", "px": [2172, 366], "bytes": [221482, 61058], "v": "0f21d071", "height": 0, "foot": 0.68, "top": 0.03, "feature": 0.62, "tags": ["grassland"], "need": ["grassland"]},
+  {"id": "band-terraces", "file": "band-terraces.webp", "role": "band", "px": [2172, 505], "bytes": [350650, 101962], "v": "b872f444", "height": 0, "foot": 0.75, "top": 0.0, "feature": 0.5, "tags": ["field", "herb_beds"], "need": ["field"], "mask": "00200700705feffffffffffffffffffff1f0"},
+  {"id": "band-forest", "file": "band-forest.webp", "role": "band", "px": [2172, 447], "bytes": [377174, 110708], "v": "c73bb1dd", "height": 0, "foot": 0.75, "top": 0.0, "feature": 0.5, "tags": ["forest", "path"], "need": ["forest", "path", "valley", "mountain"], "mask": "800ec3fffffffffffffffffffffffffff3fc"},
+  {"id": "band-river", "file": "band-river.webp", "role": "band", "px": [2172, 490], "bytes": [422704, 110814], "v": "216c5441", "height": 0, "foot": 0.8, "top": 0.0, "feature": 0.5, "tags": ["river", "stream"], "need": ["river", "waterfall", "stream"], "mask": "600e02f87fcfffffffffffffffffffffffff"},
+  {"id": "band-marsh", "file": "band-marsh.webp", "role": "band", "px": [2172, 482], "bytes": [349732, 94690], "v": "21edd69f", "height": 0, "foot": 0.75, "top": 0.05, "feature": 0.5, "tags": ["swamp", "reeds"], "need": ["swamp"], "mask": "000000f00fc3fffffffffffffffffffff7ff"},
+  {"id": "band-grassland", "file": "band-grassland.webp", "role": "band", "px": [2172, 424], "bytes": [313526, 89108], "v": "7e3079ea", "height": 0, "foot": 0.72, "top": 0.04, "feature": 0.5, "tags": ["grassland"], "need": ["grassland"], "mask": "e00ffffffffffffffffffffffffffffff000"},
+  {"id": "ground-path", "file": "ground-path.webp", "role": "ground", "px": [1774, 660], "bytes": [389410, 113800], "v": "f27f8f29", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["forest", "path", "valley"], "need": ["forest", "path", "valley", "mountain", "waterfall"]},
+  {"id": "ground-steps", "file": "ground-steps.webp", "role": "ground", "px": [1728, 698], "bytes": [435264, 122568], "v": "fa88f968", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["path", "mountain"], "need": ["path", "mountain", "peak"]},
+  {"id": "ground-bridge", "file": "ground-bridge.webp", "role": "ground", "px": [1740, 656], "bytes": [359496, 104518], "v": "e9283588", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["stream", "river"], "need": ["river", "stream"]},
+  {"id": "ground-terrace", "file": "ground-terrace.webp", "role": "ground", "px": [1757, 590], "bytes": [367978, 103352], "v": "e0d1ffab", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["ruins", "formation"], "need": ["ruins"]},
+  {"id": "ground-stairs", "file": "ground-stairs.webp", "role": "ground", "px": [1725, 532], "bytes": [278302, 78250], "v": "85dd9508", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["ruins"], "need": ["ruins"]},
+  {"id": "ground-field", "file": "ground-field.webp", "role": "ground", "px": [1774, 516], "bytes": [387678, 113370], "v": "efbfcf8f", "height": 12.0, "foot": 0, "top": 0.05, "tags": ["field", "herb_beds"], "need": ["field"]},
+  {"id": "ground-rocky", "file": "ground-rocky.webp", "role": "ground", "px": [1747, 857], "bytes": [456364, 125954], "v": "90c19dee", "height": 12.0, "foot": 0, "top": 0.3, "tags": ["canyon", "rocks"], "need": ["canyon", "mountain", "cliff", "cave", "tunnel", "shaft"]},
+  {"id": "ground-bank", "file": "ground-bank.webp", "role": "ground", "px": [1759, 567], "bytes": [352806, 91560], "v": "d11026bd", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["river", "lake", "stream"], "need": ["river", "lake", "waterfall"]},
+  {"id": "ground-boardwalk", "file": "ground-boardwalk.webp", "role": "ground", "px": [1574, 482], "bytes": [293714, 87338], "v": "5dbba246", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["swamp", "reeds"], "need": ["swamp"]},
+  {"id": "ground-grass", "file": "ground-grass.webp", "role": "ground", "px": [1706, 592], "bytes": [372174, 109808], "v": "63d53b04", "height": 12.0, "foot": 0, "top": 0.03, "tags": ["grassland"], "need": ["grassland"]},
+  {"id": "cliff", "file": "cliff.webp", "role": "subject", "px": [1174, 1321], "bytes": [616880, 171504], "v": "af94a459", "height": 15.0, "foot": 0.93, "plaque": {"box": [0.4, 0.245, 0.6, 0.54], "ink": "dark", "vertical": true}, "crown": 0.2, "weight": 0.8, "tags": ["canyon", "mountain", "cliff", "rocks", "cave", "tunnel", "shaft"], "avoid": ["ruins", "hut", "stockade", "field", "waterfall", "swamp", "grassland"], "mask": "0f03f83fc3fc3fe7fe7fe7fe7fe7feffffff", "body": [0.032, 0.967]},
+  {"id": "pavilion", "file": "pavilion.webp", "role": "subject", "px": [923, 1121], "bytes": [285910, 83714], "v": "8244a997", "height": 12.0, "foot": 0.9, "plaque": {"box": [0.365, 0.385, 0.635, 0.455], "ink": "gold"}, "tags": ["forest", "path", "river", "lake", "pavilion"], "avoid": ["ruins", "hut", "stockade", "canyon", "waterfall", "tense", "cave", "tunnel", "shaft", "grassland"], "made": true, "mask": "0600603fcfff7fe3fc39c39c3fc3fc7fe7fe", "body": [0.059, 0.94], "crown": 0.0},
+  {"id": "ruin-gate", "file": "ruin-gate.webp", "role": "subject", "px": [1341, 987], "bytes": [412178, 109174], "v": "eb4273bf", "height": 13.0, "foot": 0.91, "plaque": {"box": [0.3, 0.085, 0.715, 0.21], "ink": "dark"}, "tags": ["ruins"], "need": ["ruins"], "mask": "1fb7ff7fe7fe79e79e79e79e79e79efff7fe", "body": [0.022, 0.961], "crown": 0.0},
+  {"id": "obelisk", "file": "obelisk.webp", "role": "subject", "px": [935, 1513], "bytes": [262128, 68434], "v": "97965fb6", "height": 14.0, "foot": 0.93, "plaque": {"box": [0.43, 0.175, 0.57, 0.49], "ink": "dark", "vertical": true}, "tags": ["ruins", "formation"], "need": ["ruins"], "mask": "0600f00f00f00f00f00f00f00f01fc7fe7fe", "body": [0.084, 0.924], "crown": 0.0},
+  {"id": "ruin-temple", "file": "ruin-temple.webp", "role": "subject", "px": [1478, 967], "bytes": [416048, 118652], "v": "493fabb7", "height": 12.0, "foot": 0.9, "plaque": {"box": [0.39, 0.315, 0.595, 0.395], "ink": "dark"}, "tags": ["ruins", "temple"], "need": ["ruins"], "mask": "1881f87fefff7fe7fe7fe7fe7fe7fefff7fe", "body": [0.045, 0.951], "crown": 0.0},
+  {"id": "hut", "file": "hut.webp", "role": "subject", "px": [1436, 976], "bytes": [505926, 145158], "v": "f64c8d26", "height": 8.5, "foot": 0.88, "plaque": {"box": [0.36, 0.315, 0.64, 0.425], "ink": "gold"}, "tags": ["hut", "field", "rustic", "room", "dormitory", "storeroom", "alchemy_room", "workshop", "study", "tower"], "need": ["hut", "field", "dormitory", "room", "forest", "storeroom", "alchemy_room", "workshop", "study", "tower"], "made": true, "mask": "1f83fc7fe7ffffffff7fc7fe7fe7fe7fe3fc", "body": [0.075, 0.93], "crown": 0.0},
+  {"id": "stockade", "file": "stockade.webp", "role": "subject", "px": [1506, 961], "bytes": [394428, 118494], "v": "341a8c8c", "height": 9.5, "foot": 0.89, "plaque": {"box": [0.35, 0.195, 0.66, 0.32], "ink": "gold"}, "tags": ["stockade", "tense", "bandit_hall"], "need": ["stockade", "bandit_hall", "camp"], "made": true, "mask": "1083fc3fc1fe30e30f70ff0f70ff0ffff7fe", "body": [0.029, 0.983], "crown": 0.0},
+  {"id": "waterfall", "file": "waterfall.webp", "role": "subject", "px": [1279, 1184], "bytes": [663840, 179122], "v": "a1e9f37d", "height": 16.0, "foot": 0.9, "plaque": {"box": [0.25, 0.155, 0.385, 0.455], "ink": "dark", "vertical": true}, "tags": ["waterfall"], "need": ["waterfall"], "mask": "3847fe7fe7fe7fe7fefffffffffffffff7fe", "body": [0.01, 0.995], "crown": 0.0},
+  {"id": "tree-sign", "file": "tree-sign.webp", "role": "subject", "px": [1300, 1183], "bytes": [571984, 179210], "v": "2574ebee", "height": 15.0, "foot": 0.9, "plaque": {"box": [0.32, 0.43, 0.69, 0.52], "ink": "dark"}, "crown": 0.06, "tags": ["forest", "pines", "vines", "desolate", "grassland"], "need": ["forest", "valley", "mountain", "grassland"], "avoid": ["ruins", "hut", "stockade", "canyon", "field", "waterfall", "swamp"], "mask": "3f07fcfff7fffffdf81f80f01f03f83fc3fc", "body": [0.144, 0.862]},
+  {"id": "temple", "file": "temple.webp", "role": "subject", "px": [1110, 1149], "bytes": [411810, 117478], "v": "b0080801", "height": 9.5, "foot": 0.9, "plaque": {"box": [0.33, 0.375, 0.59, 0.455], "ink": "gold"}, "tags": ["forest", "path", "statue", "altar"], "need": ["forest", "path", "mountain", "valley"], "avoid": ["ruins", "hut", "stockade", "canyon", "field", "tense", "grassland"], "made": true, "mask": "0600f03fc7fe7fe3fc3fc3fc3fc7fefff7fe", "body": [0.027, 0.966], "crown": 0.0},
+  {"id": "lodge", "file": "lodge.webp", "role": "subject", "px": [1269, 1050], "bytes": [409056, 115008], "v": "bc81e63d", "height": 12.0, "foot": 0.9, "plaque": {"box": [0.395, 0.24, 0.665, 0.32], "ink": "gold"}, "tags": ["forest", "tower", "room", "dormitory"], "need": ["forest", "tower", "valley"], "avoid": ["ruins", "stockade", "canyon", "field", "grassland"], "made": true, "mask": "0600f03fe7fe3fc3fe7fe7fe7fe7fefff7fe", "body": [0.024, 0.971], "crown": 0.0},
+  {"id": "arch", "file": "arch.webp", "role": "subject", "px": [1095, 1153], "bytes": [320486, 96150], "v": "a3ab0d0f", "height": 11.0, "foot": 0.92, "plaque": {"box": [0.34, 0.305, 0.68, 0.385], "ink": "gold"}, "tags": ["path", "forest", "gate"], "need": ["path", "forest", "mountain"], "avoid": ["ruins", "hut", "stockade", "canyon", "field", "grassland"], "made": true, "mask": "0207fefff7fe3fe20620620620670670efff", "body": [0.044, 0.936], "crown": 0.0},
+  {"id": "stone-pavilion", "file": "stone-pavilion.webp", "role": "subject", "px": [1264, 1152], "bytes": [567786, 174454], "v": "03a298fc", "height": 12.0, "foot": 0.9, "plaque": {"box": [0.425, 0.37, 0.575, 0.415], "ink": "gold"}, "tags": ["pavilion", "forest", "bamboo", "pines", "path"], "need": ["pavilion", "forest", "path", "bamboo"], "avoid": ["ruins", "hut", "stockade", "canyon", "field", "waterfall", "tense", "grassland", "cave", "tunnel", "shaft"], "made": true, "mask": "1a07e07f8ffeffe7fe7df7fe3fe7fe7ff3fe", "body": [0.074, 0.967], "crown": 0.0},
+  {"id": "farmhouse", "file": "farmhouse.webp", "role": "subject", "px": [1300, 706], "bytes": [352636, 103794], "v": "ac01275f", "height": 9.5, "foot": 0.86, "plaque": {"box": [0.375, 0.275, 0.615, 0.365], "ink": "gold"}, "tags": ["field", "hut", "rustic", "well"], "need": ["field"], "avoid": ["ruins", "stockade", "canyon", "grassland"], "made": true, "mask": "1f83fc7fe7fe7fe7fe7ffffffffffffff7fe", "body": [0.011, 0.99], "crown": 0.0},
+  {"id": "watermill", "file": "watermill.webp", "role": "subject", "px": [1300, 875], "bytes": [403212, 109746], "v": "fd890398", "height": 10.0, "foot": 0.88, "plaque": {"box": [0.445, 0.305, 0.705, 0.395], "ink": "gold"}, "tags": ["field", "stream", "river"], "need": ["field", "river", "stream"], "avoid": ["ruins", "stockade", "canyon", "grassland"], "made": true, "mask": "0fc1fe1fe3fe7fe7fc7fc7fe7feffffff7fc", "body": [0.012, 0.988], "crown": 0.0},
+  {"id": "shed", "file": "shed.webp", "role": "subject", "px": [1239, 953], "bytes": [493930, 131564], "v": "cf5dc3f4", "height": 9.0, "foot": 0.88, "plaque": {"box": [0.33, 0.355, 0.66, 0.435], "ink": "gold"}, "tags": ["field", "storeroom", "rustic"], "need": ["field", "storeroom"], "avoid": ["ruins", "stockade", "canyon", "grassland"], "made": true, "mask": "3fc3fc7feffffff7fef0cfdc7fc7fefff7fc", "body": [0.044, 0.948], "crown": 0.0},
+  {"id": "cave-mouth", "file": "cave-mouth.webp", "role": "subject", "px": [1300, 1036], "bytes": [523762, 157420], "v": "f64c4409", "height": 13.0, "foot": 0.93, "plaque": {"box": [0.32, 0.25, 0.7, 0.39], "ink": "dark"}, "crown": 0.06, "tags": ["cave", "tunnel", "shaft", "canyon", "cliff", "rocks"], "need": ["cave", "tunnel", "shaft", "canyon", "cliff", "mountain"], "avoid": ["ruins", "hut", "stockade", "field", "waterfall", "swamp", "grassland"], "mask": "1fc3fe7fe7fe7ff7fffffffffffffffff7fe", "body": [0.005, 0.992]},
+  {"id": "rock-arch", "file": "rock-arch.webp", "role": "subject", "px": [1300, 879], "bytes": [409628, 118290], "v": "cb8e4dc5", "height": 14.0, "foot": 0.92, "plaque": {"box": [0.39, 0.185, 0.63, 0.265], "ink": "dark"}, "crown": 0.05, "tags": ["canyon", "rocks", "path"], "need": ["canyon", "mountain", "path", "valley"], "avoid": ["ruins", "hut", "stockade", "field", "waterfall", "swamp", "grassland"], "mask": "3083f87fe7fe79e70e70f70ff0ff9ffff7fe", "body": [0.015, 0.991]},
+  {"id": "plank-road", "file": "plank-road.webp", "role": "subject", "px": [1300, 884], "bytes": [442570, 136808], "v": "3d0b8186", "height": 15.0, "foot": 0.95, "plaque": {"box": [0.335, 0.275, 0.645, 0.375], "ink": "dark"}, "crown": 0.05, "tags": ["canyon", "cliff", "path"], "need": ["canyon", "cliff"], "avoid": ["ruins", "hut", "stockade", "field", "waterfall", "swamp"], "made": true, "mask": "7c87fe7fe7fe7feffffffffffffffffff7fe", "body": [0.018, 0.958]},
+  {"id": "tea-stall", "file": "tea-stall.webp", "role": "subject", "px": [1300, 889], "bytes": [376224, 114842], "v": "37a01e60", "height": 9.0, "foot": 0.9, "plaque": {"box": [0.315, 0.28, 0.645, 0.375], "ink": "gold"}, "tags": ["stall", "path", "lively"], "need": ["stall"], "avoid": ["ruins", "stockade", "canyon"], "made": true, "mask": "1f83fc7fefff7fe6024065fe7feffffff7fe", "body": [0.023, 0.978], "crown": 0.0},
+  {"id": "yurt", "file": "yurt.webp", "role": "subject", "px": [1300, 855], "bytes": [282346, 86096], "v": "bcf88afa", "height": 10.0, "foot": 0.86, "plaque": {"box": [0.4, 0.37, 0.6, 0.435], "ink": "gold"}, "tags": ["grassland", "tent", "camp"], "need": ["grassland", "tent", "camp"], "made": true, "mask": "0400640f61fe3fe3fe3fc3fc7feffffff3fc", "body": [0.017, 0.985], "crown": 0.0},
+  {"id": "cairn", "file": "cairn.webp", "role": "prop", "px": [1300, 985], "bytes": [267484, 80886], "v": "56a74047", "height": 6.0, "foot": 0.88, "tags": ["grassland", "stele", "altar"], "need": ["grassland"], "mask": "0000600f00f00f01f01f83fc3fc7fefff3fc"},
+  {"id": "canyon-wall", "file": "canyon-wall.webp", "role": "side", "px": [1030, 1024], "bytes": [433034, 120734], "v": "dab2c340", "height": 26.0, "foot": 1.0, "tags": ["canyon"], "need": ["canyon"], "mask": "ffcffefffffdffcffcffcffcffeffeffeffe"},
+  {"id": "bamboo", "file": "bamboo.webp", "role": "prop", "px": [847, 877], "bytes": [350946, 102410], "v": "5be884bc", "height": 8.0, "foot": 0.975, "depths": ["mid", "near"], "tags": ["bamboo", "forest", "path"], "need": ["bamboo", "forest", "path", "valley"], "mask": "0f07f87fcffe7fc7fc3fc7fc3f87f87fc3f8"},
+  {"id": "spring", "file": "spring.webp", "role": "prop", "px": [890, 756], "bytes": [279838, 84414], "v": "14e8c1f0", "height": 2.6, "foot": 0.95, "tags": ["stream", "rocks", "waterfall"], "need": ["stream", "rocks", "waterfall", "forest", "valley"], "mask": "1e03ec3fe7fe7fefffffffffffffff7fe1fc"},
+  {"id": "shrine", "file": "shrine.webp", "role": "prop", "px": [595, 727], "bytes": [190164, 55520], "v": "ef102532", "height": 2.2, "foot": 0.97, "tags": ["path", "forest", "valley", "stele"], "need": ["path", "forest", "valley", "mountain", "field"], "mask": "0603fc7fffff7fe7fe3fc3fc7fefff7ff7fe"},
+  {"id": "lingzhi", "file": "lingzhi.webp", "role": "prop", "px": [824, 592], "bytes": [220756, 70034], "v": "ed3ccd6c", "height": 1.3, "foot": 0.95, "tags": ["forest", "herb_beds"], "need": ["forest", "valley", "path", "swamp"], "mask": "0401e01e22fe7fc1fe7ffffefffffffff7fe"},
+  {"id": "columns", "file": "columns.webp", "role": "prop", "px": [773, 823], "bytes": [171226, 53706], "v": "6ff9f6ce", "height": 6.0, "foot": 0.97, "tags": ["ruins"], "need": ["ruins"], "mask": "0e00f01f01f00f40ee7fe7fe7fe7fefff7fe"},
+  {"id": "stone-head", "file": "stone-head.webp", "role": "prop", "px": [828, 633], "bytes": [178718, 52704], "v": "5e2d7a14", "height": 2.4, "foot": 0.95, "tags": ["ruins", "statue"], "need": ["ruins"], "mask": "0380781fc1fe1fe3ff7fffffffeffffff3fc"},
+  {"id": "altar", "file": "altar.webp", "role": "prop", "px": [932, 629], "bytes": [195096, 57310], "v": "2c36841c", "height": 2.8, "foot": 0.95, "tags": ["ruins", "altar", "formation"], "need": ["ruins"], "mask": "0700702f02fc7fe7fe7fe7fe7feffffff3fc"},
+  {"id": "floating", "file": "floating.webp", "role": "prop", "px": [789, 667], "bytes": [141808, 48106], "v": "cbbbe996", "height": 3.5, "foot": 0.75, "tags": ["ruins", "formation"], "need": ["ruins"], "mask": "0070c71fe1fc0fe3fe3fa370018010000000"},
+  {"id": "broken-stele", "file": "broken-stele.webp", "role": "prop", "px": [746, 509], "bytes": [135494, 39862], "v": "9ec086c6", "height": 1.8, "foot": 0.92, "tags": ["ruins", "stele", "desolate"], "need": ["ruins", "graves"], "mask": "00c01e03f07f1ff3fe7fefffffffffffe7f8"},
+  {"id": "rubble", "file": "rubble.webp", "role": "prop", "px": [806, 427], "bytes": [122970, 35902], "v": "3b06cf66", "height": 1.2, "foot": 0.92, "tags": ["ruins", "rocks", "canyon", "desolate"], "need": ["ruins", "rocks", "canyon", "desolate"], "mask": "0300780781783fc3fc7feffeffffff7fe3f8"},
+  {"id": "herb-bed", "file": "herb-bed.webp", "role": "prop", "px": [850, 593], "bytes": [196442, 61694], "v": "4dddbd7a", "height": 1.4, "foot": 0.97, "tags": ["herb_beds", "field"], "need": ["field", "herb_beds"], "mask": "00e00e23c7fe7fe7feffffffffffffffffff"},
+  {"id": "basket", "file": "basket.webp", "role": "prop", "px": [815, 693], "bytes": [182832, 53454], "v": "f0f6c65b", "height": 1.9, "foot": 0.95, "tags": ["herb_beds", "field", "hut"], "need": ["field", "herb_beds", "hut"], "mask": "0300101f83f83fc3fc3fc3fc7feffefff7fe"},
+  {"id": "well", "file": "well.webp", "role": "prop", "px": [760, 687], "bytes": [222108, 66016], "v": "a4d0fae7", "height": 2.8, "foot": 0.95, "tags": ["well"], "need": ["well", "field", "hut", "desolate"], "mask": "2086fc7fc6ee7fe7fe7fe7fe7feffffff3fc"},
+  {"id": "fence", "file": "fence.webp", "role": "prop", "px": [815, 624], "bytes": [247884, 79410], "v": "a20cf984", "height": 2.0, "foot": 0.95, "tags": ["field", "hut", "well"], "need": ["field", "hut", "well"], "mask": "00220674f76ffff7ff7fe7ff7feffffff7fe"},
+  {"id": "lookout", "file": "lookout.webp", "role": "prop", "px": [765, 852], "bytes": [260286, 78928], "v": "8dc68917", "height": 4.6, "foot": 0.97, "tags": ["stockade", "torches", "tense"], "need": ["stockade", "tense", "canyon"], "mask": "0f01f87fefff7fe70e3fe7fc7fc7fc7fe7fc"},
+  {"id": "torch", "file": "torch.webp", "role": "prop", "px": [471, 782], "bytes": [91924, 29604], "v": "1a5f0bfa", "height": 3.2, "foot": 0.95, "tags": ["torches", "stockade"], "need": ["torches", "stockade", "tense"], "mask": "0380b81f80f00600600600601f83fcfff7fe"},
+  {"id": "tall-grass", "file": "tall-grass.webp", "role": "prop", "px": [847, 589], "bytes": [242476, 75558], "v": "39774921", "height": 2.4, "foot": 0.95, "tags": ["grassland"], "need": ["grassland"], "mask": "0181380fe1fc3fe3fc7fc7fe7fe7fe7fe3f8"},
+  {"id": "white-stones", "file": "white-stones.webp", "role": "prop", "px": [887, 447], "bytes": [161838, 49632], "v": "8a410d63", "height": 1.6, "foot": 0.88, "tags": ["grassland", "rocks", "flowers"], "need": ["grassland"], "mask": "0000f81f81fc3fe7fe7fefffffffff7fe0f0"},
+  {"id": "fallen-column", "file": "fallen-column.webp", "role": "prop", "px": [1000, 521], "bytes": [141004, 46080], "v": "9c81d8ab", "height": 2.2, "foot": 0.82, "tags": ["ruins"], "need": ["ruins"], "mask": "00600e03e0ff3ff7fe7fe7fe7fe7fe000000"},
+  {"id": "fallen-beast", "file": "fallen-beast.webp", "role": "prop", "px": [1000, 512], "bytes": [151116, 49882], "v": "0a6dfdf4", "height": 2.2, "foot": 0.8, "tags": ["ruins", "statue"], "need": ["ruins"], "mask": "0601f41fe3fe3fe3fe7fc7feffe7fe070000"},
+  {"id": "ruin-steps", "file": "ruin-steps.webp", "role": "prop", "px": [1000, 428], "bytes": [153980, 49364], "v": "86d738f2", "height": 2.4, "foot": 0.9, "tags": ["ruins"], "need": ["ruins"], "mask": "10c1fc3fc3fe3fe7fe7ffffffffffffff3fc"},
+  {"id": "ruin-wall", "file": "ruin-wall.webp", "role": "prop", "px": [1000, 560], "bytes": [186892, 59496], "v": "981c6150", "height": 3.0, "foot": 0.9, "tags": ["ruins", "desolate"], "need": ["ruins"], "mask": "00608738e3fe3fe3ff7feffffffffffff7fe"},
+  {"id": "tree", "file": "tree.webp", "role": "near", "px": [1500, 1024], "bytes": [632238, 185020], "v": "e3d0ac66", "height": 16.0, "foot": 0.975, "hold": [0.5, 0.975], "tags": ["forest", "path", "valley", "field", "river", "waterfall", "mountain", "pines"], "mask": "1f83fe7fe7fffff7ff0f00f01f81f83fc1f8"},
+  {"id": "reeds", "file": "reeds.webp", "role": "near", "px": [1493, 996], "bytes": [626614, 177600], "v": "a839fa1b", "height": 5.5, "foot": 0.95, "hold": [0.5, 0.95], "tags": ["reeds", "swamp", "river", "lake"], "need": ["swamp", "river", "lake", "reeds"], "mask": "0601f00fe7fc3feffe7ff7ff7fe7fe7fe3fc"},
+  {"id": "name-rock", "file": "name-rock.webp", "role": "prop", "px": [1386, 781], "bytes": [399804, 103850], "v": "8c0f4b86", "height": 2.6, "foot": 0.95, "plaque": {"box": [0.235, 0.44, 0.755, 0.785], "ink": "dark"}, "only": "name", "avoid": ["ruins"], "mask": "1fc7fe7fe7fe7fe7fe7fe7feffeffffff7fe"},
+  {"id": "stele", "file": "stele.webp", "role": "prop", "px": [836, 1497], "bytes": [331510, 92792], "v": "68a9e8cb", "height": 3.6, "foot": 0.93, "plaque": {"box": [0.375, 0.21, 0.63, 0.56], "ink": "dark", "vertical": true}, "only": "name", "tags": ["path", "forest", "mountain", "valley", "stele"], "need": ["path", "forest", "mountain", "valley", "canyon", "peak"], "avoid": ["ruins"], "mask": "0f01f83fc1f81f81f81f81f83f83fc7fe7fe"},
+  {"id": "name-ruin", "file": "name-ruin.webp", "role": "prop", "px": [1286, 827], "bytes": [337044, 90906], "v": "8e106e04", "height": 2.6, "foot": 0.93, "plaque": {"box": [0.215, 0.465, 0.68, 0.82], "ink": "dark"}, "only": "name", "tags": ["ruins"], "need": ["ruins"], "mask": "1f87fc7fe7fe7fe7feffffff7fffffffffff"}
+ ]
+}

@@ -1,0 +1,100 @@
+.mark {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 var(--s-6);
+  border: var(--hair) solid var(--gold);
+  color: var(--gold);
+  transform: rotate(45deg);
+}
+.mark i {
+  font: 400 var(--fs-22)/1 var(--f-brush);
+  font-style: normal;
+  transform: rotate(-45deg);
+}
+
+/* positioned for the ink layer below, at no specificity: a holder may still place the seal absolutely */
+:where(.seal, .stamp) {
+  position: relative;
+}
+
+.seal {
+  isolation: isolate;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 5px;
+  border-radius: var(--r-seal);
+  color: var(--seal-ink);
+  font: 400 var(--fs-24)/1 var(--f-brush);
+  text-shadow: none;
+}
+
+/* the cinnabar under the character, in the seal ink (assets/ui/seal.webp): its alpha is how the ink
+   took, small gaps where it missed; the character itself stays whole */
+.seal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--cin);
+  -webkit-mask: var(--tex-seal) 0 0 / 160px;
+  mask: var(--tex-seal) 0 0 / 160px;
+}
+
+/* the small seal: vertical brush text on a cinnabar strip */
+.seal[data-small] {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 7px var(--s-4);
+  border-radius: 2px;
+  font-size: var(--fs-15);
+  writing-mode: vertical-rl;
+  letter-spacing: .08em;
+}
+.seal[data-tilt] {
+  transform: rotate(-6deg);
+}
+
+.stamp {
+  isolation: isolate;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: var(--s-4);
+  border-radius: 50%;
+  color: var(--cin);
+  font: 400 var(--fs-27)/1 var(--f-brush);
+  transform: rotate(-9deg);
+}
+
+/* the stamp's two rings, in the seal ink like the seals: a 2 px ring and, 2 px inside it, a thin one, the
+   card showing between them. The gap used to be a transparent shadow, which paints nothing, so the inner
+   ring lay against the outer one in a single 5 px band (the documents pass, #15) */
+.stamp::before,
+.stamp::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  -webkit-mask: var(--tex-seal) 0 0 / 160px;
+  mask: var(--tex-seal) 0 0 / 160px;
+}
+
+.stamp::before {
+  inset: 0;
+  border: 2px solid var(--cin);
+}
+
+.stamp::after {
+  inset: 4px;
+  border: 1px solid var(--cin);
+}

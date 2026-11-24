@@ -1,0 +1,31 @@
+/* The panel page of the gallery: a plain page under the sheet. It stands at the sheet's level of the
+   gallery (whose sticky header would otherwise cover the sheet) and holds the sheet inside it. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  background: var(--page);
+}
+
+.chips {
+  position: absolute;
+  top: calc(var(--s-16) + env(safe-area-inset-top, 0px));
+  left: var(--s-16);
+  right: var(--s-16);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+.reopen,
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-12);
+}
+
+.reopen {
+  position: absolute;
+  left: var(--s-16);
+  bottom: calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+}

@@ -1,0 +1,230 @@
+/* 账号 (spec 七): the login on the title page and the account's section in the settings. */
+
+/* ---------------------------------------------------------------- the login */
+
+/* a 360 px frame where the title's actions stand: the lower left of a desktop. The frame itself does not
+   scroll (its gold corners would be cut); its body does, when the window is short. Its ground is the
+   frame's at the opacity of the frame without blur (.92): the error's cinnabar and the tabs' soft ink must
+   read 4.5:1 over the brightest clouds and the moon. */
+section.login {
+  position: absolute;
+  left: max(var(--s-46), env(safe-area-inset-left, 0px));
+  bottom: max(var(--s-46), calc(env(safe-area-inset-bottom, 0px) + var(--s-22)));
+  width: 360px;
+  background: linear-gradient(180deg, rgb(from var(--panel-hi) r g b / .92), rgb(from var(--panel) r g b / .92));
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.loginBody {
+  max-height: calc(100dvh - 2 * var(--s-22));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: var(--s-14);
+  padding: var(--s-16) var(--s-22) var(--s-22);
+}
+
+.loginTitle {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: var(--ls-title);
+  color: var(--ink);
+}
+
+/* what the page has to say before anything is typed: the session went, signed out */
+.said {
+  margin: 0;
+  padding: var(--s-8) var(--s-12);
+  border-left: 2px solid var(--line);
+  background: var(--tint);
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  color: var(--ink);
+}
+
+.form {
+  display: grid;
+  gap: var(--s-14);
+}
+
+.field {
+  display: grid;
+  gap: var(--s-4);
+  font: var(--type-sub);
+  letter-spacing: var(--ls-sub);
+  color: var(--gold);
+}
+
+.codeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--s-12);
+}
+
+.sendCode {
+  min-height: var(--hit);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.emailAddress {
+  overflow-wrap: anywhere;
+}
+
+/* spec 七: a gold line under it and no box; the line brightens with the focus; 16 px or more */
+.input {
+  width: 100%;
+  min-width: 0;
+  padding: var(--s-8) 0 var(--s-6);
+  border: 0;
+  border-bottom: var(--hair) solid var(--line);
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font: 400 var(--fs-16)/1.5 var(--f-serif);
+  letter-spacing: .06em;
+  outline: none;
+  transition: border-color var(--d-focus), box-shadow var(--d-focus);
+}
+
+.input::placeholder {
+  color: var(--faint);
+  letter-spacing: .04em;
+}
+
+.input:focus {
+  border-bottom-color: var(--gold);
+  box-shadow: 0 1px 0 var(--gold), 0 6px 10px -8px var(--glow);
+}
+
+/* small print under the fields: the rules of a name and a password */
+.rule {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* the error, above the button, in cinnabar (spec 七) */
+.error {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  letter-spacing: .04em;
+  color: var(--cin);
+}
+
+.submit {
+  width: 100%;
+  min-height: 38px;
+  margin-top: var(--s-4);
+  font-size: var(--fs-14);
+}
+
+/* phones: a panel along the bottom, 16 px from the sides, scrolling when the keyboard leaves it short */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  section.login {
+    left: max(var(--s-16), env(safe-area-inset-left, 0px));
+    right: max(var(--s-16), env(safe-area-inset-right, 0px));
+    bottom: 0;
+    width: auto;
+    animation-name: global(rise-in);
+    animation-duration: var(--d-rise);
+  }
+  .loginBody {
+    max-height: calc(100dvh - var(--s-16));
+    padding: var(--s-14) var(--s-18) calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+  }
+  /* 44 px tall to the touch */
+  .input {
+    padding-block: var(--s-10);
+  }
+  .submit {
+    min-height: var(--hit);
+  }
+  /* the button is 44 px tall already: its touch area grows no further, into the error above it */
+  .form .submit::after {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- the account in the settings */
+
+.usage {
+  display: grid;
+  gap: var(--s-10);
+}
+
+/* one limit: its name and 「12 / 200」 over a slanted bar of the full width */
+.meter {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.meterHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-10);
+  font: var(--type-kv);
+  color: var(--soft);
+}
+
+.meterHead b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  height: 11px;
+  background: var(--line-soft);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--line), var(--gold));
+  transition: width var(--d-value) var(--ease);
+}
+
+/* a limit reached: the bar ends in cinnabar */
+.bar[data-full] .fill {
+  background: linear-gradient(90deg, var(--line), var(--cin));
+}
+
+.note {
+  margin: 0;
+  font: var(--type-note);
+  color: var(--soft);
+}
+
+/* what went wrong, or the limit reached, inside the settings: the sheet lets the picture through, so the
+   words are in ink with a cinnabar rule on their left, as the error notices have it (spec 三, 提示) */
+.problem {
+  margin: 0;
+  padding: var(--s-6) var(--s-10);
+  border-left: 2px solid var(--cin);
+  background: var(--tint);
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--ink);
+}
+
+.password {
+  display: grid;
+  gap: var(--s-12);
+}
+
+.done {
+  margin: 0;
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--jade);
+}
+
+/* a finger on the desktop layout: the fields 44 px tall to the touch */
+@media (pointer: coarse) {
+  .input {
+    padding-block: var(--s-10);
+  }
+}

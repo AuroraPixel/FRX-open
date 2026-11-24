@@ -1,0 +1,96 @@
+/* 悟得 on offer: a small gold heading, then three cards side by side on desktops, one above the other on
+   phones; a gold line over each, the name in brush, what it does under it; a rare one has a small
+   cinnabar seal in its corner. */
+.offer {
+  display: grid;
+  gap: var(--s-8);
+  margin: var(--s-10) 0 var(--s-4);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.head small {
+  margin-left: .2em;
+  font: 400 var(--fs-12)/1 var(--f-serif);
+  letter-spacing: .2em;
+  color: var(--soft);
+}
+
+.perks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perk {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--s-6);
+  width: 100%;
+  height: 100%;
+  min-height: 56px;
+  padding: var(--s-12) var(--s-12) var(--s-14);
+  border: 0;
+  border-top: var(--hair) solid var(--line);
+  border-bottom: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  text-align: left;
+  transition: background-color var(--d-focus);
+}
+
+.perk strong {
+  font: 400 var(--fs-20)/1.2 var(--f-brush);
+  letter-spacing: .12em;
+  color: var(--gold);
+}
+
+.perk span {
+  font: 400 var(--fs-13)/1.6 var(--f-serif);
+  color: var(--text);
+}
+
+.rare {
+  position: absolute;
+  top: var(--s-8);
+  right: var(--s-8);
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-seal);
+  background: var(--cin) var(--tex-seal) center / cover;
+  font: 400 var(--fs-13)/1 var(--f-brush);
+  font-style: normal;
+  color: var(--seal-ink);
+}
+
+.perk:not(:disabled):not([aria-disabled]):hover,
+.perk[data-hover],
+.perk:focus-visible {
+  background: linear-gradient(180deg, var(--glow-soft), var(--tint));
+}
+
+.perk:focus-visible {
+  outline-offset: -2px;
+}
+
+.perk:disabled {
+  cursor: default;
+}
+
+.perk:disabled strong {
+  color: var(--faint);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .perks {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-8);
+  }
+  .perk {
+    padding: var(--s-10) var(--s-36) var(--s-12) var(--s-12);
+  }
+}

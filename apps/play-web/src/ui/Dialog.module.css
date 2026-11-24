@@ -1,0 +1,61 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog);
+  display: grid;
+  place-items: center;
+  padding: var(--s-22) 0;
+}
+
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--veil);
+  animation: global(fade-in) var(--d-focus) ease both;
+}
+
+.dialog {
+  position: relative;
+  width: min(420px, 100% - 48px);
+  display: grid;
+  gap: var(--s-14);
+  padding: var(--s-22) var(--s-22) var(--s-18);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.dialog:focus-visible {
+  outline: none;
+}
+
+.title {
+  margin: 0;
+  font: 400 var(--fs-24)/1.2 var(--f-brush);
+  letter-spacing: var(--ls-title);
+  color: var(--ink);
+}
+
+.body {
+  font: 400 var(--fs-14)/1.8 var(--f-serif);
+  color: var(--text);
+}
+
+.body p {
+  margin: 0 0 .4em;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-10);
+  margin-top: var(--s-4);
+}
+
+@media (max-width: 759px) and (max-aspect-ratio: 13/10) {
+  .layer {
+    padding: var(--s-22) 0 calc(var(--s-22) + env(safe-area-inset-bottom, 0px));
+  }
+  .actions {
+    gap: var(--s-12);
+    margin-top: var(--s-8);
+  }
+}

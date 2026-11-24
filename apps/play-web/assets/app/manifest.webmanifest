@@ -1,0 +1,19 @@
+{
+  "id": "/play/",
+  "name": "云汀修行录",
+  "short_name": "云汀修行录",
+  "description": "一介凡人，问道长生的修仙文字游戏。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["games"],
+  "start_url": "/play/",
+  "scope": "/play/",
+  "display": "standalone",
+  "background_color": "#04070d",
+  "theme_color": "#04070d",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

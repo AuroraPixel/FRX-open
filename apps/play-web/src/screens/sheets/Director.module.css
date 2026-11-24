@@ -1,0 +1,52 @@
+/* 剧情演化 in the task panel: 我的指示 is a few lines of the player's own words. */
+.label {
+  font: 400 var(--fs-13)/1.2 var(--f-serif);
+  letter-spacing: var(--ls-label);
+  color: var(--soft);
+}
+
+.box {
+  width: 100%;
+  min-height: 6.4em;
+  resize: vertical;
+  padding: var(--s-8) var(--s-10);
+  border: var(--hair) solid var(--line-soft);
+  background: var(--tint);
+  color: var(--ink);
+  font: 400 var(--fs-13)/1.7 var(--f-serif);
+  transition: border-color var(--d-focus);
+}
+
+.box::placeholder {
+  color: var(--faint);
+  opacity: 1;
+}
+
+.box:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+/* phones, and a finger on the desktop layouts (a phone on its side, a tablet): 16 px keeps the browser
+   from zooming in on the box */
+@media (max-width: 759px) and (max-aspect-ratio: 13/10), (pointer: coarse) {
+  .box {
+    font-size: max(16px, var(--fs-13));
+  }
+}
+
+/* this save's main plot switch, set apart from the guidance above it; the room above it keeps the
+   phone touch areas of the two rows from overlapping */
+.plot {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-10);
+  padding-top: var(--s-12);
+  border-top: var(--hair) dashed var(--line-soft);
+}
+
+/* a run that failed or was not taken: the error toast's cinnabar edge */
+.failed {
+  padding-left: var(--s-8);
+  border-left: 2px solid var(--cin);
+}

@@ -1,0 +1,6 @@
+{
+  "night": { "clear": "night-clear.webp", "cloud": "night-cloud.webp" },
+  "dawn": { "clear": "dawn-clear.webp", "cloud": "dawn-cloud.webp" },
+  "day": { "clear": "day-clear.webp", "cloud": "day-cloud.webp" },
+  "dusk": { "clear": "dusk-clear.webp", "cloud": "dusk-cloud.webp" }
+}

@@ -1,0 +1,2170 @@
+{
+  "version": 1,
+  "description": "奖励表（玩法设计第十二节「材料与奖励」，执行计划第 30 项）：奖励由引擎出，出的是图鉴（content/life/goods.json）里的东西，名字和份数照这里，模型只写样子。sources 下是七种来源，每种按品阶（一阶、二阶）、再按危险分格：dangers 是危险的几档，一格取地点的危险数够得着的最高一档（这种来源没有那一档就取有的最近一档）；「不论」那一档不看危险。一格是 picks（这次给几样，最多 max 样）和 pool：每条写类别 class 和品阶 tier，或者直接点名 goods，再写份数 count 的范围和权重 weight，还可以限定成品的 kinds、妖兽材料的 part；战利品的每条用 foe 限定对手的种类（content/life/foes.json 的 classes）。掷的时候先定给几样，每样按权重挑一条，再从图鉴里这一类这一阶的东西里挑一样：同一次不重样；底价越高越难出（权重是底价平方根的倒数）；妖兽材料有对手的种类时只出那一种的（图鉴里没有那一种就出认不出种类的）；关键材料只在点名的地方出。份数在范围里掷。places 是绑在一个地点上的格子，在那里取代通用的那一格：稀有的东西绑地点，不绑概率。gather、hunt 是采集、狩猎两个指令读的，fortune 是月结里的奇遇，各自的 notes 说怎么读。奇遇的每一格都有一条高一阶的功法（权重 5，数值平衡第二轮）。story 是剧情里交到主角手里的东西，它的 notes 说怎么读。verbs 是这两个指令的字和名字，契约收下这两种指令以后搬进 content/life/verbs.json。apps/engine/life/rewards.cjs 读这份文件；数都是初值。",
+  "max": 3,
+  "dangers": [
+    {
+      "name": "平安",
+      "from": 0
+    },
+    {
+      "name": "山野",
+      "from": 15
+    },
+    {
+      "name": "凶险",
+      "from": 35
+    },
+    {
+      "name": "绝地",
+      "from": 60
+    }
+  ],
+  "any": "不论",
+  "sources": {
+    "差事": {
+      "一阶": {
+        "平安": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                5,
+                12
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            }
+          ]
+        },
+        "山野": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                8,
+                16
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 20
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                12,
+                20
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                3
+              ],
+              "weight": 30
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "矿材",
+              "tier": "一阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 10
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "器"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                15,
+                25
+              ],
+              "weight": 50
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                2,
+                3
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "器"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "平安": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                50,
+                120
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            }
+          ]
+        },
+        "山野": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                80,
+                160
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                120,
+                200
+              ],
+              "weight": 60
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                3
+              ],
+              "weight": 30
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                150,
+                250
+              ],
+              "weight": 50
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                2,
+                3
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      }
+    },
+    "采集": {
+      "一阶": {
+        "山野": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                6
+              ],
+              "weight": 60
+            },
+            {
+              "class": "矿材",
+              "tier": "一阶",
+              "count": [
+                2,
+                5
+              ],
+              "weight": 60
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                3,
+                8
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                3,
+                8
+              ],
+              "weight": 60
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "class": "矿材",
+              "tier": "一阶",
+              "count": [
+                3,
+                6
+              ],
+              "weight": 60
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                5,
+                12
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                4,
+                10
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "矿材",
+              "tier": "一阶",
+              "count": [
+                3,
+                8
+              ],
+              "weight": 40
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                8,
+                16
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "山野": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                4
+              ],
+              "weight": 60
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 60
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                30,
+                80
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                2,
+                5
+              ],
+              "weight": 60
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 60
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                50,
+                120
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                3,
+                6
+              ],
+              "weight": 50
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                2,
+                5
+              ],
+              "weight": 40
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                80,
+                160
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            }
+          ]
+        }
+      }
+    },
+    "狩猎": {
+      "一阶": {
+        "山野": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "皮骨",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "皮骨",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "皮骨",
+              "count": [
+                2,
+                3
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "山野": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "皮骨",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "皮骨",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "妖丹",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 50
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "皮骨",
+              "count": [
+                2,
+                3
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      }
+    },
+    "秘境": {
+      "一阶": {
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "矿材",
+              "tier": "一阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                10,
+                30
+              ],
+              "weight": 20
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "器"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                20,
+                40
+              ],
+              "weight": 20
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "凶险": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "千年灵乳"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 3
+            },
+            {
+              "goods": [
+                "降尘丹",
+                "结金丹",
+                "凝金丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 2
+            }
+          ]
+        },
+        "绝地": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 20
+            },
+            {
+              "class": "矿材",
+              "tier": "二阶",
+              "count": [
+                2,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                100,
+                300
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "千年灵乳"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            },
+            {
+              "goods": [
+                "降尘丹",
+                "结金丹",
+                "凝金丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 3
+            }
+          ]
+        }
+      }
+    },
+    "战利品": {
+      "一阶": {
+        "不论": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "妖丹",
+              "foe": "beast",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 40
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "一阶",
+              "part": "皮骨",
+              "foe": "beast",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 40
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "rogue",
+              "count": [
+                2,
+                10
+              ],
+              "weight": 50
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "foe": "rogue",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "foe": "rogue",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "disciple",
+              "count": [
+                5,
+                15
+              ],
+              "weight": 40
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "foe": "disciple",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "goods": [
+                "制式飞剑"
+              ],
+              "foe": "disciple",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "筑基丹"
+              ],
+              "foe": "disciple",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 1
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "evil",
+              "count": [
+                5,
+                20
+              ],
+              "weight": 40
+            },
+            {
+              "goods": [
+                "阴魂幡"
+              ],
+              "foe": "evil",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹"
+              ],
+              "foe": "evil",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "傀儡残件"
+              ],
+              "foe": "puppet",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 40
+            },
+            {
+              "goods": [
+                "傀儡核心"
+              ],
+              "foe": "puppet",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "不论": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "妖丹",
+              "foe": "beast",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 40
+            },
+            {
+              "class": "妖兽材料",
+              "tier": "二阶",
+              "part": "皮骨",
+              "foe": "beast",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 40
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "rogue",
+              "count": [
+                20,
+                100
+              ],
+              "weight": 50
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "foe": "rogue",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "foe": "rogue",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "disciple",
+              "count": [
+                50,
+                150
+              ],
+              "weight": 40
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "foe": "disciple",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "goods": [
+                "降尘丹",
+                "结金丹",
+                "凝金丹"
+              ],
+              "foe": "disciple",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 1
+            },
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "foe": "evil",
+              "count": [
+                50,
+                200
+              ],
+              "weight": 40
+            },
+            {
+              "goods": [
+                "蚀骨钉"
+              ],
+              "foe": "evil",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹"
+              ],
+              "foe": "evil",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "傀儡残件"
+              ],
+              "foe": "puppet",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 40
+            },
+            {
+              "goods": [
+                "傀儡核心"
+              ],
+              "foe": "puppet",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            }
+          ]
+        }
+      }
+    },
+    "奇遇": {
+      "一阶": {
+        "平安": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        },
+        "山野": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                4
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "kinds": [
+                "器"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 20
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "goods": [
+                "筑基丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 2
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "平安": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "三阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        },
+        "山野": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "class": "成品",
+              "tier": "三阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        },
+        "凶险": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵物",
+              "tier": "二阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                2,
+                3
+              ],
+              "weight": 20
+            },
+            {
+              "goods": [
+                "千年灵乳"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 3
+            },
+            {
+              "goods": [
+                "丹方·筑基丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 1
+            },
+            {
+              "class": "成品",
+              "tier": "三阶",
+              "kinds": [
+                "功法"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        }
+      }
+    },
+    "大比": {
+      "一阶": {
+        "不论": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                20,
+                50
+              ],
+              "weight": 40
+            },
+            {
+              "class": "成品",
+              "tier": "一阶",
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "goods": [
+                "照夜芦",
+                "汀果",
+                "月纹菌",
+                "泊烟藤"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "goods": [
+                "筑基丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            }
+          ]
+        }
+      },
+      "二阶": {
+        "不论": {
+          "picks": [
+            1,
+            2
+          ],
+          "pool": [
+            {
+              "class": "灵石",
+              "tier": "一阶",
+              "count": [
+                200,
+                500
+              ],
+              "weight": 40
+            },
+            {
+              "class": "成品",
+              "tier": "二阶",
+              "kinds": [
+                "丹",
+                "符"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "goods": [
+                "千年灵乳"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            },
+            {
+              "goods": [
+                "降尘丹",
+                "结金丹",
+                "凝金丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 5
+            },
+            {
+              "goods": [
+                "丹方·筑基丹"
+              ],
+              "count": [
+                1,
+                1
+              ],
+              "weight": 2
+            }
+          ]
+        }
+      }
+    }
+  },
+  "places": {
+    "沉钟泽": {
+      "采集": {
+        "一阶": {
+          "picks": [
+            1,
+            3
+          ],
+          "pool": [
+            {
+              "goods": [
+                "照夜芦",
+                "汀果",
+                "月纹菌",
+                "泊烟藤"
+              ],
+              "count": [
+                1,
+                2
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                6
+              ],
+              "weight": 40
+            },
+            {
+              "class": "灵草",
+              "tier": "二阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      },
+      "秘境": {
+        "一阶": {
+          "picks": [
+            2,
+            3
+          ],
+          "pool": [
+            {
+              "goods": [
+                "照夜芦",
+                "汀果",
+                "月纹菌",
+                "泊烟藤"
+              ],
+              "count": [
+                1,
+                3
+              ],
+              "weight": 50
+            },
+            {
+              "class": "灵草",
+              "tier": "一阶",
+              "count": [
+                2,
+                5
+              ],
+              "weight": 30
+            },
+            {
+              "class": "灵物",
+              "tier": "一阶",
+              "count": [
+                1,
+                1
+              ],
+              "weight": 10
+            }
+          ]
+        }
+      }
+    }
+  },
+  "gather": {
+    "notes": "采集：days 是一次能采的日数；full 日采满一格的份数，短些的按日数折（四舍五入，一样都没有时头一样给一份）。出什么读 content/life/places.json 这个地点的专营里「产什么」（trade.produces，第 27 项）：其中采集表里有的类（灵草、矿材、灵石、灵物），阶取其中最低的那一阶；一样都没有的地方不能采。",
+    "days": {
+      "min": 1,
+      "max": 10
+    },
+    "full": 10
+  },
+  "hunt": {
+    "notes": "狩猎：一次 days 日、一个目标。能猎哪几阶、撞上的是哪一种，读 content/life/foes.json 这个地点的遭遇表（encounter.table）：表里是妖兽的那几行，一阶起（凡兽身上没有修士用得上的东西）。日子过完就撞上那一头，先有一拍，再看斗不斗。",
+    "days": 1
+  },
+  "fortune": {
+    "notes": "奇遇：每个月结按主角气运的档位（content/checks.json 的 modifierBands，零档起）掷一次，chance 是各档的百分数；掷中了往待发生的事里放一条由头是「现在」的线索（seed 是 clues 里按所在地点的种类挑的一句），不直接给东西，线索演成一场戏、那场戏收场时才照来源「奇遇」的格子给（close）。同时最多 waiting 条奇遇的线索等着。",
+    "seedType": "奇遇",
+    "chance": [
+      1,
+      2,
+      3,
+      5,
+      8,
+      12,
+      16
+    ],
+    "waiting": 1,
+    "fallback": "山野",
+    "close": {
+      "notes": "奇遇的那一场戏（由奇遇的线索开的戏，content/life/scene.json 的 origins 里的 fortune）收场时，引擎照来源「奇遇」的格子给东西，看这场戏里掷过的检定里最好的那一次（by）：大成功给满，这一格 picks 的上限那么多样（most）；成功照这一格掷（roll）；失败只给一样、一份（one）；大失败，或者一次也没掷过（直接离开），什么也不给（none），机缘落空。在哪里收场就照哪里掷：那个地方自己的格子（places）先，然后是那个地方的阶（places.json 的阶，和差事的报酬一样）和它的危险够得着的那一档。给的东西进行囊（灵石进钱袋），回执 fortune 跟在收场之后，什么也没给也有一张（落空）。戏里每一步之后引擎先算好此刻收场给什么（frxPlay.fortune.offer，种子只看存档、这场戏和 by），可能收场的那一拍由服务端照它告诉模型主角得了什么、照写（life_turns.fortune_of），收场时给的就是它，回执列出同样的东西。seed 是掷的种子里的名字。",
+      "origin": "fortune",
+      "seed": "奇遇·收场",
+      "by": {
+        "大成功": "most",
+        "成功": "roll",
+        "失败": "one",
+        "大失败": "none",
+        "none": "none"
+      },
+      "chance": {
+        "notes": "元婴的机缘（执行计划第 50 项的修补）：前面这一关要一桩机缘、还没有时（化神，content/life/gates.json 的 chance），奇遇收场照这场戏里最好的那一次检定另掷一回，by 里是百分数：掷中了这一关记下机缘（来路 fortune），可能收场的那一拍告诉模型，回执写明。种子只看存档、这场戏和 by，不看时刻。人界很难化神：模拟里照「接下来」走的元婴一年约 0.4 场奇遇（在化神关前等着 0.44，元婴里修炼 0.38），四成上下是大成功；大成功千分之四，天灵根约三百岁结婴、余下七百年里从奇遇得到化神机缘的约三成六，真灵根约四百一十八岁结婴、约三成一。戏里故事给的另算。",
+        "by": {
+          "大成功": 0.4
+        }
+      }
+    },
+    "clues": {
+      "城镇": [
+        "茶肆里有人压低了声音，说城外一处荒宅夜里有灵光",
+        "一个落魄书生要卖祖传的旧玉佩，玉里隐隐有灵气"
+      ],
+      "坊市": [
+        "地摊角落一件不起眼的旧物透出一丝灵光",
+        "有散修悄悄打听，谁要一张残缺的藏宝图"
+      ],
+      "宗门": [
+        "藏经阁角落一本没人借过的旧册里夹着半页手札",
+        "一位快要坐化的老执事想把一桩心事托付给人"
+      ],
+      "家族": [
+        "族里的老仆说起祖上留下一处没人敢进的旧院",
+        "清点库房时翻出一件来历不明的旧物"
+      ],
+      "灵地": [
+        "灵泉深处似乎沉着什么东西",
+        "地脉里不时传来细微的震动，像有东西在下面"
+      ],
+      "矿": [
+        "矿道深处挖穿了一间古人凿过的石室",
+        "一个矿工捡到一块会发热的怪石，不知该交给谁"
+      ],
+      "药山": [
+        "崖壁高处像是长着一株年份极老的灵药",
+        "一个老药农说起山里有片他再也不敢去的药圃"
+      ],
+      "妖兽之地": [
+        "一头受了伤的妖兽拖着血迹逃进了深谷",
+        "林子里倒着一具修士的遗骸，储物袋已被野兽撕烂"
+      ],
+      "秘境": [
+        "秘境边上一处禁制松动了",
+        "有人在秘境入口留了暗记，像在等同伴"
+      ],
+      "禁地": [
+        "禁制的缝隙里露出一角残碑",
+        "雾里有个人影一闪就没了，似乎也在找什么"
+      ],
+      "遗迹": [
+        "断墙下露出半截刻满符文的石门",
+        "古战场的沙土里埋着一截断剑，剑身还有灵光"
+      ],
+      "海域": [
+        "退潮后的礁石间露出一只古旧的贝匣",
+        "渔民说夜里海面上有光柱升起"
+      ],
+      "山野": [
+        "山涧边一棵老树下灵气浓得出奇",
+        "林中遇见一个迷路的采药童子，说起深山里的怪事"
+      ]
+    }
+  },
+  "story": {
+    "notes": "剧情里交到主角手里的东西（所有者第四回试玩：六十六回合里信物、符、丹方、药材、整只储物袋都交到了手里，一样也没进储物袋）：模型在同一次回复的状态指令里登记，引擎核对（apps/engine/settle.cjs 的 storyThing）。图鉴里有的照图鉴记（类型、用处、效果都是图鉴的），一拍里这样的东西照底价合计至多是主角那一阶一件差事报酬的上限（content/life/jobs.json 的 pay，那里改了这里跟着变），超出的不登记、叫正文改成没给；图鉴里没有的是剧情独有的东西，不占这个数，记作重要物品（信物、线索：引擎不装、不用、不收），功法写的阶不高过主角那一阶的照旧是功法；兵器、护甲、法宝例外：照图鉴里同类同阶的那件记类型和用处（apps/engine/life/goods.cjs 的 likeFor），照那件的底价占这个数，写明残破、失灵的仍是重要物品；灵石不登记（灵石只由引擎结算）。别人交出的整只储物袋不登记，由引擎照倒下的人那样开（content/life/gear.json 的 bags：按那人的身份和境界掷战利品），一个人的储物袋只开一回。"
+  },
+  "verbs": {
+    "gather": {
+      "glyph": "采",
+      "label": "采集"
+    },
+    "hunt": {
+      "glyph": "猎",
+      "label": "狩猎"
+    }
+  }
+}

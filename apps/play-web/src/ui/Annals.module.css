@@ -1,0 +1,102 @@
+/* The annals (the mock-up's .fx-annals, .fx-annal): a 1 px line down the left, a 7 px diamond on it for
+   each line, the newest one filled with gold. */
+.annals {
+  margin: var(--s-10) 0 var(--s-16) 5px;
+  padding: var(--s-2) 0 var(--s-2) 17px;
+  list-style: none;
+  border-left: var(--hair) solid var(--line-soft);
+  text-indent: 0;
+}
+
+.annal {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-12);
+  margin: 0;
+  font: 400 var(--fs-13)/2.05 var(--f-serif);
+  color: var(--soft);
+  animation: global(float-up) var(--d-float) var(--ease) both;
+}
+
+.annal::before {
+  content: '';
+  position: absolute;
+  left: -21px;
+  top: .82em;
+  width: 7px;
+  height: 7px;
+  border: var(--hair) solid var(--line);
+  background: var(--page);
+  transform: rotate(45deg);
+}
+
+.annal[data-now]::before {
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+.date {
+  flex: none;
+  width: 4.9em;
+  font: 700 var(--fs-12)/2.2 var(--f-serif);
+  letter-spacing: .14em;
+  color: var(--gold);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* the clock that moved in these days, beside the line's first row */
+.clock {
+  flex: none;
+  align-self: flex-start;
+  margin-top: 9px;
+}
+
+.text b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* 写一段: small, faint, a dotted gold line under it; its touch area reaches 44 px */
+.more {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-bottom: var(--hair) dotted var(--line);
+  background: none;
+  font: 400 var(--fs-11)/1.6 var(--f-ui);
+  letter-spacing: .12em;
+  margin-right: -.12em;
+  color: var(--faint);
+  transition: color var(--d-focus), border-color var(--d-focus);
+}
+
+/* 44 px and more to touch, 14 px up and 23 down: where the scrolled text clips one side (the newest line
+   at the very top on a phone on its side, at the very bottom over the foot on a tablet) the other keeps 44 */
+.more::after {
+  content: '';
+  position: absolute;
+  inset: -14px -6px -23px;
+}
+
+.more:hover,
+.more[data-hover],
+.more:focus-visible {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.more:disabled {
+  cursor: default;
+  border-bottom-color: var(--line-soft);
+}
+
+.more:disabled::after {
+  display: none;
+}
