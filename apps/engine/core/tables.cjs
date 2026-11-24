@@ -449,7 +449,7 @@ if (id === 'B1') {
   if (previous) restoreEquipmentRow(newState, previous);
 }
 let processedItem = '功法' === newItemData['2']
-? { id: newItemData['0'], name: newItemData['1'], type: newItemData['2'], description: newItemData['3'], quantity: parseInt(newItemData['5'] || '1'), grade: newItemData['6'], maxRealm: newItemData['7'], realmEffects: newItemData['8'], currentEffect: newItemData['9'], effect: newItemData['9'] }
+? { id: newItemData['0'], name: newItemData['1'], type: newItemData['2'], description: newItemData['3'], quantity: parseInt(newItemData['5'] || '1'), grade: newItemData['6'], maxRealm: newItemData['7'], realmEffects: newItemData['8'], currentEffect: newItemData['9'], effect: newItemData['4'] ?? newItemData['9'] }
 : { id: newItemData['0'], name: newItemData['1'], type: newItemData['2'], description: newItemData['3'], effect: newItemData['4'], quantity: parseInt(newItemData['5'] || '1') };
 if (!equipment[slot]) equipment[slot] = Array(6).fill(null);
 equipment[slot][equipIndex] = processedItem;

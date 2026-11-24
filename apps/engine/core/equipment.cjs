@@ -22,6 +22,7 @@
           const row = { '0': id, '1': item.name, '2': item.type, '3': item.description, '5': String(item.quantity ?? 1) };
           if (item.type === '功法') {
             Object.assign(row, { '6': item.grade, '7': item.maxRealm, '8': item.realmEffects, '9': item.currentEffect });
+            if (item.effect !== item.currentEffect) row['4'] = item.effect;
           } else row['4'] = item.effect;
           state['1'][id] = row;
         }

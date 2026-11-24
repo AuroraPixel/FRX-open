@@ -133,7 +133,7 @@ function capOf(env, name) {
   const text = plain(row['7'] ?? row.cap ?? row.maxRealm);
   const written = text ? mechanics.parseRealm(text) : null;
   if (written && !written.unknown) return { ...written, written: true };
-  for (const field of [row.effect ?? row['4'], row.description ?? row['3']]) {
+  for (const field of [row.effect ?? row['4'], row.currentEffect ?? row['9'], row.description ?? row['3']]) {
     const described = plain(field).match(DESCRIBED_CAP);
     if (described) return { ...mechanics.parseRealm(described[1]), written: true };
   }
