@@ -123,6 +123,7 @@ function localNotices(env, board, half) {
     const completed = Object.values(env.state['6'] || {}).some(row =>
       row?.['1'] === `差事：${notice.title}` && String(row['5']).startsWith('已完成'));
     if (completed || mechanics.cultivator(env).major < notice.major
+      || (notice.visitedRealm && !env.play.realmsDone?.[notice.visitedRealm])
       || !places.mayEnter(env, notice.place)) return [];
     const active = taken(env).find(entry => entry.board === board && entry.kind === kind);
     return [{ id: active?.id || `${board}·${half}·${kind}`, kind, title: notice.title, text: notice.text,

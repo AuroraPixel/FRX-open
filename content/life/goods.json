@@ -2806,6 +2806,7 @@
       "price": 2200,
       "uses": "候潮石窟中得到的护身法宝，装备后增强神识与法防",
       "key": true,
+      "regional": true,
       "kind": "器",
       "type": "法宝",
       "unit": "颗",
@@ -2820,6 +2821,7 @@
       "price": 450,
       "uses": "白螺滩海兽的内丹，可作海炼丹方的主材",
       "key": true,
+      "regional": true,
       "part": "妖丹",
       "unit": "枚",
       "shop": false
@@ -2832,6 +2834,7 @@
       "price": 50000,
       "uses": "照海台的珍稀灵参，可炼成助结婴的灵药",
       "key": true,
+      "regional": true,
       "unit": "株",
       "shop": false
     },
@@ -2843,6 +2846,7 @@
       "price": 1500,
       "uses": "白螺滩猎妖所得的海妖内丹可炼成辅助结丹的降尘丹",
       "key": true,
+      "regional": true,
       "kind": "方",
       "type": "重要物品",
       "unit": "张",
@@ -2870,6 +2874,7 @@
       "price": 20000,
       "uses": "借海妖内丹和照海台灵参炼制结婴灵药",
       "key": true,
+      "regional": true,
       "kind": "方",
       "type": "重要物品",
       "unit": "张",
@@ -2892,6 +2897,21 @@
           "count": 1
         }
       }
+    },
+    {
+      "id": "sea-lei-bamboo",
+      "name": "潮纹竹护符",
+      "class": "成品",
+      "tier": "三阶",
+      "price": 3800,
+      "uses": "听汐坊所赠的护身法宝，装备后提升神识与法防",
+      "key": true,
+      "regional": true,
+      "kind": "器",
+      "type": "法宝",
+      "unit": "枚",
+      "effect": "神识+10、法防+18",
+      "shop": false
     }
   ]
 }

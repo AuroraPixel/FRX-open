@@ -138,6 +138,12 @@ function hints(env) {
         && !travel.route(env, SITES.return).refused) {
       return [{ text: `重返${RULES.mainland}·可往${SITES.return}，寻灵地和结婴的门路`, kind: 'hook', verb: { kind: 'travel', to: SITES.return } }];
     }
+    if (env.play.realmsDone?.xutian && at.facts.place === SITES.return
+        && !list(env.play.starSea.visited).includes(SITES.returnBoard)
+        && !travel.route(env, SITES.returnBoard).refused) {
+      return [{ text: `结婴筹备·往${SITES.returnBoard}，问试剑采药的差事`, kind: 'hook',
+        verb: { kind: 'travel', to: SITES.returnBoard } }];
+    }
     return [];
   }
   return at.main === RULES.overseas ? islandHints(env, at) : [];
@@ -149,7 +155,7 @@ function arrived(env, from, to) {
   if (from.main === RULES.overseas && to.main_region === RULES.mainland && old.entered) {
     env.play.starSea = { ...old, returned: clock.dateKey(clock.today(env)) };
   }
-  if (to.main_region !== RULES.overseas && !(to.name === SITES.return && old.entered)) return;
+  if (to.main_region !== RULES.overseas && !(to.main_region === RULES.mainland && old.entered)) return;
   const visited = list(old.visited);
   if (to.main_region === RULES.overseas && !old.entered) {
     env.play.starSea = { ...old, entered: clock.dateKey(clock.today(env)), visited };

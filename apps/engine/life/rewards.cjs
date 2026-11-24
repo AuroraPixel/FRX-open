@@ -156,11 +156,14 @@ const itemOf = (good, count) => ({ id: good.id, name: good.name, class: good.cla
 
 function roll(env, source, ctx = {}) {
   if (!Object.hasOwn(RULES.sources, source)) throw new Error(`没有「${source}」这种奖励的来源`);
-  const tier = tierIn(source, ctx.tier || playerTier(env));
+  const requested = ctx.tier || playerTier(env);
+  const generalTier = tierIn(source, requested);
+  const local = RULES.places[ctx.place]?.[source];
+  const tier = local?.[requested] ? requested : generalTier;
   const danger = Number.isFinite(ctx.danger) ? ctx.danger : places.placeFacts(env).danger;
-  const band = bandOf(RULES.sources[source][tier], danger);
-  const place = ctx.place && RULES.places[ctx.place]?.[source]?.[tier] ? ctx.place : null;
-  const cell = place ? RULES.places[place][source][tier] : RULES.sources[source][tier][band];
+  const band = bandOf(RULES.sources[source][generalTier], danger);
+  const place = local?.[tier] ? ctx.place : null;
+  const cell = place ? local[tier] : RULES.sources[source][generalTier][band];
   // the op's timeline dice (index.cjs run); a module called outside an op seeds them the same way
   const dice = env.random || (parts => create(clock.seedOf(env, parts)));
   const random = ctx.seed !== undefined ? create(String(ctx.seed))

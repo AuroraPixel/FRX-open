@@ -75,3 +75,40 @@ def test_public_sea_dungeons_open_on_the_calendar():
         assert realm["open"] and not realm.get("off")
         entered = engine(value, mode="life", op="realm", args={"action": "enter", "realm": event["id"]})
         assert entered["realm"]["exit"]
+
+
+def test_original_demo_has_optional_people_and_quests_beyond_the_main_crossing():
+    def notices(value):
+        return engine(value, mode="life", op="notices")["notices"]["notices"]
+
+    value = archive("竖灯城", "结丹初期")
+    assert any(row["title"] == "听汐坊寻回药圃旧契" for row in notices(value))
+
+    value = archive("桥尾寨", "结丹初期")
+    assert all(row["kind"] != "试剑采药" for row in notices(value))
+    play = value["data"]["state"]["frxPlay"]
+    play["starSea"] = {"entered": "0019-01-01", "returned": "0019-12-20", "visited": ["荻风岭"]}
+    play["realmsDone"] = {"xutian": "0019-07-01"}
+    notice = next(row for row in notices(value) if row["kind"] == "试剑采药")
+    assert notice["place"] == "荻风岭"
+    assert "桥尾寨" in regional_lore(value, director=True)
+
+    value = archive("荻风岭", "结丹初期")
+    value["data"]["state"]["frxPlay"].update(play)
+    view = engine(value, mode="life", op="view")["view"]
+    assert any(hint["verb"].get("to") == "桥尾寨" for hint in view["next"] if hint.get("verb"))
+
+
+def test_offshore_hunt_uses_the_local_high_tier_reward():
+    result = subprocess.run(
+        ["node", "-e", """
+            const { roll } = require('./apps/engine/life/rewards.cjs');
+            const loot = roll({}, '狩猎', { place: '白螺滩', tier: '四阶', danger: 60, seed: 'sea' });
+            process.stdout.write(JSON.stringify(loot));
+        """],
+        cwd=ROOT, text=True, capture_output=True, check=True,
+    )
+    loot = json.loads(result.stdout)
+    assert loot["place"] == "白螺滩" and loot["tier"] == "四阶"
+    assert [item["name"] for item in loot["items"]] == ["海妖内丹"]
+    assert 3 <= loot["items"][0]["count"] <= 4

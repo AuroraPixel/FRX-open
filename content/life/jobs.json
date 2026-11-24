@@ -195,6 +195,20 @@
         "major": 3,
         "days": 180,
         "pay": 1600
+      },
+      "灯坊旧契": {
+        "title": "听汐坊寻回药圃旧契",
+        "text": "去横灯岛沿旧契的界石勘察药圃并采一回灵药，完成采集可得潮纹竹护符。",
+        "place": "横灯岛", "goal": "gather", "major": 3, "days": 180, "pay": 1300,
+        "reward": "sea-lei-bamboo"
+      }
+    },
+    "桥尾寨": {
+      "试剑采药": {
+        "title": "为试剑会去荻风岭采药",
+        "text": "试剑会收灵药。到荻风岭采集一回，办成付一枚结婴丹。",
+        "place": "荻风岭", "goal": "gather", "major": 3, "days": 180, "pay": 1500,
+        "visitedRealm": "xutian", "reward": "aid-jieying"
       }
     }
   }

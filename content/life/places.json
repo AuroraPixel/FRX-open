@@ -611,6 +611,14 @@
       },
       "note": "古传送阵旁的兽穴会妨碍修阵。"
     },
+    "横灯岛": {
+      "kind": "药山",
+      "aura": "中",
+      "danger": 16,
+      "trade": {"sells": [], "buys": [], "produces": ["灵草·二阶"]},
+      "access": {"realm": null, "status": null, "calendar": null},
+      "note": "潮水冲出界石，采药人按契约照料靠山的竹林"
+    },
     "荻风岭": {
       "kind": "药山",
       "aura": "中",
