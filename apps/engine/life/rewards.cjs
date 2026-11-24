@@ -65,7 +65,7 @@
  *
  * The verbs, verbs.cjs plans (install puts them in verbs.VERBS; the view's list leaves them out
  * until the contract takes the kinds, so their glyph and label are the file's verbs):
- *   gather  { kind: "gather", days }: 1 to 10 days where the place produces something the 采集 table
+ *   gather  { kind: "gather", days? }: 1 to 10 days (one by default) where the place produces something the 采集 table
  *           has (places.json trade.produces, 「类·阶」, item 27: its classes 灵草, 矿材, 灵石, 灵物, at
  *           the lowest of their tiers). One roll of 采集 for that tier, the place's danger and classes, the counts for gather.full days scaled to the days spent and raised
  *           by the player's gather effects (talents), and one more of the first 灵草 when the spirit
@@ -344,7 +344,8 @@ function gather(env, verb, upTo = null) {
   const yields = producedOf(facts);
   if (!yields) return { refused: `${here}是${facts.kind}，没有可${label}的东西` };
   const { min, max } = RULES.gather.days;
-  const days = /^\d{1,2}$/.test(String(verb.days ?? '').trim()) ? Number(verb.days) : 0;
+  const duration = String(verb.days ?? min).trim();
+  const days = /^\d{1,2}$/.test(duration) ? Number(duration) : 0;
   if (days < min || days > max) return { refused: `${label}要写${min}到${max}日` };
   const minutes = upTo === null ? days * DAY : Math.min(days * DAY, upTo);
   const span = chronicle.spanText(minutes);
@@ -597,7 +598,8 @@ function listed(env) {
     const why = blockedFor(env, label);
     // 狩猎 takes a tier: the ones this place's beasts come in (the interface's picker; the verb's tier)
     const options = kind === 'hunt' ? tiers.map(tier => ({ value: String(tier), label: tierWord(tier) })) : [];
-    return { kind, glyph, label, ...(why ? { note: why } : {}), ...(options.length ? { options } : {}) };
+    const word = kind === 'gather' ? `耗时${chronicle.spanText(RULES.gather.days.min * DAY)}` : '';
+    return { kind, glyph, label, ...(why ? { note: why } : word ? { word } : {}), ...(options.length ? { options } : {}) };
   });
 }
 
