@@ -440,7 +440,7 @@ function landed(env, round, struck, attacker, defender, { element = null, poison
 function spellOf(env, round, foe) {
   const total = mechanics.totalStats(env, foe.id, foe.stats);
   const mana = mechanics.statValue(foe.stats['法力']), max = mechanics.statValue(foe.stats['法力'], 'max');
-  const cost = Math.max(1, Math.ceil(max * COMBAT.damage.spellCostPercent / 100));
+  const cost = mechanics.spellManaCost(max);
   if (total['法攻'] <= 0 || max <= 0 || mana < cost) return '物理';
   round.commands.push(`updateAttribute(${J(foe.id)},"法力",{"current":${mana - cost},"max":${max}})`);
   foe.stats = { ...foe.stats, 法力: { current: mana - cost, max } };

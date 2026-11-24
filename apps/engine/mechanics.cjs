@@ -251,21 +251,29 @@ function restore(env, returning, commands) {
 
 // ---------------------------------------------------------------- skills
 
+function spellManaCost(max, percent = COMBAT.damage.spellCostPercent) {
+  return Math.max(1, Math.ceil(max * percent / 100));
+}
+
 function skillCost(skill, stats) {
   const text = plain(skill['8']);
   if (!text || /^(?:无|0|零)/.test(text)) return null;
-  const percent = text.match(/(\d+(?:\.\d+)?)\s*%\s*(?:的)?\s*(?:最大)?(法力|灵力)/);
-  if (percent) return { stat: '法力', amount: Math.max(1, Math.ceil(statValue(stats['法力'], 'max') * Number(percent[1]) / 100)) };
-  const named = text.match(/(\d+)\s*点?\s*(法力|灵力|神识|血量|气血|生命)/) || text.match(/(法力|灵力|神识|血量|气血|生命)\s*(\d+)/);
+  const percent = text.match(/(\d+(?:\.\d+)?)\s*%\s*的?\s*(?:最大)?(?:法力|灵力)/)
+    || text.match(/(?:法力|灵力)\s*的?\s*(\d+(?:\.\d+)?)\s*%/);
+  if (percent) return { stat: '法力', amount: spellManaCost(statValue(stats['法力'], 'max'), Number(percent[1])) };
+  const named = text.match(/(?<amount>\d+|[一二两三四五六七八九十百千万零]+)\s*点?\s*(?<stat>法力|灵力|神识|血量|气血|生命)/)
+    || text.match(/(?<stat>法力|灵力|神识|血量|气血|生命)\s*(?<amount>\d+|[一二两三四五六七八九十百千万零]+(?=\s*(?:点|$|[，、。；,;])))/);
   if (named) {
-    const [amount, stat] = /\d/.test(named[1]) ? [named[1], named[2]] : [named[2], named[1]];
-    return { stat: { 灵力: '法力', 气血: '血量', 生命: '血量' }[stat] || stat, amount: Number(amount) };
+    const { amount, stat } = named.groups;
+    return { stat: { 灵力: '法力', 气血: '血量', 生命: '血量' }[stat] || stat, amount: chineseNumber(amount) };
   }
   const blood = text.match(/精血\s*([一二三四五六七八九十\d]+)\s*滴/);
   if (blood) {
     const drops = chineseNumber(blood[1]) || 1;
     return { stat: '血量', amount: Math.max(1, Math.ceil(statValue(stats['血量'], 'max') * COMBAT.skills.bloodDropPercent * drops / 100)) };
   }
+  const charged = text.replace(/(?:无需(?:消耗|耗费)?|免耗|不(?:用|需要?|消耗|耗费?))\s*(?:法力|灵力)/g, '');
+  if (/法力|灵力/.test(charged)) return { stat: '法力', amount: spellManaCost(statValue(stats['法力'], 'max')) };
   return { narrative: text };
 }
 
@@ -489,7 +497,7 @@ function resolveAttack(env, args, source, ordinal) {
     const a = totalStats(env, attacker.id, attacker.stats);
     const max = statValue(attacker.stats['法力'], 'max'), before = statValue(attacker.stats['法力']);
     if (a['法攻'] <= 0 || max <= 0) return fail(`${attacker.name}尚未修出法力，施展不了法术`);
-    const amount = Math.max(1, Math.ceil(max * COMBAT.damage.spellCostPercent / 100));
+    const amount = spellManaCost(max);
     if (before < amount) return fail(`法力不足：催动法术需要${amount}点，现有${before}点`);
     commands.push(`updateAttribute(${JSON.stringify(attacker.id)},"法力",{"current":${before - amount},"max":${max}})`);
     attacker.stats = { ...attacker.stats, 法力: { current: before - amount, max } };
@@ -506,7 +514,7 @@ function resolveAttack(env, args, source, ordinal) {
   if (counter) {
     const t = totalStats(env, defender.id, defender.stats);
     const mana = statValue(defender.stats['法力']), manaMax = statValue(defender.stats['法力'], 'max');
-    const spellCost = Math.max(1, Math.ceil(manaMax * COMBAT.damage.spellCostPercent / 100));
+    const spellCost = spellManaCost(manaMax);
     const counterStyle = t['法攻'] > t['物攻'] && manaMax > 0 && mana >= spellCost ? '法术' : '物理';
     if (counterStyle === '法术') {
       commands.push(`updateAttribute(${JSON.stringify(defender.id)},"法力",{"current":${mana - spellCost},"max":${manaMax}})`);
@@ -2016,7 +2024,7 @@ module.exports = {
   // For the cultivation-life play (apps/engine/life/), which moves the clock itself.
   clockText, spanMinutes, agedRemarks, placeOf,
   // For its fights (life/fight.cjs), which play each move themselves on the same rules.
-  strike, fighter, castSkill, skillOf, defeatStatus, statValue,
+  strike, fighter, castSkill, skillOf, defeatStatus, statValue, spellManaCost,
   // The gate's preparation sheet (life/gate.cjs) reads the same gate and cooldown as breakthrough.
   gateOf, cooldownOf,
   // What counts for a main line's 持有 (life/hints.cjs looks for it in the shops).
