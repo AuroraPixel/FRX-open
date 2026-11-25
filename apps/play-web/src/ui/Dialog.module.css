@@ -18,6 +18,8 @@
   position: relative;
   width: min(420px, 100% - 48px);
   display: grid;
+  max-height: 100%;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: var(--s-14);
   padding: var(--s-22) var(--s-22) var(--s-18);
   animation: global(float-up) var(--d-float) var(--ease) both;
@@ -35,6 +37,8 @@
 }
 
 .body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
   font: 400 var(--fs-14)/1.8 var(--f-serif);
   color: var(--text);
 }

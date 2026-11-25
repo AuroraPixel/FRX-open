@@ -162,11 +162,13 @@ function damagedOf(env, id) {
 
 // A piece of the story's is the catalogue's piece it was registered as (goods.ofItem): its tier
 // and numbers are that piece's.
-function tierOfItem(env, item) {
+function knownTier(env, item) {
   const texts = textsOf(item);
   const good = goods.ofItem(texts);
-  return (good && good.tier) || tierOfText(texts) || recordOf(env, plain(item?.id ?? item?.['0']))?.tier || playerTier(env);
+  return good?.tier || tierOfText(texts) || recordOf(env, plain(item?.id ?? item?.['0']))?.tier;
 }
+
+const tierOfItem = (env, item) => knownTier(env, item) || playerTier(env);
 
 function pieceOf(env, item, slot, index = null) {
   const id = plain(item?.id ?? item?.['0']);
@@ -208,8 +210,16 @@ function pieceOf(env, item, slot, index = null) {
 function wornOf(env) {
   const remarks = env.ctx.parseRemarksString(env.state['0']?.B1?.['9']);
   const equipment = env.ctx.parseNestedJsonString(remarks.equipment, {}) || {};
-  return Object.fromEntries(Object.keys(GEAR.slots).map(slot => [slot,
+  const slots = Object.fromEntries(Object.keys(GEAR.slots).map(slot => [slot,
     (Array.isArray(equipment[slot]) ? equipment[slot] : []).map((item, index) => (item ? { item, index } : null)).filter(Boolean)]));
+  const primary = slots.technique.findIndex(({ item }) => plain(item.id ?? item['0']) === env.play?.primaryTechnique);
+  if (primary > 0) slots.technique.unshift(...slots.technique.splice(primary, 1));
+  return slots;
+}
+
+function methods(env) {
+  return wornOf(env).technique.filter(({ item, index }) => !pieceOf(env, item, 'technique', index).unusable)
+    .map(({ item }) => item);
 }
 
 function allGear(env) {
@@ -622,7 +632,18 @@ async function equipOp(env, args) {
 async function unequipOp(env, args) {
   const made = mechanics.unequipItem(env, { item_id: plain(args.itemId ?? args.item_id) }, 'engine');
   if (!made.ok) return env.refuse(made.reason);
+  if (env.play.primaryTechnique === plain(args.itemId ?? args.item_id)) delete env.play.primaryTechnique;
   await env.settle(made);
+  return { gear: view(env) };
+}
+
+async function primaryOp(env, args) {
+  const id = plain(args.itemId);
+  const item = methods(env).find(row => plain(row.id ?? row['0']) === id);
+  if (!item) return env.refuse('只能将已装备且可修习的功法设为主修');
+  env.play.primaryTechnique = id;
+  await env.settle({ kind: 'primary_technique', ok: true, hidden: true, source: 'engine',
+    commands: '', owns: ownsNothing(), summary: `主修「${textsOf(item).name}」` });
   return { gear: view(env) };
 }
 
@@ -787,7 +808,7 @@ function install(verbs) {
 }
 
 module.exports = {
-  GEAR, TRAITS, tierOfItem, pieceOf, allGear, activeGear, totals, panelOf, traitNames, traitsOf, drive, damage, damageItem,
+  GEAR, TRAITS, tierOfItem, knownTier, pieceOf, methods, allGear, activeGear, totals, panelOf, traitNames, traitsOf, drive, damage, damageItem,
   beltIds, beltItems, talisman, spend, stolenUse, markStolen, bag, valueOf, grantBag, canEquip, view, install,
-  equip: equipOp, unequip: unequipOp, belt: beltOp, gift: giftOp, handover: handoverOp,
+  equip: equipOp, unequip: unequipOp, primary: primaryOp, belt: beltOp, gift: giftOp, handover: handoverOp,
 };

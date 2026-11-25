@@ -255,7 +255,8 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
           ...live,
           status: live.retryingSettlement ? 'pending' : 'failed',
           open: null,
-          error: { code: problem.code, message: problem.message, retryable: problem.retryable },
+          error: { code: problem.code, message: problem.message, retryable: problem.retryable,
+            ...(problem.retryAfter ? { retryAt: Date.now() + problem.retryAfter * 1000 } : {}) },
         },
       });
     } finally {
@@ -358,6 +359,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
 
     async retry() {
       const { saveId, live, request, turns } = get();
+      if ((live?.error?.retryAt ?? 0) > Date.now()) return;
       if (live?.status === 'pending' || (!live && turns.at(-1)?.status === 'pending')) return get().settle();
       const at = version();
       if (!saveId || !live || live.status === 'streaming' || at === undefined) return;
@@ -429,7 +431,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
       const at = version();
       const saved = turns.at(-1);
       const pending = live ?? (saved?.status === 'pending' ? { ...saved, open: null } : null);
-      if (!saveId || pending?.status !== 'pending' || at === undefined) return;
+      if (!saveId || pending?.status !== 'pending' || at === undefined || (pending.error?.retryAt ?? 0) > Date.now()) return;
       set({
         turns: turns.filter((turn) => turn.id !== pending.id),
         live: { ...pending, status: 'streaming', settling: true, retryingSettlement: true, error: undefined },

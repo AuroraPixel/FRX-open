@@ -288,7 +288,7 @@ def grade_of(raw_name, text, effect):
     return max(qualities) if qualities else 1
 
 
-def item_view(entry, quantity=None):
+def item_view(entry, quantity=None, gear=None, tiers=None):
     """A bag row (numbered columns) or a worn item (named fields) as an Item."""
 
     def field(named, column):
@@ -318,32 +318,38 @@ def item_view(entry, quantity=None):
     if quantity is None:
         count = parse_int(field("quantity", "5"))
         quantity = count if isinstance(count, int) and count >= 0 else 1
+    item_id = to_text(field("id", "0")) if truthy(field("id", "0")) else ""
+    piece = (gear or {}).get(item_id) or {}
     return M.Item(
-        id=to_text(field("id", "0")) if truthy(field("id", "0")) else "",
+        id=item_id,
         name=name,
         type=item_type,
         text=text,
         effect=effect or None,
         quantity=quantity,
         grade=grade_of(raw_name, text, effect),
+        tier=piece.get("tier") or (tiers or {}).get(item_id),
+        attune=M.GearAttune.model_validate(piece["attune"]) if piece.get("attune") else None,
         icon=art.icon_of(name, item_type),
         equippable=item_type in EQUIPPABLE,
         usable=item_type == "消耗品",
     )
 
 
-def equipment_view(player):
+def equipment_view(player, gear=None, tiers=None):
     slots = {}
     for slot in SLOTS:
         held = js_or(player.get(slot), [])
         held = (held if isinstance(held, list) else [held])[:6]
-        cells = [item_view(item) if isinstance(item, dict) else None for item in held]
+        cells = [item_view(item, gear=gear, tiers=tiers) if isinstance(item, dict) else None
+                 for item in held]
         slots[slot] = cells + [None] * (6 - len(cells))
     return M.Equipment(**slots)
 
 
-def bag_view(tables):
-    return [item_view(row, quantity=item_stack_count(js_get(row, "5"))) for row in bag_rows(tables)]
+def bag_view(tables, gear=None, tiers=None):
+    return [item_view(row, quantity=item_stack_count(js_get(row, "5")), gear=gear, tiers=tiers)
+            for row in bag_rows(tables)]
 
 
 def skill_kind(name, sort, text):
@@ -667,6 +673,18 @@ class Save:
         self.sheet = Sheet(self.state)
         self.player = self.sheet.player or character_data({"0": "B1"}, "B1") | {"playerTraits": []}
         self.location = Location(self.sheet.location_text)
+        if life_of(value) is not None:
+            world_map = places.known_world_map(self.state.get("worldMap"), life=True)
+            root = self.location.spot.split("·", 1)[0].strip()
+            poi = next((point for point in art.pois_of(world_map) if point["name"] == root), None)
+            xy = (poi.get("x"), poi.get("y")) if poi else None
+            if xy and all(isinstance(point, (int, float)) for point in xy):
+                region = poi.get("main_region") or self.location.region
+                area = poi.get("sub_region") or region
+                nearby = self.location.xy and math.dist(self.location.xy, xy) <= 15
+                if not nearby or (self.location.region, self.location.area) != (region, area):
+                    self.location.xy = xy
+                self.location.region, self.location.area = region, area
 
     def known(self):
         """People met who are not in the scene: bonded characters, then the biographies the
@@ -1154,13 +1172,16 @@ def state_view(save, art_value, progress=None, looks=None):
     progress = progress or {}
     tables = save.sheet.tables
     present = save.present()
-    gear = (progress.get("life") or {}).get("gear") if life_of(save) else None
+    life = (progress.get("life") or {}) if life_of(save) else {}
+    gear = life.get("gear")
+    pieces = (gear or {}).get("pieces")
+    tiers = life.get("itemTiers")
     return M.StateView(
         version=save.version,
         turn_no=save.turns(),
         player=player_view(save, recipe_of(art_value, "B1"), progress.get("cultivation"), gear),
-        equipment=equipment_view(save.player),
-        bag=bag_view(tables),
+        equipment=equipment_view(save.player, pieces, tiers),
+        bag=bag_view(tables, pieces, tiers),
         skills=[skill_view(key, row) for key, row in rows_of(js_get(tables, "8"))],
         beasts=[beast_view(key, row) for key, row in rows_of(js_get(tables, "7"))],
         quests=[quest_view(key, row) for key, row in rows_of(js_get(tables, "6"))],

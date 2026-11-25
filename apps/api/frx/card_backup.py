@@ -10,6 +10,8 @@ import hashlib
 import io
 import json
 import re
+import shutil
+import tempfile
 import zipfile
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -25,18 +27,19 @@ from .card_import import (
     document_of,
     encoded,
     invalid,
+    write_payload,
 )
 from .card_media import ADDRESS, CardMedia
 from .card_settings import browser_setting, without_credentials
 from .card_snapshots import CODEC, pack_snapshot, unpack_snapshot
 from .card_store import CardRequest, state_digest
 from .play_places import PlaceBook, check_rows
+from .save_schema import Archive
 from .storage import now
 
 FORMAT = "frx-backup"
 VERSION = 2
 LIMIT = 256 * 1024 * 1024
-PAYLOAD_LIMIT = 64 * 1024 * 1024
 PLAY_ART = "play_art"
 PLACE_LOOKS = "place_looks"
 AVATAR = "CULTIVATION_CUSTOM_AVATAR_V1_"
@@ -220,42 +223,58 @@ def read_media(package):
         raise invalid("存档图片缺失或摘要无效，没有写入存档") from None
 
 
-def export_backup(records, archive_name=None):
-    with records.sessions.begin() as session:
-        records.read_lock(session)
-        archives = [package_of(records, session, row)
-                    for row in _rows(records, session, "archives")
-                    if row.value is not None and (archive_name is None or row.key == archive_name)]
-        if not archives:
-            raise HTTPException(404, "没有可备份的存档")
-        names = {archive["archive"]["name"] for archive in archives}
-        settings = [without_credentials(browser_setting(copy.deepcopy(row.value)))
-                    for row in _rows(records, session, "settings") if row.value is not None
-                    and (not row.key.startswith(AVATAR) or row.key[len(AVATAR):] in names)]
-        shared = [copy.deepcopy(row.value) for row in session.scalars(
-            records.memories_of([], include_shared=True)) if row.value is not None]
-        payload = {"format": FORMAT, "version": VERSION, "createdAt": now(),
-                   "archives": archives, "settings": settings, "sharedMemories": shared}
-        body = encoded(payload)
-        if len(body) > PAYLOAD_LIMIT:
-            raise HTTPException(413, "备份数据超过64MB，请按存档分别备份")
-        files = {"payload.json": body}
-        for filename in sorted(set(media_refs(payload))):
-            data = records.media.resolve(filename).read_bytes()
-            if records.media.filename(data) != filename:
-                raise invalid("本地媒体摘要不一致，备份未生成")
-            files["media/" + filename] = data
-    if sum(map(len, files.values())) > LIMIT:
-        raise HTTPException(413, "备份超过256MB，请按存档分别备份")
-    manifest = {"format": FORMAT, "version": VERSION,
-                "files": {name: {"sha256": digest(data), "bytes": len(data)}
-                          for name, data in files.items()}}
-    output = io.BytesIO()
-    with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as package:
-        package.writestr("manifest.json", encoded(manifest))
-        for name, data in files.items():
-            package.writestr(name, data)
-    return output.getvalue()
+def export_backup(records, archive_name=None, *, archive_id=None):
+    scoped = archive_name is not None or archive_id is not None
+    too_large = ("此存档的完整备份超过256MB" if scoped
+                 else "完整备份超过256MB，请在存档菜单逐个下载存档备份")
+    with tempfile.SpooledTemporaryFile(max_size=4 * 1024 * 1024) as body:
+        with records.sessions.begin() as session:
+            records.read_lock(session)
+            query = records.records_of("archives").where(Archive.deleted.is_(False))
+            if archive_name is not None:
+                query = query.where(Archive.name == archive_name)
+            if archive_id is not None:
+                query = query.where(Archive.archive_id == archive_id)
+            archives = [package_of(records, session, row) for row in session.scalars(query)]
+            if not archives:
+                raise HTTPException(404, "没有可备份的存档")
+            names = {archive["archive"]["name"] for archive in archives}
+            settings = [without_credentials(browser_setting(copy.deepcopy(row.value)))
+                        for row in _rows(records, session, "settings") if row.value is not None
+                        and (not row.key.startswith(AVATAR) or row.key[len(AVATAR):] in names)]
+            shared = [copy.deepcopy(row.value) for row in session.scalars(
+                records.memories_of([], include_shared=True)) if row.value is not None]
+            payload = {"format": FORMAT, "version": VERSION, "createdAt": now(),
+                       "archives": archives, "settings": settings, "sharedMemories": shared}
+            entries = {"payload.json": write_payload(payload, body, LIMIT, too_large)}
+            files = {}
+            size = entries["payload.json"]["bytes"]
+            for filename in sorted(set(media_refs(payload))):
+                path = records.media.resolve(filename)
+                if size + path.stat().st_size > LIMIT:
+                    raise HTTPException(413, too_large)
+                data = path.read_bytes()
+                if records.media.filename(data) != filename:
+                    raise invalid("本地媒体摘要不一致，备份未生成")
+                name = "media/" + filename
+                files[name] = data
+                entries[name] = {"sha256": digest(data), "bytes": len(data)}
+                size += len(data)
+        del payload, archives, settings, shared
+        manifest = encoded({"format": FORMAT, "version": VERSION, "files": entries})
+        if size + len(manifest) > LIMIT:
+            raise HTTPException(413, too_large)
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as package:
+            package.writestr("manifest.json", manifest)
+            with package.open("payload.json", "w") as zipped:
+                body.seek(0)
+                shutil.copyfileobj(body, zipped, 256 * 1024)
+            for name, data in files.items():
+                package.writestr(name, data)
+        if output.tell() > LIMIT:
+            raise HTTPException(413, too_large)
+        return output.getvalue()
 
 
 def read_backup(records, raw):
@@ -273,8 +292,7 @@ def read_backup(records, raw):
             if any(name not in {"manifest.json", "payload.json"} and not re.fullmatch(
                     r"media/[0-9a-f]{64}\.(png|jpg|gif|webp)", name) for name in names):
                 raise ValueError
-            if (package.getinfo("manifest.json").file_size > 2_000_000
-                    or package.getinfo("payload.json").file_size > PAYLOAD_LIMIT):
+            if package.getinfo("manifest.json").file_size > 2_000_000:
                 raise ValueError
             manifest = json.loads(package.read("manifest.json"))
             if manifest.get("format") != FORMAT or manifest.get("version") != VERSION:

@@ -17,6 +17,7 @@ export interface DialogProps {
   onCancel?: () => void;
   /** irreversible: the confirm button turns cinnabar */
   danger?: boolean;
+  focusConfirm?: boolean;
   className?: string;
 }
 
@@ -33,12 +34,13 @@ export function Dialog({
   onConfirm,
   onCancel,
   danger = false,
+  focusConfirm = false,
   className,
 }: DialogProps) {
   const box = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const bodyId = useId();
-  useFocusTrap(box, open, onCancel ?? onConfirm);
+  useFocusTrap(box, open, onCancel ?? onConfirm, focusConfirm ? '[data-confirm]' : undefined);
   if (!open) return null;
   return (
     <div className={styles.layer}>
@@ -61,7 +63,12 @@ export function Dialog({
         </div>
         <div className={styles.actions}>
           {onCancel && <Btn onClick={onCancel}>{cancelLabel}</Btn>}
-          <Btn variant={danger ? 'danger' : 'solid'} onClick={onConfirm}>
+          <Btn data-confirm="" variant={danger ? 'danger' : 'solid'} onClick={onConfirm}
+            onKeyDown={focusConfirm ? (event) => {
+              if (event.key !== 'Enter' || event.nativeEvent.isComposing || event.repeat) return;
+              event.preventDefault();
+              onConfirm();
+            } : undefined}>
             {confirmLabel}
           </Btn>
         </div>

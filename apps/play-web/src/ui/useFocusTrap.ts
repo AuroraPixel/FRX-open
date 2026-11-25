@@ -31,7 +31,7 @@ function toastStops(): HTMLElement[] {
  * turn's menu) keeps it by stopping it, and a desktop panel closes even with the focus in the book
  * beside it.
  */
-export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean, onEscape?: () => void) {
+export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean, onEscape?: () => void, initialFocus?: string) {
   const escape = useRef(onEscape);
   escape.current = onEscape;
 
@@ -41,7 +41,10 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean
     const me = {};
     opened.push(me);
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    if (!root.contains(document.activeElement)) (focusables(root)[0] ?? root).focus({ preventScroll: true });
+    if (!root.contains(document.activeElement)) {
+      const first = (initialFocus && root.querySelector<HTMLElement>(initialFocus)) || focusables(root)[0] || root;
+      first.focus({ preventScroll: true });
+    }
 
     const onTab = (event: KeyboardEvent) => {
       if (event.key !== 'Tab' || opened[opened.length - 1] !== me) return;
@@ -81,5 +84,5 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean
       document.removeEventListener('keydown', onEscape);
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
-  }, [ref, active]);
+  }, [ref, active, initialFocus]);
 }

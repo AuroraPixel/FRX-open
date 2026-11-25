@@ -40,13 +40,13 @@ from .life_turns import (
     engine_report,
     fight_end_of,
     free_verb,
-    protected_action,
     gate_of,
     interruption_of,
     life_op,
     life_pilot_stream,
     life_stream,
     move_words,
+    protected_action,
     realm_args,
     run_verb,
     scene_opened,
@@ -101,9 +101,13 @@ class TurnError(PlayError):
     player sees (docs/play-contracts.md, ErrorCode). Raised under a route it is the response,
     with the status the contract gives the code."""
 
-    def __init__(self, code, message, status=None, retryable=False):
-        super().__init__(status or STATUS[code], code, message)
+    def __init__(self, code, message, status=None, retryable=False, headers=None):
+        super().__init__(status or STATUS[code], code, message, headers)
         self.retryable = retryable
+
+    def retry_timing(self):
+        delay = (self.headers or {}).get("Retry-After")
+        return {"retryAfter": int(delay)} if delay and delay.isdigit() else {}
 
 
 CODES = {400: "model_not_configured", 404: "not_found", 413: "input_too_large"}
@@ -113,6 +117,8 @@ def turn_error(exc):
     """The contract's error for a failure of the shared pipeline."""
     if isinstance(exc, TurnError):
         return exc
+    if isinstance(exc, PlayError):
+        return TurnError(exc.code, exc.message, exc.status, exc.status == 429, exc.headers)
     if isinstance(exc, LifeRefusal):
         return TurnError("refused", str(exc))
     if isinstance(exc, HTTPException):
@@ -761,7 +767,7 @@ class TurnPlay:
             try:
                 await asyncio.to_thread(meter.check, self.ws.user)
             except PlayError as error:
-                raise TurnError(error.code, error.message) from None
+                raise turn_error(error) from None
         config = runtime.profiles.load("default")
         if not config.model:
             raise TurnError("model_not_configured", "请先在模型连接中配置模型", 400)
@@ -1419,7 +1425,8 @@ class TurnDesk:
             if await self.finish_committed(run, ws):
                 return
             await self.end_failed(ws, run)
-            run.emit("error", code=error.code, message=error.message, retryable=error.retryable)
+            run.emit("error", code=error.code, message=error.message, retryable=error.retryable,
+                     **error.retry_timing())
             run.finish("failed")
         except asyncio.CancelledError:
             if await self.finish_committed(run, ws):
@@ -1661,7 +1668,19 @@ class TurnDesk:
                     self.repair(run, ws), context=self.usage_context(ws.user, "retry", turn_id)
                 )
                 return self.register(ws.user.id, run, task)
-        if attempt["status"] in {"failed", "cancelled", "expired"}:
+        if attempt["status"] == "generating":
+            async with self.lock(ws.user.id, save.name):
+                if self.running(ws.user.id, save.archive_id):
+                    raise TurnError("turn_in_progress", "本回合正在生成，请先停止或等待")
+                self.check_version(ws.user.id, save, version)
+                try:
+                    timeline = CardTimeline(ws.records)
+                    await asyncio.to_thread(timeline.undo, save.name, save.version, turn_id)
+                except HTTPException as error:
+                    raise turn_error(error) from None
+            save = await asyncio.to_thread(find_save, ws.records, save.archive_id, True)
+            version = save.version
+        if attempt["status"] in {"generating", "failed", "cancelled", "expired"}:
             # The same request again: the words, the option and the action chips, from the run
             # while the server keeps it, else as the request row kept them (after a restart or
             # a minute). The chips' calls are the earlier attempt's: what it took out of the
@@ -1678,8 +1697,8 @@ class TurnDesk:
             carried = kept.get("actions") if kept and not life_request(kept) else None
             seed = attempt["seed"]
             return await self.start(ws, save, str(uuid4()), {**request, "version": version},
-                                    carried=carried,
-                                    seed=seed if seed.startswith(REROLL_PREFIX) else None)
+                                    carried=carried, seed=seed if attempt["status"] == "generating"
+                                    or seed.startswith(REROLL_PREFIX) else None)
         raise TurnError("version_conflict", "这一回合已经结算，不能重试")
 
     async def again(self, ws, save, turn_id, attempt, version):
@@ -1778,7 +1797,7 @@ class TurnDesk:
                 return
             failure = turn_error(error)
             run.emit("error", code=failure.code, message=failure.message,
-                     retryable=failure.status != 409)
+                     retryable=failure.status != 409, **failure.retry_timing())
             run.finish("pending")
 
     async def finish_committed(self, run, ws):
@@ -1905,14 +1924,22 @@ class TurnDesk:
         run = self.running(ws.user.id, save.archive_id)
         if run:
             return run.turn()
-        with ws.records.sessions() as session:
-            ready = session.scalars(ws.records.requests_of(save.name).where(
-                CardRequest.status == "ready").order_by(CardRequest.created_at)).first()
-            if ready is not None:
-                return self.ready_view(save, {
-                    "id": ready.id, "response": ready.response, "created_at": ready.created_at,
-                })
         logs = save.data["logs"]
+        with ws.records.sessions() as session:
+            rows = session.scalars(ws.records.requests_of(save.name).where(
+                CardRequest.status.in_(("ready", "generating")))
+                .order_by(CardRequest.created_at.desc())).all()
+            for row in rows:
+                context = row.context or {}
+                if row.status == "ready":
+                    return self.ready_view(save, {"id": row.id, "response": row.response,
+                                                  "created_at": row.created_at})
+                tip = logs[-1].get("id") if logs else None
+                if (tip and context.get("userLogId") == tip) or request_blocks_archive(row):
+                    notice = {"id": "interrupted-generation", **PENDING,
+                              "text": "上次生成已中断。可以重新执行行动，或放弃本回合。"}
+                    return {"id": row.id, "no": turn_count(logs) + 1, "status": "pending",
+                            "blocks": [notice], "at": row.created_at}
         last = next((log for log in reversed(logs) if is_turn(log)), None)
         if last and last.get("frxPending"):
             save = find_save(ws.records, save.archive_id)

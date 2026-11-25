@@ -1287,9 +1287,22 @@ export interface Item {
   effect?: string;
   quantity: number;
   grade: 1 | 2 | 3 | 4 | 5;
+  tier?: string;
+  attune?: GearAttune;
   icon: string;
   equippable: boolean;
   usable: boolean;
+}
+/**
+ * A piece's refining (祭炼): the days done of the days its tier needs; until full it works at
+ * half.
+ *
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "GearAttune".
+ */
+export interface GearAttune {
+  done: number;
+  need: number;
 }
 /**
  * This interface was referenced by `FrxContracts`'s JSON-Schema
@@ -1963,17 +1976,6 @@ export interface GearPiece {
   traits: string[];
   above?: number;
   unusable?: string;
-}
-/**
- * A piece's refining (祭炼): the days done of the days its tier needs; until full it works at
- * half.
- *
- * This interface was referenced by `FrxContracts`'s JSON-Schema
- * via the `definition` "GearAttune".
- */
-export interface GearAttune {
-  done: number;
-  need: number;
 }
 /**
  * Whom a stolen piece (赃物) was taken from, and his faction (or his region) where using or
@@ -2674,6 +2676,7 @@ export interface ErrorEvent {
     | 'invalid_input';
   message: string;
   retryable: boolean;
+  retryAfter?: number;
 }
 /**
  * This interface was referenced by `FrxContracts`'s JSON-Schema
@@ -3236,6 +3239,7 @@ export interface PanelAction {
   action:
     | 'equip'
     | 'unequip'
+    | 'primary_technique'
     | 'tidy'
     | 'bond'
     | 'unbond'

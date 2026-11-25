@@ -158,3 +158,17 @@
     bottom: calc(var(--bar-h, 56px) + var(--kb, 0px) + var(--s-12));
   }
 }
+
+.insights {
+  position: fixed;
+  z-index: var(--z-sheet);
+  inset-inline-start: clamp(12px, 3vw, 36px);
+  inset-block-end: calc(env(safe-area-inset-bottom, 0px) + 72px);
+  width: min(460px, calc(100vw - 24px));
+  max-height: min(460px, calc(100dvh - 96px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--s-12) var(--s-8);
+  border: var(--hair) solid var(--line);
+  background: var(--paper, var(--bg));
+}

@@ -356,7 +356,7 @@ function price(ctx, card) {
   const notes = [];
   const given = plain(card.kind);
   const title = plain(card.title);
-  let name = kindName(given);
+  let name = auctionBid(title) ? '买卖' : kindName(given);
   if (!name) {
     name = classify(title);
     notes.push(given ? `类型「${given}」不认识，按标题归为${name}` : `没有写类型，按标题归为${name}`);
@@ -600,8 +600,9 @@ function contextOf(env, card) {
   const [id, row] = (key && (cast.find(([each]) => each === key) || cast.find(([, each]) => rowName(each) === key))) || [];
   // 买卖: the engine's price (dealOf); a price the card carries (the server's, or the one it was
   // shown with) stands, and the good it buys is still the engine's
-  const fee = Number(card?.fee);
-  const paysFee = plain(card?.kind) === '买卖' && Number.isSafeInteger(fee) && fee > 0;
+  const bid = auctionBid(plain(card?.title));
+  const fee = bid || Number(card?.fee);
+  const paysFee = (bid || plain(card?.kind) === '买卖') && Number.isSafeInteger(fee) && fee > 0;
   const priced = given(card?.price) && Number.isFinite(Number(card.price));
   const barter = plain(card?.kind) === '买卖' && /以物易物|换宝|抵价|(?:以|用|拿|凭|交出|交付)[^，。；]{1,25}(?:换取|换得|抵作)/.test(plain(card?.title));
   const deal = barter ? { barter: true } : paysFee ? { price: fee, fee: true }
@@ -677,14 +678,19 @@ function dealt(env, card, commands, owns, paid) {
   }
 }
 
-// The thing of the bag a 买卖 card sells: its target, else one its title names when it says sell.
-// A title that says buy and not sell buys, whatever thing of the bag the target names, unless the
-// title names that thing too (「作价买入下品乌木盾」 aimed at the rusty sword buys the shield; the
-// owner's copy, 2026-11-16, had it locked as a sale of a sword with no price).
+// An explicit auction bid pays from the purse even when the model supplies an inventory id.
+const AUCTION = /竞拍|竞购|竞下|拍下|举牌/;
+function auctionBid(title) {
+  if (!AUCTION.test(title) || /如果|能否|是否|打听|问价|试探|不出价|不竞拍/.test(title)) return null;
+  const found = title.match(/(?:出价|出资|报价|加价|用|付|拿出)\s*([0-9零一二两三四五六七八九十百千万]{1,12})\s*[块枚颗]?\s*(下品|中品|上品)?灵石(?![碎矿])/);
+  const amount = found ? mechanics.numberIn(found[1]) * ({ 中品: 100, 上品: 10000 }[found[2]] || 1) : 0;
+  return Number.isSafeInteger(amount) && amount > 0 && amount <= 100_000_000 ? amount : null;
+}
+
 function saleItem(bag, key, title, sellWords) {
+  if (AUCTION.test(title) && !sellWords) return null;
   const target = findIn(bag, key);
-  const buying = /买|购/.test(title) && !/卖|售|典当/.test(title);
-  if (target && buying && !title.includes(plain(target.name).split('|')[0].trim())) return null;
+  if (/买|购/.test(title) && !sellWords) return null;
   return target || (sellWords ? namedIn(bag, title) : null);
 }
 

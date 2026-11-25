@@ -384,13 +384,17 @@ function view(env) {
   const next = gate.summary(env);
   const inside = realm.view(env);
   const worn = gear.view(env);
+  const itemTiers = Object.fromEntries(Object.entries(env.state['1'] || {}).flatMap(([id, row]) => {
+    const tier = gear.knownTier(env, row);
+    return tier ? [[id, tier]] : [];
+  }));
   const kept = beasts.view(env);
   const own = home.view(env);
   return { date: now ? clock.dateOf(now) : null, age: mechanics.numberIn(remarks['年龄']), lifespan: mechanics.numberIn(remarks['寿元']),
     mind: mind.view(env), place: placed(env), near: travel.near(env), clocks: clocks.view(env), calendar: calendar.upcoming(env, 5), verbs: verbs.list(env),
     ...(next ? { gate: next } : {}), ...(fighting ? { fight: fighting } : {}),
     ...(env.play.scene && !fighting ? { cards: actions.viewCards(env) } : {}),
-    ...(inside ? { realm: inside } : {}), ...poison.view(env), gear: worn, beasts: kept,
+    ...(inside ? { realm: inside } : {}), ...poison.view(env), gear: worn, itemTiers, beasts: kept,
     leads: leads.view(env), ...karma.view(env), threads: threads.view(env), sect: sect.view(env), joining: sect.joining(env), next: legacy.choosing(env) ? [] : hints.next(env),
     book: book.view(env), ...(own ? { home: own } : {}), arrays: arrays.view(env), legacy: legacy.view(env) };
 }
@@ -405,6 +409,7 @@ const OPS = {
   tie: people.tie,
   equip: gear.equip,
   unequip: gear.unequip,
+  primary_technique: gear.primary,
   belt: gear.belt,
   gift: gear.gift,
   bag: gear.handover,
@@ -480,4 +485,4 @@ async function run(input, env, apply, earlier) {
   return { receipts, chronicle: chronicle.cap(lines), ...result };
 }
 
-module.exports = { lifeOf, view, run };
+module.exports = { lifeOf, view, run, cultivationView: verbs.cultivationView };

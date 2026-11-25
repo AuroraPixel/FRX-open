@@ -1170,20 +1170,22 @@ function isMethod(name, type) {
 // unequipped in the bag is named so the player knows to put it on.
 function techniqueOf(env) {
   const found = [];
-  for (const item of env.ctx.equippedItemRows(env.state['0']?.B1)) {
+  const life = env.play || env.cultivationLife ? require('./life/gear.cjs') : null;
+  const worn = life ? life.methods(env).slice(0, 1) : env.ctx.equippedItemRows(env.state['0']?.B1);
+  for (const item of worn) {
     if ((item?.type ?? item?.['2']) !== '功法') continue;
     const name = plain(item.name ?? item['1']).split('|')[0];
     if (!name) continue;
     found.push({ name, factor: gradeFactor([name, item.grade ?? item['6'], item.description ?? item['3'], item.currentEffect ?? item['9'], item.effect ?? item['4']]) });
   }
-  for (const skill of Object.values(env.state['8'] || {})) {
+  for (const skill of life && found.length ? [] : Object.values(env.state['8'] || {})) {
     if (!skill) continue;
     const name = rowName(skill), type = plain(skill['3']);
     if (name && isMethod(name, type)) found.push({ name, factor: gradeFactor([name, skill['2'], type, skill['4'], skill['5']]) });
   }
   const best = found.sort((a, b) => b.factor - a.factor)[0] || null;
   const locked = env.ctx.storedItemIds(env.state);
-  const mayUse = env.play || env.cultivationLife ? require('./life/gear.cjs').canEquip : null;
+  const mayUse = life?.canEquip;
   const shelved = Object.entries(env.state['1'] || {})
     .filter(([id, row]) => row && !locked.has(id) && row['2'] === '功法' && rowName(row)
       && (!mayUse || !mayUse(env, id)))
@@ -1251,6 +1253,8 @@ const progressToTop = c => (stepsIn(c.major) - c.step) * 100 + (100 - c.progress
 function dayRate({ major, root, technique, world = 1, affinity = 1, bonus = 0, aura = 1, stepDays = null }) {
   return 100 / (stepDays ?? byMajor(CULTIVATION.stepDays, major)) * root * technique * world * affinity * (1 + bonus) * aura;
 }
+const rateBase = (c, options) => dayRate({ major: c.major, root: c.root.factor, technique: c.technique.factor,
+  world: c.world?.factor ?? 1, affinity: options.affinity, bonus: options.bonus, stepDays: options.stepDays }) * (options.mind ?? 1);
 const perDayOf = c => dayRate({ major: c.major, root: c.root.factor, technique: c.technique.factor, world: c.world?.factor ?? 1 });
 
 // 全民修仙: there are no mortals. A player still written as one becomes 炼气一层 the next time a
@@ -1481,7 +1485,7 @@ function cultivate(env, args = {}, source, options = {}) {
   const days = span.minutes / DAY_MINUTES;
   const affinity = options.affinity ?? 1, bonus = options.bonus ?? 0, mind = options.mind ?? 1;
   const moves = options.moveClock !== false;
-  const base = dayRate({ major: c.major, root: c.root.factor, technique: c.technique.factor, world: c.world?.factor ?? 1, affinity, bonus, stepDays: options.stepDays ?? null }) * mind;
+  const base = rateBase(c, options);
   const useStones = args.use_stones === true || plain(args.use_stones) === 'true';
   // Stones lift the aura to the floor; where it is already that rich they would not help and
   // none are spent.
@@ -1859,13 +1863,14 @@ function breakthrough(env, args = {}, source, ordinal = 0, options = {}) {
 
 // ------------------------------------------------ what the player sees
 
-function cultivationView(env) {
+function cultivationView(env, options = null) {
   const c = cultivator(env);
   return {
     realm: c.realm.text, major: ORDER[c.major] || '凡人', progress: c.progress, top: c.top,
     root: { label: c.root.label, factor: c.root.factor, assumed: c.root.assumed },
     technique: { name: c.technique.name, factor: c.technique.factor, unequipped: c.technique.unequipped },
-    perDay: round2(perDayOf(c) * CULTIVATION.environment.aura[CULTIVATION.environment.default]),
+    perDay: round2(options ? rateBase(c, options) * placedAura(options.aura, options.auraBonus).factor
+      : perDayOf(c) * CULTIVATION.environment.aura[CULTIVATION.environment.default]),
     world: c.world,
     next: nextOf(env, c),
   };
@@ -1964,6 +1969,11 @@ function conditionStatus(env, c, condition) {
     }
     case '到达': {
       const place = placeOf(env.state);
+      if (env.play || env.cultivationLife) {
+        const where = require('./life/places.cjs').mapPosition(place, env.worldMap);
+        const reading = [where.region, where.area, where.spot].filter(Boolean);
+        return done(!!value && reading.some(part => part.includes(value)), `当前位于${reading.join('／') || '未知'}`);
+      }
       return done(!!value && place.includes(value), `当前位于${place.replace(/\s*-?\d+(?:\.\d+)?\s*[,，]\s*-?\d+(?:\.\d+)?\s*$/, '') || '未知'}`);
     }
     case '日期': {

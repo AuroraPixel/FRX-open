@@ -35,7 +35,7 @@ import { CloseUp } from './CloseUp';
 import { Cultivation } from './Cultivation';
 import { endsInDeath } from './DeathCard';
 import { Fight } from './Fight';
-import { LifeContext, type LifeReading, actsOf, annalRuns, annalTurn, lifeWords, perksOf } from './life';
+import { LifeContext, LifePerks, type LifeReading, actsOf, annalRuns, annalTurn, lifeWords, perksOf } from './life';
 import { LegacyCard } from './LegacyCard';
 import { MainlineCard, mainlineLabel } from './MainlineCard';
 import { NextGate, nextGateLabel } from './NextGate';
@@ -558,7 +558,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
   );
   const [abandon, setAbandon] = useState<string | null>(null);
   const pendingCard = pendingId && (
-    <PendingCard error={live?.error?.message} onSettle={() => void useTurnsStore.getState().settle()}
+    <PendingCard error={live?.error?.message} retryAt={live?.error?.retryAt} onSettle={() => void useTurnsStore.getState().settle()}
       onAbandon={() => setAbandon(pendingId)} />
   );
   const confirmAbandon = async () => {
@@ -690,7 +690,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
               )
             }
           >
-            <LifeContext.Provider value={lifeReading}>
+            <LifeContext.Provider value={lifeReading && { ...lifeReading, onPerk: undefined }}>
               {sections}
               {fallbackCards && <Acts items={fallbackCards} onPick={act} disabled={inputLocked} hotkeys={hotkeys && !inputLocked} />}
               {live && (
@@ -766,6 +766,13 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
           <p key={line.key}>{line.text}</p>
         ))}
       </div>
+      {perksUp && lastShown && !sheet && (
+        <div className={styles.insights}>
+          <LifeContext.Provider value={lifeReading}>
+            <LifePerks block={perksUp} no={lastShown.no} />
+          </LifeContext.Provider>
+        </div>
+      )}
       <SheetHost saveId={saveId} />
       {choosing && (
         <VerbChoices

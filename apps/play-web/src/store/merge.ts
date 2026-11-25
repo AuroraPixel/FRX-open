@@ -21,7 +21,7 @@ export interface LiveTurn {
   waiting?: string;
   /** why it failed, when it did */
   retryingSettlement?: boolean;
-  error?: { code: ErrorCode; message: string; retryable: boolean };
+  error?: { code: ErrorCode; message: string; retryable: boolean; retryAt?: number };
 }
 
 export type Outcome =
@@ -126,7 +126,8 @@ export function applyEvent(live: LiveTurn | null, event: TurnEvent, text: LiveTe
           status: live.retryingSettlement ? 'pending' : event.code === 'cancelled' ? 'cancelled' : 'failed',
           settling: undefined,
           open: null,
-          error: { code: event.code, message: event.message, retryable: event.retryable },
+          error: { code: event.code, message: event.message, retryable: event.retryable,
+            ...(event.retryAfter ? { retryAt: Date.now() + event.retryAfter * 1000 } : {}) },
         },
       };
     default:

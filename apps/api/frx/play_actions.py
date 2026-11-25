@@ -304,7 +304,8 @@ EXTRA_CHANGES = {"bond": bond_changes, "unbond": bond_changes, "length": length_
 
 # The panel actions the cultivation life does by its own rules: the engine's op of each (gear.cjs,
 # beasts.cjs); the beasts' own four are the life's alone.
-LIFE_OPS = {"equip": "equip", "unequip": "unequip", "belt": "belt", "feed": "feed",
+LIFE_OPS = {"equip": "equip", "unequip": "unequip", "primary_technique": "primary_technique",
+            "belt": "belt", "feed": "feed",
             "out": "beast", "in": "beast", "hatch": "beast", "promote": "beast"}
 BEAST_ACTIONS = {"out", "in", "hatch", "promote"}
 

@@ -47,14 +47,14 @@ export function LifeActs({ block, no }: { block: ActionsBlock; no: number | unde
 export function LifePerks({ block, no }: { block: PerksBlock; no: number | undefined }) {
   const life = useContext(LifeContext);
   const [asked, setAsked] = useState<PerkChoice | null>(null);
-  if (!life || no === undefined || life.actsFor !== no) return null;
+  if (!life?.onPerk || no === undefined || life.actsFor !== no) return null;
   const choose = (item: PerkChoice) => {
     setAsked(null);
     life.onPerk?.(item.index);
   };
   return (
     <>
-      <Perks items={block.items} onPick={life.onPerk ? setAsked : undefined} disabled={life.locked} />
+      <Perks items={block.items} onPick={setAsked} disabled={life.locked} />
       {/* over the whole screen: the book's column (a card floating up) would hold a fixed layer inside itself */}
       {createPortal(
         <Dialog
@@ -62,6 +62,7 @@ export function LifePerks({ block, no }: { block: PerksBlock; no: number | undef
           title={`悟得「${asked?.name ?? ''}」`}
           confirmLabel="就是它"
           cancelLabel="再想想"
+          focusConfirm
           onConfirm={() => asked && choose(asked)}
           onCancel={() => setAsked(null)}
         >

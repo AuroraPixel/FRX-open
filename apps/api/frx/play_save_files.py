@@ -1,6 +1,7 @@
 """Current domain save files and backups. Original-card uploads are not supported."""
 
 import base64
+import io
 from urllib.parse import quote
 
 from fastapi import HTTPException
@@ -19,7 +20,7 @@ from .card_backup import (
     validate_package,
 )
 from .card_import import LIMIT as SAVE_FILE_LIMIT
-from .card_import import encoded, preview_save, read_save
+from .card_import import preview_save, read_save, write_payload
 from .play_actions import version_conflict
 from .play_errors import PlayError, not_found, refused
 from .play_saves import art_of, find_save
@@ -41,7 +42,7 @@ def refusal(exc: HTTPException):
 def archive_row(records, session, archive_id):
     row = session.scalar(select(Archive).where(
         Archive.user_id == records.user_id, Archive.archive_id == archive_id))
-    if row is None or row.value is None:
+    if row is None or row.deleted:
         raise HTTPException(404, "存档不存在")
     return row
 
@@ -82,11 +83,11 @@ def export_save(records, archive_id):
                 if records.media.filename(data) != filename:
                     raise HTTPException(422, "本地媒体摘要不一致，导出未生成")
                 package["media"][filename] = base64.b64encode(data).decode()
-            body = encoded(package)
-            if len(body) > SAVE_FILE_LIMIT:
-                raise HTTPException(413, "存档文件超过64MB，请使用完整备份")
+            body = io.BytesIO()
+            message = "存档文件超过64MB，请在该存档菜单下载存档备份（ZIP）"
+            write_payload(package, body, SAVE_FILE_LIMIT, message)
             name = row.key
-        return attachment(body, name + ".json", "application/json")
+        return attachment(body.getvalue(), name + ".json", "application/json")
     except HTTPException as exc:
         raise refusal(exc) from None
 
@@ -117,11 +118,11 @@ def import_save_file(records, raw):
 
 def download_backup(records, archive_id=None):
     try:
-        name = find_save(records, archive_id).name if archive_id else None
-        data = export_backup(records, name)
+        data = export_backup(records, archive_id=archive_id)
     except HTTPException as exc:
         raise refusal(exc) from None
-    return attachment(data, "frx-backup.zip", "application/zip")
+    filename = "frx-save-backup.zip" if archive_id else "frx-backup.zip"
+    return attachment(data, filename, "application/zip")
 
 
 def inspect_backup(records, raw):

@@ -95,9 +95,12 @@ function readWhere(text) {
 // The map's places (play_art.pois_of): the save's map, or the card's default map when the save
 // carries none (play_world.map_of_state).
 function poisOf(map) {
-  const own = map && typeof map === 'object' && Array.isArray(map.points_of_interest) && map.points_of_interest.length
-    ? map.points_of_interest : MAP.points_of_interest;
-  return own.filter(poi => poi && typeof poi === 'object' && typeof poi.name === 'string');
+  const source = Array.isArray(map?.points_of_interest) && map.points_of_interest.length ? map : MAP;
+  const own = source.points_of_interest.filter(poi => poi && typeof poi.name === 'string');
+  const areas = Array.isArray(source.sub_regions) ? source.sub_regions : [];
+  const storyPlaces = (data('travel').storyPlaces || []).filter(poi => !own.some(each => each.name === poi.name)
+    && areas.some(area => area?.name === poi.sub_region && area.main_region === poi.main_region));
+  return [...own, ...storyPlaces];
 }
 
 // The map place a spot names: the place itself, or the longest place name inside it.
@@ -111,6 +114,28 @@ function namedPoi(pois, spot) {
 }
 
 // The map place nearest to the coordinates, within REACH.
+function mapPosition(text, map) {
+  const where = readWhere(text);
+  // A location like “旧城书斋” can be a local room whose name happens to contain a town.
+  // Only an exact name or an explicitly scoped district can correct a different map anchor.
+  const root = where.spot.split('·', 1)[0].trim();
+  const poi = poisOf(map).find(point => point.name === root);
+  if (!poi || !Number.isFinite(poi.x) || !Number.isFinite(poi.y)) return where;
+  const region = poi.main_region || where.region;
+  const area = poi.sub_region || region;
+  const near = where.xy && Math.hypot(where.xy[0] - poi.x, where.xy[1] - poi.y) <= REACH;
+  return { ...where, region, area, xy: near && region === where.region && area === where.area ? where.xy : [poi.x, poi.y] };
+}
+
+function normalizedTimeRow(text, map) {
+  const at = String(text ?? '').indexOf('/');
+  if (at < 0) return text;
+  const raw = text.slice(at + 1), before = readWhere(raw), where = mapPosition(raw, map);
+  if (!where.xy || (where.region === before.region && where.area === before.area
+      && String(where.xy) === String(before.xy))) return text;
+  return `${text.slice(0, at)}/${where.region}/${where.area}（${where.spot}）${where.xy.join(',')}`;
+}
+
 function nearestPoi(pois, xy) {
   if (!xy) return null;
   let best = null;
@@ -332,5 +357,5 @@ function mapDrafts(map) {
     .map(poi => [poi.name, draftOf(poi.name, typeof poi.description === 'string' ? poi.description : '', poi)]));
 }
 
-module.exports = { factsOf, placeFacts, poiHere, placeView, dangerWord, tierAt, poisOf, mapFacts, mapDrafts, readWhere, REACH,
+module.exports = { factsOf, placeFacts, poiHere, placeView, dangerWord, tierAt, poisOf, mapFacts, mapDrafts, readWhere, mapPosition, normalizedTimeRow, REACH,
   mayEnter, belongsTo, accessKey };

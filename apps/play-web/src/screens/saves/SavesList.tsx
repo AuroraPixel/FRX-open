@@ -105,9 +105,20 @@ export function SavesList({ state, current, playing, onLoad, onNew }: SavesListP
 
   const exportSave = (save: SaveSummary) =>
     run(async () => {
-      saveToDisk(await api.exportFile(save.id, save.name));
-      notify(`已导出「${save.name}」`);
+      try {
+        saveToDisk(await api.exportFile(save.id, save.name));
+        notify(`已导出「${save.name}」`);
+      } catch (error) {
+        if (!(error instanceof ApiError) || error.code !== 'input_too_large') throw error;
+        saveToDisk(await api.backup(save.id, save.name));
+        notify(`已下载「${save.name}」的 ZIP 备份`);
+      }
     });
+
+  const backupSave = (save: SaveSummary) => run(async () => {
+    saveToDisk(await api.backup(save.id, save.name));
+    notify(`已下载「${save.name}」的 ZIP 备份`);
+  });
 
   // the file is picked before anything waits on it: a picker closed without a file may never say so
   const startImport = async () => {
@@ -238,6 +249,9 @@ export function SavesList({ state, current, playing, onLoad, onNew }: SavesListP
                     </Btn>
                     <Btn onClick={() => void exportSave(save)} disabled={busy}>
                       导出
+                    </Btn>
+                    <Btn onClick={() => void backupSave(save)} disabled={busy}>
+                      下载存档备份
                     </Btn>
                     <Btn
                       variant="danger"

@@ -32,9 +32,6 @@ export function signed(value: number): string {
   return value < 0 ? `−${Math.abs(value)}` : `+${value}`;
 }
 
-function oneDecimal(value: number): string {
-  return String(Number(value.toFixed(1)));
-}
 
 /** The spirit root as the page writes it: the save keeps 「真灵根 土,水」, the page 「真灵根 土、水」 (spec 八, full-width
  * punctuation; the creation's confirmation writes it so too). */
@@ -68,7 +65,7 @@ function Basics({ player }: { player: Player }) {
         { label: '寿元', value: `${player.lifespan.age} / ${player.lifespan.max}` },
         { label: '灵根', value: `${root} ×${player.root.multiplier.toFixed(1)}` },
         { label: '功法', value: player.technique?.name ?? '未修' },
-        { label: '每日修为', value: player.progress ? `约 ${oneDecimal(player.progress.perDay)}` : '—' },
+        { label: '每日修为', value: player.progress ? `约 ${player.progress.perDay}` : '—' },
       ]}
     />
   );
@@ -201,7 +198,7 @@ function Gear({
                     selected={item ? picked === slot : undefined}
                     aria-label={
                       item
-                        ? `${label}第 ${index + 1} 格：${item.name} · ${GRADE_NAMES[item.grade]}${idle[item.id] ? `，不算数：${idle[item.id]}` : ''}`
+                        ? `${label}第 ${index + 1} 格：${item.name} · ${item.tier ?? GRADE_NAMES[item.grade]}${idle[item.id] ? `，不算数：${idle[item.id]}` : ''}`
                         : `${label}第 ${index + 1} 格：空着，去行囊挑一件`
                     }
                     onClick={() => (item ? onPick(kind, index) : onEmpty(kind, index))}
@@ -227,7 +224,7 @@ function Cultivation({ player }: { player: Player }) {
     },
     {
       label: '修炼效率',
-      value: `${progress ? `每日约 ${oneDecimal(progress.perDay)} · ` : ''}灵根 ×${player.root.multiplier.toFixed(1)}`,
+      value: `${progress ? `每日约 ${progress.perDay} · ` : ''}灵根 ×${player.root.multiplier.toFixed(1)}`,
     },
     ...(progress ? [{ label: '下一境界', value: progress.next }] : []),
   ];
@@ -293,6 +290,7 @@ export function Character({ saveId }: { saveId: string }) {
   const at = parseSlot(picked ?? undefined);
   const pickedGear: Picked | null =
     at && equipment[at.kind][at.index] ? { ...at, item: equipment[at.kind][at.index]! } : null;
+  const mainTechnique = view.play?.gear?.active.find((piece) => piece.role === 'main')?.id;
   const pickedLabel = pickedGear ? (EQUIP_ROWS.find((row) => row.kind === pickedGear.kind)?.label ?? '') : '';
 
   const pick = (kind: EquipKind, index: number) => {
@@ -345,11 +343,18 @@ export function Character({ saveId }: { saveId: string }) {
               <div ref={detailRef} className={common.revealed}>
                 <Detail
                   title={pickedGear.item.name}
-                  meta={`${TYPE_LABEL[pickedGear.item.type]} · ${GRADE_NAMES[pickedGear.item.grade]} · ${pickedLabel}第 ${pickedGear.index + 1} 格`}
+                  meta={`${TYPE_LABEL[pickedGear.item.type]} · ${pickedGear.item.tier ?? GRADE_NAMES[pickedGear.item.grade]} · ${pickedLabel}第 ${pickedGear.index + 1} 格`}
                   actions={
-                    <Btn onClick={() => void takeOff()} disabled={blocked}>
-                      卸下
-                    </Btn>
+                    <>
+                      {view.play && pickedGear.kind === 'technique' && (pickedGear.item.id === mainTechnique
+                        ? <span>主修功法</span>
+                        : <Btn disabled={blocked || Boolean(view.play.gear?.pieces[pickedGear.item.id]?.unusable)}
+                            onClick={() => void run(
+                              (version) => actions.primaryTechnique(saveId, version, pickedGear.item.id),
+                              `主修「${pickedGear.item.name}」`,
+                            )}>设为主修</Btn>)}
+                      <Btn onClick={() => void takeOff()} disabled={blocked}>卸下</Btn>
+                    </>
                   }
                 >
                   <p>{pickedGear.item.text}</p>

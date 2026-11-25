@@ -589,6 +589,14 @@ class Player(Character):
     progress: Progress | SkipJsonSchema[None] = None
 
 
+class GearAttune(Contract):
+    """A piece's refining (祭炼): the days done of the days its tier needs; until full it works at
+    half."""
+
+    done: int = Field(ge=0)
+    need: int = Field(ge=0)
+
+
 class Item(Contract):
     id: str
     name: str
@@ -596,7 +604,9 @@ class Item(Contract):
     text: str
     effect: OptStr = None
     quantity: int = Field(ge=0)
-    grade: Literal[1, 2, 3, 4, 5]
+    grade: Literal[1, 2, 3, 4, 5]  # card-era visual quality, separate from realm tier
+    tier: OptStr = None
+    attune: GearAttune | SkipJsonSchema[None] = None
     icon: str
     equippable: bool
     usable: bool
@@ -1463,14 +1473,6 @@ class PlayHint(Contract):
 GearSlot = Literal["weapon", "armor", "treasure", "technique"]
 
 
-class GearAttune(Contract):
-    """A piece's refining (祭炼): the days done of the days its tier needs; until full it works at
-    half."""
-
-    done: int = Field(ge=0)
-    need: int = Field(ge=0)
-
-
 class GearStolen(Contract):
     """Whom a stolen piece (赃物) was taken from, and his faction (or his region) where using or
     selling it raises a clock."""
@@ -1929,6 +1931,7 @@ class ErrorEvent(Contract):
     code: ErrorCode
     message: str
     retryable: bool
+    retry_after: OptInt = None
 
 
 TurnEvent = Annotated[
@@ -2276,7 +2279,8 @@ class PanelAction(VersionRequest):
     (heir: one of PlayLegacy.heirs by id, or "new" with a name, a gender and maybe a
     portrait) and the last word (words; the default one when absent)."""
 
-    action: Literal["equip", "unequip", "tidy", "bond", "unbond", "feed", "length", "belt",
+    action: Literal["equip", "unequip", "primary_technique", "tidy", "bond", "unbond",
+                    "feed", "length", "belt",
                     "out", "in", "hatch", "promote", "sect_join", "sect_exchange",
                     "sect_promote", "sect_enter", "inherit"]
     item_id: OptStr = None

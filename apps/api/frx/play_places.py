@@ -44,6 +44,31 @@ from .storage import Base, now
 logger = logging.getLogger(__name__)
 
 PLACES = ROOT / "content/art/places.json"
+
+
+@cache
+def default_world_map():
+    return json.loads((ROOT / "content/map.json").read_text(encoding="utf-8"))
+
+
+@cache
+def story_places():
+    rules = json.loads((ROOT / "content/life/travel.json").read_text(encoding="utf-8"))
+    return rules.get("storyPlaces", [])
+
+
+def known_world_map(world_map, life=False):
+    has_map = isinstance(world_map, dict) and world_map.get("points_of_interest")
+    source = world_map if has_map else default_world_map()
+    if not life or not story_places():
+        return source
+    points = source["points_of_interest"]
+    names = {row.get("name") for row in points if isinstance(row, dict)}
+    areas = {(row.get("main_region"), row.get("name"))
+             for row in (source.get("sub_regions") or []) if isinstance(row, dict)}
+    extra = [row for row in story_places() if row["name"] not in names
+             and (row["main_region"], row["sub_region"]) in areas]
+    return {**source, "points_of_interest": [*points, *extra]} if extra else source
 FIELDS = ("setting", "terrain", "structure", "features", "scale", "mood")
 SCALES = ("narrow", "open")
 MOODS = ("calm", "lively", "tense", "eerie", "solemn", "desolate")

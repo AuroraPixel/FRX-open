@@ -230,10 +230,12 @@ function requirement(env, key, c, gate, rule) {
     return { met: !!c.technique.name, text, short: '没有功法' };
   }
   if (key === 'cap') {
-    const cap = capOf(env, c.technique.name);
+    const equipped = gear.methods(env).map(row => ({ cap: capOfItem(env, row), name: plain(row.name ?? row['1']).split('|')[0] }));
+    const best = equipped.filter(each => each.cap).sort((a, b) => b.cap.major - a.cap.major || (b.cap.minor || 0) - (a.cap.minor || 0))[0];
+    const cap = best?.cap || (!equipped.length && capOf(env, c.technique.name));
     if (!cap) return { met: true, text: c.technique.name ? '上限未注明' : '尚无功法', short: '' };
     const reach = cap.major >= gate.target;
-    const how = cap.written ? '' : `按${cap.tier}算，`;
+    const how = (best?.name && best.name !== c.technique.name ? `「${best.name}」` : '') + (cap.written ? '' : `按${cap.tier}算，`);
     return { met: reach, text: reach ? `${how}可至${cap.text}` : `${how}只到${cap.text}，够不着${ORDER[gate.target]}；${methodAdvice(env, gate.target)}`, short: `功法只到${cap.text}` };
   }
   if (key === 'mind') {

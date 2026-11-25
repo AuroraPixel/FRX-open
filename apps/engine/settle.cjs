@@ -77,6 +77,7 @@ function engineEnv(context, archive, seed) {
   const cultivationLife = archive.data.state.frxPlay?.version === 1;
   if (cultivationLife) require('./life/manual-items.cjs').normalizeManuals(state);
   return { ctx: context, state, cultivationLife,
+           ...(cultivationLife ? { play: structuredClone(archive.data.state.frxPlay) } : {}),
            dailyUses: archive.data.state.dailyItemUses, seed, archiveId: archive.data.archiveId || archive.name,
            progress: rules.mechanics.ledgerOf(archive.data.state.frxProgress),
            worldFactors: rules.mechanics.worldFactorsOf(archive.data.logs),
@@ -725,7 +726,7 @@ async function progressMode(input) {
     env.plot = input.plot || null;
   }
   return {
-    cultivation: rules.mechanics.cultivationView(env),
+    cultivation: play ? life.cultivationView(env) : rules.mechanics.cultivationView(env),
     plot: input.plot ? rules.mechanics.plotView(env, input.plot) : null,
     // The same 【修行】 text a pilot turn's prompt gets, for the plot director's input.
     progressText: rules.mechanics.cultivationPrompt(env),
@@ -1174,7 +1175,13 @@ async function settle(input) {
   context.keepDeparted = life;
   const result = await vm.runInContext("applyChanges(stateInput, parsed.delta, {persistEffects:false, keepDeparted})", context, { timeout: 1500 });
   if (errors.length) return { errors };
-  if (life) require('./life/manual-items.cjs').normalizeManuals(result.newState);
+  if (life) {
+    require('./life/manual-items.cjs').normalizeManuals(result.newState);
+    const time = rules.mechanics.clockRow(result.newState);
+    if (time && typeof time['0'] === 'string') {
+      time['0'] = require('./life/places.cjs').normalizedTimeRow(time['0'], context.WORLD_MAP_DATA);
+    }
+  }
   // A turn's settlement (it has a story) reports the gear its commands moved; a bare block of
   // commands returns exactly what the card's own settlement returned.
   const gear = "story" in input ? gearReceipts(context, wornBefore, result.newState, input.pilot?.receipts || []) : [];

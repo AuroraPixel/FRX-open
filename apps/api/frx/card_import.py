@@ -27,6 +27,25 @@ def encoded(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
 
 
+def write_payload(payload, target, limit, too_large):
+    """Write bounded UTF-8 JSON and return the size and digest of the bytes written."""
+    hashed = hashlib.sha256()
+    buffer = bytearray()
+    encoder = json.JSONEncoder(ensure_ascii=False, separators=(",", ":"))
+    for part in encoder.iterencode(payload):
+        buffer.extend(part.encode())
+        if target.tell() + len(buffer) > limit:
+            raise HTTPException(413, too_large)
+        if len(buffer) >= 256 * 1024:
+            hashed.update(buffer)
+            target.write(buffer)
+            buffer.clear()
+    hashed.update(buffer)
+    target.write(buffer)
+    return {"sha256": hashed.hexdigest(), "bytes": target.tell()}
+
+
+
 def digest(value):
     return hashlib.sha256(encoded(value)).hexdigest()
 
