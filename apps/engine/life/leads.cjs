@@ -145,7 +145,8 @@ async function prove(env, args, earlier = []) {
   if (lead.proven) return env.refuse(chronicle.fill(said.proven, { 疑点: lead.line }));
   const scene = env.play.scene;
   if (!scene) return env.refuse(said.scene);
-  const attempt = earlier.findLast(receipt => receipt.kind === 'act' && receipt.investigation?.id === id);
+  const attempt = earlier.findLast(receipt => receipt.kind === 'act' && receipt.investigation);
+  if (attempt && attempt.investigation.id !== id) return env.refuse('这一回合正在调查另一条疑点');
   if (!scene.won || (attempt && (!success(attempt.outcome) || attempt.investigation.ask))) {
     return env.refuse(said.check);
   }

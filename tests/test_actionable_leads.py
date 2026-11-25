@@ -42,6 +42,9 @@ def test_lead_routes_a_current_scene_a_distant_destination_and_an_unplaced_clue(
 
 def test_selected_lead_writes_proof_only_when_its_own_check_succeeds():
     value = investigation_save()
+    value['data']['state']['frxPlay']['leads'].append(
+        {'id': 'F4', 'line': '旧门锁印未干', 'where': '调查明水府旧门', 'chapter': 'c4'}
+    )
     results = {}
     for nth in range(1, 23):
         result = engine(value, mode='life', op='act', args={'lead': 'F1', 'nth': nth}, keep=True)
@@ -62,6 +65,9 @@ def test_selected_lead_writes_proof_only_when_its_own_check_succeeds():
     assert 'proven' not in after['leads'][1]
     assert len([event for event in after['pending'] if event['from'] == 'leads']) == 1
     assert any(row.get('lead', {}).get('id') == 'F1' for row in good['receipts'])
+    unrelated = {'id': 'unrelated-proof', 'name': 'prove_lead', 'arguments': json.dumps({'id': 'F4'})}
+    refused = engine(value, mode='tools', calls=[unrelated], receipts=good['receipts'])
+    assert refused['results'][0]['receipt']['ok'] is False
     value['data']['state'].update(good['kept'])
     shown = {row['id']: row for row in engine(value, mode='progress')['life']['leads']}
     assert shown['F1']['proven'] and 'action' not in shown['F1']
