@@ -4,6 +4,7 @@ import json
 import subprocess
 from uuid import uuid4
 
+import pytest
 from fastapi.testclient import TestClient
 from frx.auth import LOCAL_USER_ID
 from frx.card_store import CardStore
@@ -130,7 +131,8 @@ def test_old_trade_card_is_repriced_without_touching_the_saved_purse():
     assert not card["locked"] and card["cost"]["stones"] == 0 and "以物易物" in card["sub"]
 
 
-def test_abandoning_a_ready_reply_preserves_the_previous_commit(tmp_path, monkeypatch):
+@pytest.mark.parametrize("status", ["ready", "generating"])
+def test_abandoning_a_ready_or_interrupted_turn_preserves_the_previous_commit(tmp_path, monkeypatch, status):
     monkeypatch.setenv("FRX_AUTH", "off")
     monkeypatch.setenv("FRX_DATA_DIR", str(tmp_path))
     store = Store(f"sqlite:///{tmp_path}/ready.db")
@@ -142,7 +144,8 @@ def test_abandoning_a_ready_reply_preserves_the_previous_commit(tmp_path, monkey
     saved = records.write("archives", value["name"], value, 0)
     rid = str(uuid4())
     records.begin_request(rid, value["name"], {"turn_action": {"text": "攻"}}, "synthetic")
-    assert records.finish_request(rid, "<content>待提交战报</content>", "ready", {})
+    if status == "ready":
+        assert records.finish_request(rid, "<content>待提交战报</content>", "ready", {})
     try:
         with TestClient(create_app(store=store), headers={"X-FRX-Client": "local"}) as client:
             endpoint = f'/api/play/saves/{value["data"]["archiveId"]}'
@@ -201,3 +204,130 @@ def test_unknown_traded_and_quest_reward_manuals_are_classified_by_their_titles(
     settled = engine(value, commands="", story="", pilot={"receipts": receipts})
     new_items = {row["1"]: row["2"] for row in settled["state"]["1"].values()}
     assert new_items["空谷真解"] == new_items["引潮宝典"] == "功法"
+
+
+
+def test_auction_bid_checks_the_purse_even_with_an_unrelated_bag_target():
+    value = archive()
+    tables = value["data"]["state"]["currentState"]
+    tables["0"]["B1"]["26"] = "348"
+    result = engine(value, mode="life", op="cards", args={"cards": [
+        {"kind": "买卖", "title": "出资一百五十灵石竞拍鬼木", "target": "I4"},
+        {"kind": "买卖", "title": "出价四百块灵石竞下鬼木", "target": "I3"},
+    ]}, keep=True)
+    bid, costly = result["cards"][:2]
+    assert not bid["locked"] and bid["cost"]["stones"] == 150 and not bid["cost"]["items"]
+    assert costly["locked"] and "灵石不够" in costly["reason"]
+    value["data"]["state"].update(result["kept"])
+    before = value["data"]["state"]["currentState"]["1"]
+    selected = engine(value, mode="life", op="act", args={"index": bid["index"]}, keep=True)
+    after = selected["kept"]["currentState"]
+    assert after["0"]["B1"]["26"] == "198"
+    assert after["1"] == before
+
+
+def test_equipped_manual_both_projects_tier_and_can_be_selected_as_primary(tmp_path, monkeypatch):
+    monkeypatch.setenv("FRX_AUTH", "off")
+    monkeypatch.setenv("FRX_DATA_DIR", str(tmp_path))
+    store = Store(f"sqlite:///{tmp_path}/primary.db")
+    store.initialize()
+    records = CardStore(LOCAL_USER_ID, store.sessions)
+    value = archive()
+    state = value["data"]["state"]
+    tables = state["currentState"]
+    tables["0"]["B1"]["2"] = "筑基后期|散修"
+    tables["1"]["I5"] = {"0": "I5", "1": "照雪秘录", "2": "功法", "3": "三阶水属性功法，可修到结丹为止", "5": "1"}
+    for number in (2, 5):
+        result = engine(value, mode="life", op="equip", args={"itemId": f"I{number}"}, keep=True)
+        state.update(result["kept"])
+    state["frxPlay"].setdefault("gear", {})["I5"] = {"attuned": 3}
+    cap = next(row for row in engine(value, mode="life", op="gate")["gate"]["requires"] if row["key"] == "cap")
+    assert cap["met"] and "照雪秘录" in cap["text"]
+    saved = records.write("archives", value["name"], value, 0)
+    endpoint = f'/api/play/saves/{value["data"]["archiveId"]}'
+    with TestClient(create_app(store=store), headers={"X-FRX-Client": "local"}) as client:
+        before = client.get(f"{endpoint}/state").json()
+        higher = next(row for row in before["equipment"]["technique"] if row and row["id"] == "I5")
+        assert higher["tier"] == "三阶" and higher["attune"]["done"] == 3
+        switched = client.post(f"{endpoint}/actions", json={"version": saved["version"], "action": "primary_technique", "itemId": "I5"})
+        assert switched.status_code == 200, switched.text
+        reloaded = client.get(f"{endpoint}/state").json()
+        assert reloaded["player"]["technique"]["name"] == "照雪秘录"
+        assert next(row for row in reloaded["play"]["gear"]["active"] if row.get("role") == "main")["id"] == "I5"
+        assert records.get("archives", value["name"])["value"]["data"]["state"]["frxPlay"]["primaryTechnique"] == "I5"
+    assert protected_action("以《照雪秘录》为主修，将另一部降为辅助")
+
+
+def test_refining_updates_the_item_and_character_rate_matches_the_cultivation_preview():
+    value = archive()
+    state = value["data"]["state"]
+    state["currentState"]["0"]["B1"]["2"] = "筑基初期|散修"
+    state["currentState"]["0"]["B1"]["9"] = "年龄:30|寿元:200|灵根:异灵根 水|修为进度:25%"
+    args = {"kind": "refine", "itemId": "I2", "days": 2}
+    refined = engine(value, mode="life", op="verb", args=args, keep=True)
+    assert "kept" in refined, refined
+    state.update(refined["kept"])
+    assert state["frxPlay"]["gear"]["I2"]["attuned"] == 2
+    rate = engine(value, mode="progress")["cultivation"]["perDay"]
+    planned = engine(value, mode="life", op="preview", args={"kind": "cultivate", "days": 1})["preview"]
+    daily = next(row["value"] for row in planned["formula"] if row["label"] == "每日")
+    assert daily == f"约{rate:g}"
+
+
+def test_known_destination_overrides_stale_province_and_coordinates():
+    from frx.play_state import Save
+
+    value = archive()
+    state = value["data"]["state"]
+    state["worldMap"] = {"points_of_interest": [
+        {"name": "旧驿", "main_region": "北原", "sub_region": "草原", "x": 10, "y": 10},
+        {"name": "明水府", "main_region": "南地", "sub_region": "临川", "x": 140, "y": 250},
+    ]}
+    state["currentState"]["4"][0]["0"] += "/北原/草原（明水府·东街）10,10"
+    save = Save(value["name"], 1, value)
+    assert (save.location.region, save.location.area, save.location.xy) == ("南地", "临川", (140, 250))
+    plot = {"id": "p", "chapters": [{"id": "p1", "title": "渡入临川", "conditions": [{"kind": "到达", "value": "临川"},
+                                                                {"kind": "到达", "value": "草原"}]}]}
+    conditions = engine(value, mode="progress", plot=plot)["plot"]["chapters"][0]["conditions"]
+    assert [item["met"] for item in conditions] == [True, False]
+    modified = engine(value, commands="", pilot={"receipts": []})
+    assert modified["state"]["4"][0]["0"].endswith("/南地/临川（明水府·东街）140,250")
+
+
+def test_volume_opening_has_title_and_couplet_without_reusing_a_chapter_number():
+    from frx.play_blocks import turn_blocks
+    from frx.play_models import MarkBlock
+    from frx.play_state import Save
+
+    value = archive()
+    save = Save(value["name"], 1, value)
+    receipt = {"kind": "breakthrough", "ok": True, "gate": {"name": "筑基"}, "volume": {"cause": {"name": "筑基"}}}
+    blocks = turn_blocks(action=None, receipts=[receipt], story="云散月明。", branches="", before=save, after=save)
+    opening, closing = [MarkBlock.model_validate(block) for block in blocks if block["type"] == "mark"]
+    assert opening.kind == "open" and closing.kind == "close" and opening.title == closing.title == "筑基开新卷"
+    assert opening.chapter is None and closing.chapter is None
+    assert [len(line) for line in closing.couplet.split()] == [7, 7]
+
+
+def test_large_save_zip_can_be_downloaded_and_read_when_json_exceeds_64_mib(tmp_path, monkeypatch):
+    from frx.card_backup import read_backup
+
+    monkeypatch.setenv("FRX_AUTH", "off")
+    monkeypatch.setenv("FRX_DATA_DIR", str(tmp_path))
+    store = Store(f"sqlite:///{tmp_path}/large.db")
+    store.initialize()
+    records = CardStore(LOCAL_USER_ID, store.sessions)
+    value = archive()
+    rid = str(uuid4())
+    records.write("archives", value["name"], value, 0)
+    records.begin_request(rid, value["name"], {}, "synthetic")
+    assert records.finish_request(rid, "x" * (64 * 1024 * 1024), "failed", {})
+    with TestClient(create_app(store=store), headers={"X-FRX-Client": "local"}) as client:
+        archive_id = value["data"]["archiveId"]
+        assert client.get(f"/api/play/saves/{archive_id}/export").status_code == 413
+        scoped = client.get(f"/api/play/backup?save={archive_id}")
+        assert scoped.status_code == 200, scoped.text[:150]
+        payload, _ = read_backup(records, scoped.content)
+        [held] = payload["archives"]
+        assert held["archive"]["id"] == archive_id and held["requests"][0]["id"] == rid
+        assert len(held["requests"][0]["response"]) == 64 * 1024 * 1024

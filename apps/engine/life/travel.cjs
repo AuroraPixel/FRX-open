@@ -68,7 +68,7 @@ const hooks = { cross: () => null };
 // Where the player stands: the map place they are at (or none), their coordinates, their regions.
 function standing(env) {
   const text = mechanics.placeOf(env.state);
-  const where = places.readWhere(text);
+  const where = places.mapPosition(text, env.worldMap);
   const facts = places.factsOf(text, env.worldMap);
   const poi = facts.place ? places.poisOf(env.worldMap).find(each => each.name === facts.place) || null : null;
   const xy = where.xy || (poi && Number.isFinite(poi.x) && Number.isFinite(poi.y) ? [poi.x, poi.y] : null);
@@ -93,7 +93,8 @@ function route(env, to) {
   if (!at.xy) return { refused: '认不出你在地图上的哪里，没法算路程' };
   const distance = Math.hypot(dest.x - at.xy[0], dest.y - at.xy[1]);
   const foot = footOf(env);
-  if (at.main && dest.main_region && at.main !== dest.main_region) {
+  const overland = RULES.landLinks?.some(pair => pair.includes(at.main) && pair.includes(dest.main_region));
+  if (at.main && dest.main_region && at.main !== dest.main_region && !overland) {
     const gate = hooks.cross(env, at, dest);
     if (!gate) return { refused: across(at.main, dest) };
     return gate.refused ? gate : { to: dest, from: at, distance, foot, walk: 0, days: gate.days, teleport: gate };
@@ -143,7 +144,7 @@ async function sceneArrival(env, args, earlier) {
   if (!confirmed) return;
 
   const now = mechanics.readClock(env.state);
-  const where = places.readWhere(now?.place.slice(1));
+  const where = places.mapPosition(now?.place.slice(1), env.worldMap);
   if (!where.xy || !where.region || !where.area || spot === where.spot) return;
   const [x, y] = where.xy;
   const map = env.worldMap;

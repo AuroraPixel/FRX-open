@@ -188,7 +188,7 @@ export function Bag({ saveId }: { saveId: string }) {
         <div ref={detailRef} className={common.revealed}>
           <Detail
             title={item.name}
-            meta={`${TYPE_LABEL[item.type]} · ${GRADE_NAMES[item.grade]} · 持有 ${item.quantity}`}
+            meta={`${TYPE_LABEL[item.type]} · ${item.tier ?? GRADE_NAMES[item.grade]} · 持有 ${item.quantity}`}
             actions={
               <>
                 {item.equippable && (

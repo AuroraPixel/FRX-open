@@ -1,6 +1,5 @@
 """The other read views of a save: the map, the people, world events and the daily papers."""
 
-import json
 import re
 from html.parser import HTMLParser
 
@@ -8,6 +7,7 @@ from . import play_art as art
 from . import play_models as M
 from .domain import ROOT
 from .life import life_of
+from .play_places import known_world_map
 from .play_sheet import js_get, js_round, js_trim, js_values, parse_nested_json, to_text
 from .play_state import (
     Location,
@@ -18,9 +18,7 @@ from .play_state import (
     text_of,
 )
 
-# The card's default world map, as the card archive held it (tests/fixtures/parity/originals.json).
 DEFAULT_MAP = ROOT / "content/map.json"
-
 
 # ---------------------------------------------------------------- the map
 
@@ -32,10 +30,8 @@ def world_map_of(save):
 
 def map_of_state(state):
     """The map a save's state carries, or the card's default map when it carries none."""
-    world_map = (state or {}).get("worldMap")
-    if isinstance(world_map, dict) and world_map.get("points_of_interest"):
-        return world_map
-    return json.loads(DEFAULT_MAP.read_text(encoding="utf-8")) if DEFAULT_MAP.is_file() else {}
+    life = life_of({"data": {"state": state}}) is not None
+    return known_world_map((state or {}).get("worldMap"), life=life)
 
 
 def find_poi(world_map, place_id):

@@ -86,7 +86,8 @@ export const saves = {
   exportFile: (save: string, name: string) => download(`/saves/${id(save)}/export`, `${name}.json`),
   previewImport: (file: Blob | string) => upload<ImportPreview>('/saves/import/preview', file),
   importFile: (file: Blob | string) => upload<SaveSummary>('/saves/import', file),
-  backup: () => download('/backup', 'frx-backup.zip'),
+  backup: (save?: string, name?: string) => download(save ? `/backup?save=${id(save)}` : '/backup',
+    name ? `${name}.zip` : 'frx-backup.zip'),
   previewBackup: (file: Blob) => upload<BackupPreview>('/backup/preview', file),
   restoreBackup: (file: Blob, revision: string, settings: boolean) =>
     upload<RestoreResult>(`/backup/restore?restoreSettings=${settings}`, file, { 'x-frx-backup-revision': revision }),

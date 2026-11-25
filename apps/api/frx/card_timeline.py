@@ -219,10 +219,11 @@ class CardTimeline:
             logs = row.full["data"]["logs"]
             if pending_id:
                 pending = self.records.attempt(session, pending_id, lock=True)
-                if not pending or pending.archive != name or pending.status not in {"pending", "repairing", "ready"}:
+                recoverable = {"pending", "repairing", "ready", "generating"}
+                if not pending or pending.archive != name or pending.status not in recoverable:
                     raise HTTPException(409, "此回合已结束，请重新载入")
-                if pending.status == "ready":
-                    return self.abandon_ready(row, pending)
+                if pending.status in {"ready", "generating"}:
+                    return self.abandon_unapplied(row, pending)
             index = next(
                 (i for i in range(len(logs) - 1, -1, -1) if logs[i].get("type") == "ai"
                  and not logs[i].get("isGhost") and not logs[i].get("isDeepSummary")), None
@@ -289,8 +290,8 @@ class CardTimeline:
             return self.restore(session, row, self.log_snapshot(row.full, previous), previous + 1)
 
 
-    def abandon_ready(self, row, pending):
-        """A durable reply whose effects have not been applied can discard only its own input."""
+    def abandon_unapplied(self, row, pending):
+        """Discard the input of a request whose effects have not been applied."""
         value = row.full
         logs = value["data"]["logs"]
         context = pending.context or {}

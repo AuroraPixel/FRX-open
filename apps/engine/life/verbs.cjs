@@ -315,6 +315,20 @@ function formulaOf(c, record, affinity, pool, stonesHelp, minded, lifted = null)
   return terms;
 }
 
+function practiceOf(env, c, facts = places.placeFacts(env)) {
+  const affinity = speed.affinityOf(env, c);
+  const pool = speed.bonusPool(env);
+  const minded = mind.factor(env, c);
+  const lifted = hooks.auraBonus(env);
+  return { affinity, pool, minded, lifted,
+    options: { aura: hooks.aura(env, facts.aura), auraBonus: lifted?.value || 0,
+      affinity: affinity.factor, bonus: pool.value, mind: minded.factor, stepDays: speed.stepDaysOf(c.major) } };
+}
+
+function cultivationView(env) {
+  return mechanics.cultivationView(env, practiceOf(env, mechanics.cultivator(env)).options);
+}
+
 function cultivate(env, verb, upTo = null) {
   if (hooks.polish && hooks.polishing(env)) return hooks.polish(env, verb, upTo);
   const blocked = blockedFor(env, 'cultivate');
@@ -328,15 +342,11 @@ function cultivate(env, verb, upTo = null) {
   const span = upTo === null ? asking : Math.max(60, Math.min(asking, Math.floor(upTo / 60) * 60));
   const c = mechanics.cultivator(env);
   const facts = places.placeFacts(env);
-  const affinity = speed.affinityOf(env, c);
-  const pool = speed.bonusPool(env);
-  const minded = mind.factor(env, c);
+  const { affinity, pool, minded, lifted, options } = practiceOf(env, c, facts);
   const useStones = verb.stones === true;
-  const lifted = hooks.auraBonus(env);
   // the fraction of a point the stretches before left over (frxPlay.leftover) goes into this one's gain
   const carry = Number.isFinite(env.play.leftover) ? env.play.leftover : 0;
-  const options = { aura: hooks.aura(env, facts.aura), auraBonus: lifted?.value || 0, affinity: affinity.factor, bonus: pool.value, mind: minded.factor, moveClock: false, carry,
-    stepDays: speed.stepDaysOf(c.major) };
+  Object.assign(options, { moveClock: false, carry });
   const args = { mode: '修炼', duration: span / 60, unit: '小时', use_stones: useStones };
   const receipt = mechanics.cultivate(env, args, 'verb', options);
   if (!receipt.ok) return { refused: receipt.reason };
@@ -527,4 +537,4 @@ function list(env) {
   }));
 }
 
-module.exports = { verb, preview, list, hooks, VERBS };
+module.exports = { verb, preview, list, hooks, VERBS, cultivationView };

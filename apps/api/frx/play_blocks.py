@@ -1888,6 +1888,16 @@ def turn_blocks(*, action, receipts, story, branches, before, after, notice=None
             if not echoes_options(block, options)]
     speech = [block for block in told if block["type"] == "speech"]
     blocks = [action] if action else []
+    # A successful major breakthrough starts a volume with its own passage. It is outside
+    # the numbered scenes, which continue across volumes.
+    gate = next((receipt for receipt in receipts if receipt.get("kind") == "breakthrough"
+                 and receipt.get("ok") and isinstance(receipt.get("volume"), dict)), None)
+    opening = None
+    if gate:
+        cause = gate["volume"].get("cause") or gate.get("gate") or {}
+        name = cause.get("name")
+        opening = f"{name}开新卷" if name else "修行开新卷"
+        blocks.append(mark_block("open", opening))
     blocks += list(chronicle)
     for receipt in receipts:
         if not told_after(receipt):
@@ -1902,10 +1912,12 @@ def turn_blocks(*, action, receipts, story, branches, before, after, notice=None
         if told_after(receipt):
             blocks += receipt_blocks(receipt)
     named = scene_title(receipts)
-    if named:
+    if named and not opening:
         # The opening mark under the name the model gave the scene on its first beat.
         blocks = [{**block, "title": named} if block["type"] == "mark" and block["kind"] == "open"
                   else block for block in blocks]
+    if opening:
+        blocks.append(mark_block("close", opening, couplet="几载潜修开道境　此身初渡启新篇"))
     if notice:
         blocks.append(notice)
     # the first-time notes say what the choices below them are (or what the turn just showed)

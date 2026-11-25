@@ -3134,6 +3134,9 @@
         },
         "retryable": {
           "type": "boolean"
+        },
+        "retryAfter": {
+          "type": "integer"
         }
       },
       "required": [
@@ -4203,6 +4206,12 @@
             5
           ],
           "type": "integer"
+        },
+        "tier": {
+          "type": "string"
+        },
+        "attune": {
+          "$ref": "#/definitions/GearAttune"
         },
         "icon": {
           "type": "string"
@@ -5294,6 +5303,7 @@
           "enum": [
             "equip",
             "unequip",
+            "primary_technique",
             "tidy",
             "bond",
             "unbond",

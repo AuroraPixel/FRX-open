@@ -36,7 +36,11 @@ FRX_DATA_DIR="$PWD/.frx" uv run --env-file .env python -m frx.tool_admission
 docker compose --env-file deploy/multiuser.env -f compose.multiuser.yaml up -d --build
 ```
 
-首次部署需要空数据库。SMTP 和验证码签名密钥的配置见 [环境变量样板](.env.example)。密钥和存档应保存在本地数据目录或部署环境中。改 DOM、规则或接口后，可以用下列命令检查最小回归。
+首次部署需要空数据库。SMTP 和验证码签名密钥的配置见 [环境变量样板](.env.example)。密钥和存档应保存在本地数据目录或部署环境中。
+
+存档菜单支持单档 JSON 与 ZIP。JSON 超过 64 MiB 时自动下载该存档的 ZIP，完整备份和单档 ZIP 的解压上限均为 256 MiB。
+
+改 DOM、规则或接口后，可以用下列命令检查最小回归。
 
 ```sh
 uv run pytest -q tests/test_public_world.py tests/test_star_sea.py

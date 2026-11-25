@@ -2,6 +2,7 @@
 // being settled once its words are all here, the model error with 重试 and 改写行动, the pending
 // settlement with 继续结算, and the two dialogs: the version conflict, and going back to an earlier
 // turn, which says what it gives up.
+import { useEffect, useState } from 'react';
 import type { NoticeBlock } from '../../contracts';
 import { turnWords } from '../../lib/book';
 import { chapterTitle } from '../../lib/numerals';
@@ -13,12 +14,37 @@ import { Loading } from '../../ui/Loading';
 import bookStyles from './Book.module.css';
 import styles from './PlayScreen.module.css';
 
+function useRetrySeconds(until?: number) {
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    if (!until) return;
+    setNow(Date.now());
+    const timer = window.setInterval(() => {
+      const at = Date.now();
+      setNow(at);
+      if (at >= until) window.clearInterval(timer);
+    }, 250);
+    return () => window.clearInterval(timer);
+  }, [until]);
+  return until ? Math.max(0, Math.ceil((until - now) / 1000)) : 0;
+}
+
+function retryWords(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  return `还需 ${hours ? `${hours} 小时 ` : ''}${minutes % 60 ? `${minutes % 60} 分 ` : ''}${seconds % 60} 秒后可重试。`;
+}
+
 /**
  * What follows the rows of the turn being written: the waiting line, or the error card. Once the words
  * are all here the server only settles and commits the turn: the line says so, and there is nothing left
  * to cancel.
  */
 export function LiveState({ live, onCancel, onRetry, onRewrite }: { live: LiveTurn; onCancel: () => void; onRetry: () => void; onRewrite: () => void }) {
+  const quota = live.error?.code === 'quota_exceeded';
+  const until = quota ? live.error?.retryAt : undefined;
+  const seconds = useRetrySeconds(until);
+  const message = live.error?.message ?? '这一回没能写完。';
   return (
     <>
       {live.status === 'streaming' && live.settling && (
@@ -39,9 +65,11 @@ export function LiveState({ live, onCancel, onRetry, onRewrite }: { live: LiveTu
       {/* a version conflict is the dialog's to say */}
       {live.status === 'failed' && live.error?.code !== 'version_conflict' && (
         <div className={bookStyles.failure} role="alert">
-          <p>{live.error?.message ?? '这一回没能写完。'}</p>
+          <p>{until ? message.replace(/，约 .*后可以再玩$/, '') : message}</p>
+          {until && <p role="timer">{seconds ? retryWords(seconds) : '可以重试了。'}</p>}
+          {quota && <p>改写行动会保留输入内容，用量按最近 24 小时计算。</p>}
           <div className={bookStyles.actions}>
-            <Btn variant="solid" onClick={onRetry}>
+            <Btn variant="solid" onClick={onRetry} disabled={seconds > 0}>
               重试
             </Btn>
             <Btn onClick={onRewrite}>改写行动</Btn>
@@ -61,16 +89,19 @@ export function noticeAction(action: NonNullable<NoticeBlock['action']>) {
 }
 
 /** 待结算: the words came, the settlement did not. */
-export function PendingCard({ error, onSettle, onAbandon }: {
+export function PendingCard({ error, retryAt, onSettle, onAbandon }: {
   error?: string;
+  retryAt?: number;
   onSettle: () => void;
   onAbandon: () => void;
 }) {
+  const seconds = useRetrySeconds(retryAt);
   return (
     <div className={bookStyles.pending} role="status">
-      <p>{error ?? '这一回合还在等待结算。'}</p>
+      <p>{(retryAt ? error?.replace(/，约 .*后可以再玩$/, '') : error) ?? '这一回合还在等待结算。'}</p>
+      {retryAt && <p role="timer">{seconds ? retryWords(seconds) : '可以继续结算了。'}</p>}
       <div className={bookStyles.actions}>
-        <Btn variant="solid" onClick={onSettle}>继续结算</Btn>
+        <Btn variant="solid" onClick={onSettle} disabled={seconds > 0}>继续结算</Btn>
         <Btn onClick={onAbandon}>放弃本回合</Btn>
       </div>
     </div>

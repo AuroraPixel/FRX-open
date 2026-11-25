@@ -28,6 +28,8 @@ export const actions = {
   /** Takes an item off and puts it back in the bag. */
   unequip: (save: string, version: number, itemId: string, slot?: string): Promise<PanelResult> =>
     play.action(save, { version, action: 'unequip', itemId, ...(slot ? { slot } : {}) }),
+  primaryTechnique: (save: string, version: number, itemId: string): Promise<PanelResult> =>
+    play.action(save, { version, action: 'primary_technique', itemId }),
   /** Sorts the bag by kind, as the old page's 整理 did. */
   tidy: (save: string, version: number): Promise<PanelResult> => play.action(save, { version, action: 'tidy' }),
   /** Marks a character as bonded (the old page's 标记为羁绊). */
