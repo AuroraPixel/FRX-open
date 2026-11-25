@@ -6,11 +6,14 @@ const namePattern = new RegExp(rules.manualName);
 const descriptionPattern = new RegExp(rules.manualDescription);
 const exclusions = new RegExp(rules.exclusions);
 
-function isManual(name, type, description, effect) {
+function hasManualTitle(name) {
   const named = plain(name).split('|')[0].trim();
+  return namePattern.test(named) && !exclusions.test(named);
+}
+
+function isManual(name, type, description, effect) {
   const texts = [plain(description), plain(effect)];
-  return rules.ambiguousTypes.includes(plain(type)) && namePattern.test(named)
-    && !exclusions.test(named)
+  return rules.ambiguousTypes.includes(plain(type)) && hasManualTitle(name)
     && !texts.some(text => exclusions.test(text.split(/[，,。；;、：:\n]/)[0]))
     && texts.some(text => descriptionPattern.test(text));
 }
@@ -24,4 +27,4 @@ function normalizeManuals(state) {
   }
 }
 
-module.exports = { isManual, normalizeManuals };
+module.exports = { hasManualTitle, isManual, normalizeManuals };

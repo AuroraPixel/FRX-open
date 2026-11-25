@@ -1496,6 +1496,7 @@ class GearPiece(Contract):
     stolen: GearStolen | SkipJsonSchema[None] = None
     traits: list[str]
     above: int | SkipJsonSchema[None] = Field(default=None, ge=0)
+    unusable: OptStr = None
 
 
 class GearActive(Contract):

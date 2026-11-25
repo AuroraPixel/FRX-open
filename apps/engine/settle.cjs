@@ -359,13 +359,8 @@ function storyThing(data, id, base, gifts, notes) {
       return `set(${JSON.stringify({ ...data, 0: at, 1: name, 2: like.type, 4: gifts.goods.pieceEffect(like), 5: String(count) })})`;
     }
   }
-  let kept = KEEPSAKE_TYPES.has(type) ? type : KEEPSAKE;
-  if (type === "功法") {
-    const claimed = `${name} ${textOf(data["3"])} ${textOf(data["4"])}`.match(TIER_WORD);
-    const above = !!claimed && gifts.goods.TIERS.indexOf(`${claimed[1]}阶`) > gifts.goods.TIERS.indexOf(gifts.tier) + 1;
-    kept = above ? KEEPSAKE : type;
-    if (above) notes.push(`「${name}」写的是${claimed[1]}阶，高过主角这一阶，记作重要物品，眼下修不了`);
-  } else if (kept !== type) {
+  const kept = type === "功法" || KEEPSAKE_TYPES.has(type) ? type : KEEPSAKE;
+  if (kept !== type) {
     notes.push(`「${name}」不在图鉴里，记作重要物品（信物、线索），不当${type || "器物"}用`);
   }
   const at = freeItemId(id, gifts);
