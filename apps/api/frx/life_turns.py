@@ -1184,7 +1184,7 @@ async def before_story(plan, archive, seed, knowledge, admitted, life):
         # pending event that goes off now opens the player's own instead (its cause, its line)
         origin = (life.get("interrupted") or {}).get("origin") or "free"
         present = present_of(life.get("interrupted") or {})
-        if not life.get("interrupted") and not play.get("opening"):
+        if not life.get("interrupted") and not play.get("opening") and not life.get("lead"):
             # words that carry on a story thread hold a `now` event back for this scene (batch 9:
             # the owner typed 「送孙老道到落雁坡」 and got the chapter's reveal instead)
             result = await life_op(archive, seed, knowledge, receipts, "pending",
@@ -1213,7 +1213,13 @@ async def before_story(plan, archive, seed, knowledge, admitted, life):
     # scene beat, after_story): from its battle report it goes on as any scene (batch 8's
     # real-model run: eleven fights left their scenes light to the end)
     unlight = bool(light) and bool(life.get("fought"))
-    if life.get("act"):
+    if life.get("lead"):
+        result = await life_op(archive, seed, knowledge, receipts, "act", {"lead": life["lead"]})
+        made = result.get("receipts") or []
+        receipts += made
+        act = next((receipt for receipt in made if receipt.get("kind") == "act"), None)
+        unlight = bool(light)
+    elif life.get("act"):
         result = await life_op(archive, seed, knowledge, receipts, "act", {"index": life["act"]})
         made = result.get("receipts") or []
         receipts += made
@@ -1254,6 +1260,11 @@ async def before_story(plan, archive, seed, knowledge, admitted, life):
     plan["life"] = {"scene": scene, "next": upcoming, "opened": opened, "act": act,
                     "length": length_of(play), "routeChoices": True}
     plan["life"]["threadFacts"] = True
+    if life.get("lead") and act:
+        chosen = act.get("investigation") or {}
+        plan["life"]["investigation"] = {**chosen, "proven": any(
+            receipt.get("kind") == "lead" and receipt.get("ok")
+            and (receipt.get("lead") or {}).get("id") == life["lead"] for receipt in receipts)}
     tasks = clock_tasks(play_after(receipts, archive) or {})
     if tasks:
         plan["life"]["clockTasks"] = tasks

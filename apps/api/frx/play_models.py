@@ -1195,6 +1195,8 @@ class PlayLead(Contract):
     proven: bool
     where: OptStr = None
     chapter: OptStr = None
+    action: Literal["travel", "investigate", "ask"] | SkipJsonSchema[None] = None
+    place: OptStr = None
 
 
 class PlayKarma(Contract):
@@ -2106,20 +2108,21 @@ class TurnRequest(Contract):
     act: int | SkipJsonSchema[None] = Field(default=None, ge=1)
     move: Move | SkipJsonSchema[None] = None
     step: RealmStep | SkipJsonSchema[None] = None
+    lead: str | SkipJsonSchema[None] = Field(default=None, pattern=r"^F[0-9]{1,4}$")
 
     @model_validator(mode="after")
     def one_way(self):
-        ways = ("option", "verb", "act", "move", "step")
+        ways = ("option", "verb", "act", "move", "step", "lead")
         given = [name for name in ways if getattr(self, name) is not None]
         # contract_rule: the message is the player's (play_errors.request_problem passes it on)
         if len(given) > 1:
             raise PydanticCustomError(
-                "contract_rule", "选项、指令、行动卡、斗法的一手和秘境的一步，一回合只能给一样"
+                "contract_rule", "选项、指令、行动卡、斗法、秘境和调查疑点，一回合只能给一样"
             )
         if given and given[0] != "option" and (self.input or self.queue):
             raise PydanticCustomError(
                 "contract_rule",
-                "发指令、选行动卡、斗法出手或在秘境里走一步时，不能另写行动或排行动签",
+                "发指令、选行动卡、斗法、探索秘境或调查疑点时，不能另写行动或排行动签",
             )
         return self
 

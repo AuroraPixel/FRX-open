@@ -6,6 +6,8 @@
 import { useId, useState } from 'react';
 import type { Mainline, Quest } from '../../contracts';
 import { useStateStore } from '../../store/state';
+import { useTurnsStore } from '../../store/turns';
+import { followLead } from '../play/commands';
 import { Entry } from '../../ui/Entry';
 import { Empty, Loading } from '../../ui/Loading';
 import { Tabs } from '../../ui/Tabs';
@@ -65,6 +67,7 @@ function QuestMore({ id, quest }: { id: string; quest: Quest }) {
 
 export function Quests({ saveId }: { saveId: string }) {
   const view = useStateStore((s) => s.view);
+  const busy = useTurnsStore((s) => s.conflict || s.live?.status === 'streaming' || s.live?.status === 'pending');
   const aim = useAim('quests');
   const aimed = view?.quests.find((quest) => quest.id === aim?.pick);
   const [tab, setTab] = useState<Tab>(
@@ -83,8 +86,8 @@ export function Quests({ saveId }: { saveId: string }) {
     <>
       {view.play ? (
         <>
-          {view.mainline && <StoryHead line={view.mainline} />}
-          <Leads leads={view.play.leads ?? []} />
+          {view.mainline && <StoryHead line={view.mainline} date={view.play.date} />}
+          <Leads leads={view.play.leads ?? []} disabled={busy} onFollow={followLead} />
           <Karma karma={view.play.karma ?? []} />
           <Knots knots={view.play.knots ?? []} />
         </>

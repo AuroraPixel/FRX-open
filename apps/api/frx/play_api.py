@@ -64,7 +64,8 @@ def play_router(store, runtime):
         """Words alone: in a save of the cultivation life they may mean a standing verb
         (修炼, 调息: the desk decides), which needs no model and so no model quota."""
         return bool(body.input.strip()) and not (body.option or body.queue) and (
-            body.verb is None and body.act is None and body.move is None and body.step is None)
+            body.verb is None and body.act is None and body.move is None and body.step is None
+            and body.lead is None)
 
     @router.post("/saves/{archive_id}/turns")
     async def play(
@@ -72,7 +73,7 @@ def play_router(store, runtime):
         ws: Workspace = Depends(workspace),
     ):
         if not (body.input.strip() or body.option or body.queue or body.verb or body.act
-                or body.move or body.step):
+                or body.move or body.step or body.lead):
             raise invalid_input("请写下行动、选一个选项、排好行动签，或者发一个指令")
         # The model quota, before anything else: a turn the engine settles alone does not use it.
         # Words alone over it may still be a life save's 修炼 or 调息 (no model): the desk says.

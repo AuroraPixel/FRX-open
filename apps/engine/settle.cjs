@@ -793,7 +793,7 @@ async function lifeTool(input, settled, name, args) {
   const refused = reason => ({ kind, ok: false, readOnly: true, reason, summary: `没有结算：${reason}`, commands: "" });
   const setup = await lifeSetup({ ...input, receipts: settled });
   if (!setup) return refused("只有修仙人生的存档用得上");
-  const done = await setup.life.run({ op, args }, setup.env, setup.apply, settled.length);
+  const done = await setup.life.run({ op, args, receipts: settled }, setup.env, setup.apply, settled.length);
   if (done.error) return refused(done.reason || "这件事核不过");
   if (!done.receipts.length) return refused("没有可结算的");
   const [first, ...after] = done.receipts.map(receipt => ({ ...receipt }));
