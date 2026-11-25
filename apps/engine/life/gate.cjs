@@ -129,7 +129,10 @@ function capOf(env, name) {
   if (!name) return null;
   const rows = [...env.ctx.equippedItemRows(env.state['0']?.B1), ...Object.values(env.state['1'] || {})];
   const row = rows.find(each => each && (each.type ?? each['2']) === '功法' && plain(each.name ?? each['1']).split('|')[0] === name);
-  if (!row) return null;
+  return row ? capOfItem(env, row) : null;
+}
+
+function capOfItem(env, row) {
   const text = plain(row['7'] ?? row.cap ?? row.maxRealm);
   const written = text ? mechanics.parseRealm(text) : null;
   if (written && !written.unknown) return { ...written, written: true };
@@ -140,6 +143,19 @@ function capOf(env, name) {
   const tier = gear.tierOfItem(env, row);
   const realm = TIER_REALMS[tier] ? mechanics.parseRealm(TIER_REALMS[tier]) : null;
   return realm && !realm.unknown ? { ...realm, written: false, tier } : null;
+}
+
+function methodAdvice(env, target) {
+  const stored = env.ctx.storedItemIds(env.state);
+  const needed = ORDER[target];
+  const fitting = Object.entries(env.state['1'] || {}).filter(([id, row]) =>
+    row?.['2'] === '功法' && !stored.has(id) && (capOfItem(env, row)?.major ?? 0) >= target);
+  const ready = fitting.find(([id]) => !gear.canEquip(env, id));
+  if (ready) return `可在角色面板装备行囊里的「${rowName(ready[1])}」`;
+  const search = `可去坊市或宗门藏经阁找一部能修至${needed}的功法`;
+  if (!fitting.length) return search;
+  const [, row] = fitting[0];
+  return `行囊里的「${rowName(row)}」暂因境界不足无法修习；${search}`;
 }
 
 // Someone on the scene who will stand guard: 信赖 favour or more, a realm not below the player's.
@@ -210,14 +226,15 @@ function requirement(env, key, c, gate, rule) {
   }
   if (key === 'root') return { met: c.root.factor > 0, text: c.root.assumed ? '未注明，按真灵根' : c.root.label, short: '没有灵根' };
   if (key === 'technique') {
-    return { met: !!c.technique.name, text: c.technique.name ? `「${c.technique.name}」` : c.technique.unequipped ? `「${c.technique.unequipped}」尚未装备` : '尚无功法', short: '没有功法' };
+    const text = c.technique.name ? `「${c.technique.name}」` : `尚未装备功法；${methodAdvice(env, gate.target)}`;
+    return { met: !!c.technique.name, text, short: '没有功法' };
   }
   if (key === 'cap') {
     const cap = capOf(env, c.technique.name);
     if (!cap) return { met: true, text: c.technique.name ? '上限未注明' : '尚无功法', short: '' };
     const reach = cap.major >= gate.target;
     const how = cap.written ? '' : `按${cap.tier}算，`;
-    return { met: reach, text: reach ? `${how}可至${cap.text}` : `${how}只到${cap.text}，够不着${ORDER[gate.target]}`, short: `功法只到${cap.text}` };
+    return { met: reach, text: reach ? `${how}可至${cap.text}` : `${how}只到${cap.text}，够不着${ORDER[gate.target]}；${methodAdvice(env, gate.target)}`, short: `功法只到${cap.text}` };
   }
   if (key === 'mind') {
     if (!GATES.mind.open) return { met: true, text: GATES.mind.label, short: '' };

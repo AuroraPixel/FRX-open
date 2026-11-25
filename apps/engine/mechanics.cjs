@@ -606,6 +606,10 @@ function equipItem(env, { item_id: itemId, name = '' }, source) {
     if (row && !SLOT_OF[row['2']]) return fail(`「${rowName(row)}」是${row['2'] || '杂物'}，不能装备`);
     return fail(`储物袋中没有可装备的「${name || itemId}」`);
   }
+  if (env.play || env.cultivationLife) {
+    const blocked = require('./life/gear.cjs').canEquip(env, gear.id);
+    if (blocked) return fail(blocked);
+  }
   const slot = SLOT_OF[gear.type];
   const slots = Array.isArray(equipment[slot]) ? equipment[slot] : [];
   let index = [0, 1, 2, 3, 4, 5].find(i => !slots[i]);
@@ -652,6 +656,7 @@ function rewardLimit(group, name) {
 }
 
 function itemTypeFor(name) {
+  if (require('./life/manual-items.cjs').hasManualTitle(name)) return '功法';
   if (/丹|丸|散|膏|液|露|饼|膳|粮|汤|酒|茶|果/.test(name)) return '消耗品';
   if (/剑|刀|枪|棍|鞭|弓|斧|锤|戟/.test(name)) return '武器';
   if (/甲|袍|衣|靴|盾/.test(name)) return '护甲';
@@ -901,7 +906,7 @@ function tradeItem(env, args, source) {
     } else {
       id = nextItemIds(env, 1)[0];
       commands.push(`set(${JSON.stringify({ 0: id, 1: name, 2: type, 3: description.slice(0, 200),
-        4: effect.slice(0, 200), 5: String(quantity), ...(corrected && effect !== '无' ? { 9: effect.slice(0, 200) } : {}) })})`);
+        4: effect.slice(0, 200), 5: String(quantity), ...(type === '功法' && effect !== '无' ? { 9: effect.slice(0, 200) } : {}) })})`);
     }
     owns.items.push(id);
     owns.grants.push(name);
@@ -1178,8 +1183,10 @@ function techniqueOf(env) {
   }
   const best = found.sort((a, b) => b.factor - a.factor)[0] || null;
   const locked = env.ctx.storedItemIds(env.state);
+  const mayUse = env.play || env.cultivationLife ? require('./life/gear.cjs').canEquip : null;
   const shelved = Object.entries(env.state['1'] || {})
-    .filter(([id, row]) => row && !locked.has(id) && row['2'] === '功法' && rowName(row))
+    .filter(([id, row]) => row && !locked.has(id) && row['2'] === '功法' && rowName(row)
+      && (!mayUse || !mayUse(env, id)))
     .map(([, row]) => ({ name: rowName(row), factor: gradeFactor([rowName(row), row['6'], row['3'], row['9'], row['4']]) }))
     .sort((a, b) => b.factor - a.factor)[0];
   return {

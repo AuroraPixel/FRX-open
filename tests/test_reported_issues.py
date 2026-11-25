@@ -157,3 +157,47 @@ def test_abandoning_a_ready_reply_preserves_the_previous_commit(tmp_path, monkey
             assert client.get(f"{endpoint}/turns/pending").status_code == 204
     finally:
         store.engine.dispose()
+
+
+def test_high_tier_manual_keeps_its_type_but_cannot_bypass_equipment_requirements():
+    value = archive()
+    saved = value["data"]["state"]
+    commands = 'set({"0":"I91","1":"照雪秘录","2":"功法","3":"古修所遗","4":"三阶水道功法","5":"1"})'
+    settled = engine(value, commands=commands, story="你接下照雪秘录。", pilot={"receipts": []})
+    assert settled["errors"] == []
+    saved["currentState"] = settled["state"]
+    assert settled["state"]["1"]["I91"]["2"] == "功法"
+    sheet = engine(value, mode="life", op="gate")["gate"]
+    first = next(row for row in sheet["requires"] if row["key"] == "technique")
+    assert not first["met"] and "凝霜真解" in first["text"]
+
+    # An inaccessible manual remains visible in the bag, with the same reason the engine will use.
+    del saved["currentState"]["1"]["I2"]
+    pieces = engine(value, mode="life", op="view")["view"]["gear"]["pieces"]
+    reason = pieces["I91"]["unusable"]
+    assert "境界不足" in reason
+    refused = engine(value, mode="life", op="equip", args={"itemId": "I91"}, keep=True)
+    assert refused["reason"] == reason and "kept" not in refused
+    plan = engine(value, mode="presettle", action={"text": "我装备《照雪秘录》", "items": []})
+    assert not any(row["kind"] == "equip_item" and row["ok"] for row in plan.get("receipts", []))
+    sheet = engine(value, mode="life", op="gate")["gate"]
+    first = next(row for row in sheet["requires"] if row["key"] == "technique")
+    assert not first["met"] and "照雪秘录" in first["text"] and "坊市" in first["text"]
+
+
+def test_unknown_traded_and_quest_reward_manuals_are_classified_by_their_titles():
+    value = archive()
+    tables = value["data"]["state"]["currentState"]
+    tables["6"] = {"T1": {"0": "T1", "1": "问学", "3": "引潮宝典 ×1", "5": "进行中（炼气）"}}
+    calls = [
+        {"id": "sale", "name": "trade_item",
+         "arguments": json.dumps({"direction": "买入", "item_name": "空谷真解", "price": 1})},
+        {"id": "quest", "name": "update_quest",
+         "arguments": json.dumps({"quest_id": "T1", "status": "完成", "rewards": [{"name": "引潮宝典"}]})},
+    ]
+    results = engine(value, mode="tools", calls=calls, receipts=[])["results"]
+    receipts = [row["receipt"] for row in results]
+    assert all(row["ok"] for row in receipts), results
+    settled = engine(value, commands="", story="", pilot={"receipts": receipts})
+    new_items = {row["1"]: row["2"] for row in settled["state"]["1"].values()}
+    assert new_items["空谷真解"] == new_items["引潮宝典"] == "功法"

@@ -3833,6 +3833,9 @@
         "above": {
           "ge": 0,
           "type": "integer"
+        },
+        "unusable": {
+          "type": "string"
         }
       },
       "required": [

@@ -1962,6 +1962,7 @@ export interface GearPiece {
   stolen?: GearStolen;
   traits: string[];
   above?: number;
+  unusable?: string;
 }
 /**
  * A piece's refining (祭炼): the days done of the days its tier needs; until full it works at

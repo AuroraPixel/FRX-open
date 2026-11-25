@@ -95,6 +95,7 @@ export function Bag({ saveId }: { saveId: string }) {
   if (!view) return <Loading text="载入中……" />;
   const people = view.people.filter((person) => person.present);
   const item = view.bag.find((thing) => thing.id === picked) ?? null;
+  const equipReason = item ? view.play?.gear?.pieces[item.id]?.unusable : undefined;
   const pill = item ? view.play?.pills?.find((each) => each.itemId === item.id) : undefined;
   const tabLabel = BAG_TABS.find((t) => t.id === tab)?.label ?? '全部';
   const target = parseSlot(slot);
@@ -191,7 +192,7 @@ export function Bag({ saveId }: { saveId: string }) {
             actions={
               <>
                 {item.equippable && (
-                  <Btn onClick={() => void equip(item)} disabled={blocked}>
+                  <Btn onClick={() => void equip(item)} disabled={blocked || Boolean(equipReason)}>
                     装备
                   </Btn>
                 )}

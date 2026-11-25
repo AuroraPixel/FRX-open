@@ -37,6 +37,7 @@ export function gearRows(piece: GearPiece, active?: GearActive, inactive?: GearI
   const rows = [{ label: '品阶', value: [piece.tier, piece.quality && `${piece.quality}品`, piece.above && `高${chineseNumber(piece.above)}阶`].filter(Boolean).join(' · ') }];
   if (active) rows.push({ label: '生效', value: active.role ? ROLE[active.role] ?? '生效' : '生效' });
   else if (inactive) rows.push({ label: '生效', value: `不算数：${inactive.reason}` });
+  else if (piece.unusable) rows.push({ label: '装备', value: piece.unusable });
   const bonus = active ? bonusWords(active.bonus) : '';
   if (bonus) rows.push({ label: '加成', value: bonus });
   rows.push({ label: '成色', value: piece.condition });
@@ -57,6 +58,7 @@ type Mend = 'hand' | 'smith';
 
 /** The verb a piece's action sends: 修补 a damaged one (by hand or by a smith), else 祭炼. */
 export function gearVerb(itemId: string, piece: GearPiece, mend: Mend): Verb | null {
+  if (piece.unusable) return null;
   if (piece.damaged) return { kind: 'repair', id: itemId, ...(mend === 'smith' ? { smith: true } : {}) };
   if (piece.attune.done < piece.attune.need) return { kind: 'refine', id: itemId };
   return null;

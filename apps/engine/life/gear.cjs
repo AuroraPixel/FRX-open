@@ -194,7 +194,11 @@ function pieceOf(env, item, slot, index = null) {
   const stolen = stolenOf(env, id);
   return {
     id, name: texts.name, slot, index, type: texts.type, tier, ...(graded ? { quality: good.quality } : {}), from: graded ? 'catalogue' : 'written',
-    base, above, ...(above >= GEAR.above.most ? { unusable: chronicle.fill(GEAR.above.reason, { 名: texts.name, 阶: tier, 差: chronicle.numeral(above) }) } : {}),
+    base, above, ...(above >= GEAR.above.most ? {
+      unusable: slot === 'technique'
+        ? `境界不足：「${texts.name}」为${tier}功法，高出当前${chronicle.numeral(above)}阶，暂时无法修习`
+        : chronicle.fill(GEAR.above.reason, { 名: texts.name, 阶: tier, 差: chronicle.numeral(above) }),
+    } : {}),
     attune: { done, need }, condition, damaged, traits: traitsIn(env, id, texts, slot), ...(stolen ? { stolen } : {}),
     ...(isTalismanText(texts) ? { talisman: true } : {}), factor, bonus,
   };
@@ -602,8 +606,6 @@ function canEquip(env, itemId) {
 
 async function equipOp(env, args) {
   const id = plain(args.itemId ?? args.item_id);
-  const why = canEquip(env, id);
-  if (why) return env.refuse(why);
   const row = env.state['1']?.[id];
   const made = mechanics.equipItem(env, { item_id: id }, 'engine');
   if (!made.ok) return env.refuse(made.reason);
@@ -753,7 +755,8 @@ function repair(env, verb, upTo = null) {
 function marksOf(piece) {
   return { name: piece.name, slot: piece.slot, tier: piece.tier, ...(piece.quality ? { quality: piece.quality } : {}),
     attune: piece.attune, condition: piece.condition, ...(piece.damaged ? { damaged: true } : {}), ...(piece.stolen ? { stolen: { owner: piece.stolen.name, faction: piece.stolen.faction } } : {}),
-    traits: piece.traits, ...(piece.above ? { above: piece.above } : {}) };
+    traits: piece.traits, ...(piece.above ? { above: piece.above } : {}),
+    ...(piece.unusable ? { unusable: piece.unusable } : {}) };
 }
 
 function view(env) {
