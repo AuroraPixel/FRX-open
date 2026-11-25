@@ -19,7 +19,7 @@ from .domain import ROOT
 from .life import life_of
 from .play_art import same_name
 from .play_places import same_place
-from .play_state import Moment, Save, place_reading, scene_view
+from .play_state import Moment, Save, action_cards, place_reading, scene_view
 
 # What JavaScript's String.prototype.trim and the regex class \s count as white space.
 JS_SPACE = "\t\n\v\f\r                  　﻿"
@@ -1561,27 +1561,7 @@ def perks_on_offer(play):
 
 
 def actions_block(cards):
-    """The cultivation life's options: the priced cards of frxPlay.cards (the engine's), each as
-    the page shows it. A card made from the model's <branches> (fallback) shows no odds."""
-    items = []
-    for card in cards or []:
-        if not isinstance(card, dict) or not isinstance(card.get("index"), int):
-            continue
-        item = {"index": card["index"], "kind": str(card.get("kind") or ""),
-                "glyph": str(card.get("glyph") or ""), "title": str(card.get("title") or ""),
-                "sub": str(card.get("sub") or "")}
-        rolls = not card.get("plain") and not card.get("locked") and not card.get("fallback")
-        if rolls and isinstance(card.get("odds"), int | float):
-            item["odds"] = max(0, min(100, int(card["odds"])))
-            if card.get("tone") in {"good", "mid", "poor"}:
-                item["tone"] = card["tone"]
-        if card.get("locked"):
-            item["locked"] = True
-            if card.get("reason"):
-                item["reason"] = str(card["reason"])
-        if card.get("plain"):
-            item["plain"] = True
-        items.append(item)
+    items = action_cards(cards)
     if not items:
         return None
     block = {"type": "actions", "items": items}

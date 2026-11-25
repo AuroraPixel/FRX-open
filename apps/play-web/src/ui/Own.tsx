@@ -4,6 +4,7 @@ import { Gem } from './Gem';
 import styles from './Own.module.css';
 
 export interface OwnProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   onSend: (text: string) => void;
@@ -25,6 +26,7 @@ const MAX_LINES = 4;
  * Desktops show a 回车 key cap, phones a send diamond.
  */
 export function Own({
+  id,
   value,
   onChange,
   onSend,
@@ -68,6 +70,7 @@ export function Own({
   return (
     <div className={cx(styles.own, className)}>
       <textarea
+        id={id}
         ref={setRef}
         className={styles.input}
         rows={1}

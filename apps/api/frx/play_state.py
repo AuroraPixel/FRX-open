@@ -63,6 +63,10 @@ GLYPHS = (
     ("渡劫", "劫"),
     ("凡人", "凡"),
 )
+MANUAL_ITEMS = json.loads((ROOT / "content/life/manual-items.json").read_text(encoding="utf-8"))
+MANUAL_NAME = re.compile(MANUAL_ITEMS["manualName"])
+MANUAL_DESCRIPTION = re.compile(MANUAL_ITEMS["manualDescription"])
+MANUAL_EXCLUSIONS = re.compile(MANUAL_ITEMS["exclusions"])
 ITEM_TYPES = set(get_args(M.ItemType))
 ITEM_SYNONYMS = {"丹药": "消耗品", "法器": "法宝"}
 EQUIPPABLE = {"武器", "护甲", "功法", "法宝"}
@@ -295,8 +299,15 @@ def item_view(entry, quantity=None):
     raw_name = to_text(field("name", "1")) if truthy(field("name", "1")) else ""
     name = art.plain_name(raw_name) or "无名之物"
     text = text_of(field("description", "3"))
+    inferred = (
+        raw_type in MANUAL_ITEMS["ambiguousTypes"] and MANUAL_NAME.search(name)
+        and MANUAL_DESCRIPTION.search(text) and not MANUAL_EXCLUSIONS.search(name)
+        and not MANUAL_EXCLUSIONS.search(re.split(r"[，,。；;、：:\n]", text, maxsplit=1)[0])
+    )
+    if inferred:
+        item_type = "功法"
     effect = (
-        text_of(field("currentEffect", "9"))
+        (text_of(field("currentEffect", "9")) or (text_of(field("effect", "4")) if inferred else ""))
         if item_type == "功法"
         else text_of(field("effect", "4"))
     )
@@ -932,6 +943,31 @@ def calendar_entry(row):
     )
 
 
+def action_cards(cards):
+    """The cultivation life's options: the priced cards of frxPlay.cards (the engine's), each as
+    the page shows it. A card made from the model's <branches> (fallback) shows no odds."""
+    items = []
+    for card in cards or []:
+        if not isinstance(card, dict) or not isinstance(card.get("index"), int) or card["index"] < 1:
+            continue
+        item = {"index": card["index"], "kind": str(card.get("kind") or ""),
+                "glyph": str(card.get("glyph") or ""), "title": str(card.get("title") or ""),
+                "sub": str(card.get("sub") or "")}
+        rolls = not card.get("plain") and not card.get("locked") and not card.get("fallback")
+        if rolls and isinstance(card.get("odds"), int | float):
+            item["odds"] = max(0, min(100, int(card["odds"])))
+            if card.get("tone") in {"good", "mid", "poor"}:
+                item["tone"] = card["tone"]
+        if card.get("locked"):
+            item["locked"] = True
+            if card.get("reason"):
+                item["reason"] = str(card["reason"])
+        if card.get("plain"):
+            item["plain"] = True
+        items.append(item)
+    return items
+
+
 def play_view(save, progress):
     """The cultivation life's part of the state view, for a save in it (life.life_of), else None:
     the day, age and lifespan, the place (its kind, aura, danger in words and venues) and the
@@ -956,6 +992,7 @@ def play_view(save, progress):
     place = life.get("place") if isinstance(life.get("place"), dict) else None
     mind = life.get("mind") if isinstance(life.get("mind"), dict) else None
     # the engine lists every verb, 采集 and 狩猎 where the place allows them (rewards.listed)
+    cards = action_cards(life.get("cards", play.get("cards"))) if scene and not play.get("fight") else []
     verbs = rows("verbs")
     legacy = life.get("legacy") if isinstance(life.get("legacy"), dict) else None
     choosing = (legacy or {}).get("state") == "choosing"
@@ -975,6 +1012,7 @@ def play_view(save, progress):
         near=[M.PlayNear.model_validate(row) for row in rows("near")] if "near" in life else None,
         scene=M.PlayScene(title=str(scene.get("title") or ""), beats=int(scene.get("beats") or 0))
         if scene else None,
+        cards=[M.ActionCard.model_validate(card) for card in cards] if cards else None,
         verbs=[M.PlayVerb.model_validate(
             {key: row[key] for key in ("kind", "glyph", "label", "main", "off", "note", "options")
              if row.get(key) not in (None, False, "")}) for row in verbs

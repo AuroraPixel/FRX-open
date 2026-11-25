@@ -1793,6 +1793,7 @@ class PlayView(Contract):
     place: PlayPlace | SkipJsonSchema[None] = None
     near: list[PlayNear] | SkipJsonSchema[None] = None
     scene: PlayScene | SkipJsonSchema[None] = None
+    cards: list[ActionCard] | SkipJsonSchema[None] = None
     verbs: list[PlayVerb]
     clocks: list[PlayClock]
     calendar: list[CalendarEntry]
@@ -2255,6 +2256,7 @@ class VersionRequest(Contract):
 
 class UndoRequest(VersionRequest):
     to_turn: int | SkipJsonSchema[None] = Field(default=None, ge=1)
+    pending_turn_id: str | SkipJsonSchema[None] = Field(default=None, min_length=1, max_length=100)
 
 
 class PanelAction(VersionRequest):

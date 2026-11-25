@@ -7113,6 +7113,12 @@
         "scene": {
           "$ref": "#/definitions/PlayScene"
         },
+        "cards": {
+          "items": {
+            "$ref": "#/definitions/ActionCard"
+          },
+          "type": "array"
+        },
         "verbs": {
           "items": {
             "$ref": "#/definitions/PlayVerb"
@@ -9375,6 +9381,11 @@
         "toTurn": {
           "ge": 1,
           "type": "integer"
+        },
+        "pendingTurnId": {
+          "maxLength": 100,
+          "minLength": 1,
+          "type": "string"
         }
       },
       "required": [

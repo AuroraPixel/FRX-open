@@ -52,7 +52,7 @@ export function PhoneBar({ bookRef, pending, chips, own, navOpen, onNav, verbs, 
         <div className={styles.barRow}>{verbs}</div>
       ) : (
         <div className={styles.barRow}>
-          {onVerbs && <Gem glyph="令" label="回到常驻指令" labelMode="none" onClick={onVerbs} />}
+          {onVerbs && <Gem glyph="令" label="指令" aria-label="回到常驻指令" labelMode="below" aria-controls="own-action" aria-expanded onClick={onVerbs} />}
           {own}
           <Gem glyph="卷" label="导航" labelMode="none" selected={navOpen} onClick={onNav} />
         </div>

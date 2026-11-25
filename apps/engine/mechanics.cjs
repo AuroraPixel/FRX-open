@@ -884,8 +884,12 @@ function tradeItem(env, args, source) {
         owns.npcItems.push(`${counterpartId}:${edit.key}`);
       }
     }
-    const type = ITEM_TYPES.includes(plain(args.item_type)) ? plain(args.item_type)
+    const description = plain(args.description) || plain(listed?.['3'] ?? listed?.description) || `${who ? `从${who}处` : ''}买来的${name}`;
+    const effect = plain(args.effect) || plain(listed?.['4'] ?? listed?.effect) || '无';
+    let type = ITEM_TYPES.includes(plain(args.item_type)) ? plain(args.item_type)
       : ITEM_TYPES.includes(plain(listed?.['2'] ?? listed?.type)) ? plain(listed['2'] ?? listed.type) : itemTypeFor(name);
+    const corrected = (env.cultivationLife || env.play) && require('./life/manual-items.cjs').isManual(name, type, description);
+    if (corrected) type = '功法';
     // Goods go into the bag: a stack locked away in storage is not merged into.
     const locked = env.ctx.storedItemIds(env.state);
     const stack = Object.entries(env.state['1'] || {}).find(([id, row]) => row && !locked.has(id) && rowName(row) === name
@@ -896,9 +900,8 @@ function tradeItem(env, args, source) {
       commands.push(`add(${JSON.stringify(id)},{"5":"${env.ctx.itemStackCount(stack[1]['5']) + quantity}"})`);
     } else {
       id = nextItemIds(env, 1)[0];
-      const description = plain(args.description) || plain(listed?.['3'] ?? listed?.description) || `${who ? `从${who}处` : ''}买来的${name}`;
-      const effect = plain(args.effect) || plain(listed?.['4'] ?? listed?.effect) || '无';
-      commands.push(`set(${JSON.stringify({ 0: id, 1: name, 2: type, 3: description.slice(0, 200), 4: effect.slice(0, 200), 5: String(quantity) })})`);
+      commands.push(`set(${JSON.stringify({ 0: id, 1: name, 2: type, 3: description.slice(0, 200),
+        4: effect.slice(0, 200), 5: String(quantity), ...(corrected && effect !== '无' ? { 9: effect.slice(0, 200) } : {}) })})`);
     }
     owns.items.push(id);
     owns.grants.push(name);

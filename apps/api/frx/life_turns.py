@@ -369,7 +369,7 @@ FEE_PAYMENT = re.compile(
     r"(下品|中品)?灵石"
 )
 FEE_PURPOSE = re.compile(
-    r"入场|进场|入市|入集|门资|门票|过路|通行费|丁税|船资|车资|房钱|缴税"
+    r"入场|进场|入城|入市|入集|门资|门票|过路|通行费|丁税|船资|车资|房钱|缴税|守卫|门卫|岗哨"
 )
 FEE_CONDITIONAL = re.compile(
     r"如果|要是|倘若|是否|能否|能不能|问(?:清|明)|打算|试探|展示|验看|出示|"
@@ -387,6 +387,64 @@ def stated_fee(text):
     number, grade = payments[0]
     amount = count_of(number) * (100 if grade == "中品" else 1)
     return amount if amount > 0 else None
+
+
+FEE_QUOTE = re.compile(
+    r"(入场费|入城费|门票|通行费|过路费|船资|车资|房钱|门资)"
+    r"[^，,；;。！？\n]{0,6}?(?:要|需|收|是|[:：])\s*"
+    r"([0-9]{1,8}|[零一二两三四五六七八九十百千]{1,12})\s*[块枚颗]\s*(下品|中品)?灵石"
+)
+
+
+def priced_actions(raw):
+    cards, fallback = parse_actions(raw)
+    # A quoted tariff is usable only for a card naming the same tariff. Previously paid amounts
+    # and unrelated prices in the prose cannot price another card.
+    prose = plain(story_of(raw))
+    tariffs = {}
+    for clause in re.split(r"[，,；;。！？\n]", prose):
+        if re.search(r"不收|免收|无需|不必|不付|已付|退还", clause):
+            continue
+        for name, amount, grade in FEE_QUOTE.findall(clause):
+            tariffs.setdefault(name, set()).add(count_of(amount) * (100 if grade == "中品" else 1))
+    for card in cards:
+        if card["kind"] != "买卖" or FEE_CONDITIONAL.search(card["title"]):
+            continue
+        fee = stated_fee(card["title"])
+        if fee is None and re.search(r"付|缴|交|给", card["title"]):
+            matches = {amount for name, amounts in tariffs.items() if name in card["title"]
+                       for amount in amounts}
+            if len(matches) == 1:
+                fee = matches.pop()
+        if fee:
+            card["fee"] = fee
+    return cards, fallback
+
+
+BREAKTHROUGH_INPUT = re.compile(
+    r"冲关|(?:冲击|冲破|突破|晋入|晋阶至|踏入|跨入|进阶到|尝试突破|正式突破)"
+    r"\s*(?:大境界|境界瓶颈|瓶颈|关隘|筑基|结丹|金丹|元婴|化神|炼虚|合体|大乘|渡劫)"
+    r"|突破(?:到|至|为)(?:筑基|结丹|金丹|元婴|化神|炼虚|合体|大乘|渡劫)"
+)
+METHOD_INPUT = re.compile(
+    r"(?:改修|改练|转修|重修)\s*[《「][^》」]{1,30}[》」]"
+    r"|(?:换(?:下|上|成|用)|改修|改练|改换|改为|更换|替换|转修|重修|设为|切换|卸下|装备)"
+    r"[^，,；;。！？\n]{0,30}(?:主修功[法诀]|本命功法|功法|心法|真解|[诀经]》)"
+    r"|主修功[法诀][^，,；;。！？\n]{0,20}(?:换成|改为|改成|切换|卸下)"
+)
+ASKING_ABOUT = re.compile(r"打听|请教|询问|求教|问问|问他|查看|翻阅|查找|了解|筹备|为将来|准备日后|将来|日后|暂不|不急着")
+
+
+def protected_action(text):
+    """Direct a deliberate gate or equipment change to its engine-controlled entry point."""
+    for clause in re.split(r"[，,；;。！？\n]", text):
+        if ASKING_ABOUT.search(clause):
+            continue
+        if BREAKTHROUGH_INPUT.search(clause):
+            return "请打开「冲关准备单」选择辅助材料并冲关。"
+        if METHOD_INPUT.search(clause):
+            return "请打开角色面板，在「功法」格装备或更换主修功法。"
+    return None
 
 
 def words_verb(kind, text):
@@ -591,6 +649,28 @@ async def close_reported(archive, seed, knowledge, receipts):
         return []
     result = await life_op(archive, seed, knowledge, receipts, "scene", {"action": "close"})
     return result.get("receipts") or []
+
+
+FIGHT_REPORT_SECONDS = 30
+
+
+async def settle_battle_report(archive, seed, knowledge, before):
+    """Finish a resolved fight using its engine receipts and a factual report."""
+    ended = fight_end_of(before)
+    if not ended:
+        raise ModelFailure("引擎尚未结算斗法结果")
+    story = engine_report(ended) or "\n\n".join(
+        plain(receipt["summary"]) for receipt in before
+        if receipt.get("kind") == "fight" and receipt.get("summary")
+    ) or "斗法已结束。请查看本回合的斗法结算。"
+    receipts = before + await close_reported(archive, seed, knowledge, before)
+    report = synthesize(story, receipts, "", "")
+    result = await settle_card(archive, "", seed, knowledge, reply=report,
+                               pilot={"receipts": receipts, "story": story})
+    if result.get("errors") or PilotTurn.blocking(result):
+        raise ModelFailure("斗法结算校验未通过，请重试或放弃本回合")
+    result.update(receipts=receipts, errors=[])
+    return report, result
 
 
 # ---------------------------------------------------------------- the gate (item 22)
@@ -1562,7 +1642,7 @@ async def after_story(archive, seed, knowledge, receipts, raw, beat, commands=""
         result = await life_op(archive, seed, knowledge, receipts + made, "scene",
                                {"action": "close"})
         return made + (result.get("receipts") or []), []
-    cards, fallback = parse_actions(raw)
+    cards, fallback = priced_actions(raw)
     result = await life_op(archive, seed, knowledge, receipts + made, "cards",
                            {"cards": cards, "fallback": fallback})
     made += result.get("receipts") or []
@@ -1595,7 +1675,7 @@ async def repriced(archive, settlement, seed, knowledge, receipts, late, raw, ca
     play = play_after(late, after) or {}
     if play.get("encounter") or not play.get("scene"):
         return None
-    shown, fallback = parse_actions(raw)
+    shown, fallback = priced_actions(raw)
     try:
         result = await life_op(after, seed, knowledge, list(late), "cards",
                                {"cards": shown, "fallback": fallback})
@@ -2122,25 +2202,35 @@ def life_pilot_stream(runtime, records, running, request_id, reservation, archiv
         runtime.active[running] = asyncio.current_task()
         started = time.monotonic()
         try:
+            battle = bool(beat.get("fought") and fight_end_of(pilot.get("receipts") or []))
+            limit = FIGHT_REPORT_SECONDS if battle else None
             async with asyncio.timeout(GENERATION_SECONDS):
                 if chronicle:
                     yield event({"chronicle": list(chronicle)})
-                # what settled before the story (the opening mark, the card's check) goes first
                 yield event({"cards": []})
-                async for chunk in turn.run():
-                    data = frame_data(chunk) or {}
-                    if "final" in (data.get("frx") or {}):
-                        # settled with the story: the scene's beat or close, the next cards
-                        yield event({"cards": []})
-                        visible_cards = [] if after["protocol"] else after["cards"]
-                        turn.final = kept_reply(turn.final, visible_cards)
-                        block = actions_block(visible_cards)
-                        if block:
-                            yield event({"actions": block})
-                        yield event({"final": turn.final})
-                        continue
-                    yield chunk
-                settlement = turn.settlement
+                try:
+                    async with asyncio.timeout(limit):
+                        async for chunk in turn.run():
+                            data = frame_data(chunk) or {}
+                            if "final" not in (data.get("frx") or {}):
+                                yield chunk
+                except (LifeRefusal, ModelFailure, TimeoutError):
+                    if not battle:
+                        raise
+                settlement = getattr(turn, "settlement", None)
+                if battle and (not settlement or settlement.get("errors")
+                               or settlement.get("pilotUnresolved")):
+                    turn.final, settlement = await settle_battle_report(
+                        archive_before, seed, context.get("knowledge"), pilot.get("receipts") or [])
+                    turn.receipts = settlement["receipts"]
+                    turn.settlement = settlement
+                    after["cards"], after["matter"] = [], None
+                visible_cards = [] if after["protocol"] else after["cards"]
+                turn.final = kept_reply(turn.final, visible_cards)
+                block = actions_block(visible_cards)
+                if block:
+                    yield event({"actions": block})
+                yield event({"final": turn.final})
                 settlement.setdefault(
                     "beforeStateHash", state_digest(archive_before["data"]["state"])
                 )

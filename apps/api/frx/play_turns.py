@@ -40,6 +40,7 @@ from .life_turns import (
     engine_report,
     fight_end_of,
     free_verb,
+    protected_action,
     gate_of,
     interruption_of,
     life_op,
@@ -338,7 +339,11 @@ def picked_card(play, index):
     card = cards[index - 1] if isinstance(index, int) and 1 <= index <= len(cards) else None
     if not isinstance(card, dict):
         raise TurnError("refused", f"没有第{index}张行动卡")
-    if card.get("locked"):
+    trade = card.get("trade") or {}
+    legacy_price = (trade.get("direction") == "buy" and trade.get("price") is not None
+                    and not trade.get("fee") and not trade.get("good") and "quotedPrice" not in card)
+    # Older cards could be locked by the placeholder price. The engine reprices these on use.
+    if card.get("locked") and not legacy_price:
         raise TurnError("refused", str(card.get("reason") or "不够格"))
     return card
 
@@ -699,8 +704,15 @@ class TurnPlay:
             ended = fight_end_of(settled[0])
             told = engine_report(ended)
             if ended is not None and told is None:
-                self.fought = ended
-                return await self.prepare_beat(settled, words, fought=ended)
+                try:
+                    self.fought = ended
+                    return await self.prepare_beat(settled, words, fought=ended)
+                except TurnError as error:
+                    if error.code not in {"model_not_configured", "quota_exceeded"}:
+                        raise
+                    self.fought = None
+                    told = "\n\n".join(plain(receipt["summary"]) for receipt in settled[0]
+                                       if receipt.get("kind") == "fight" and receipt.get("summary"))
             if told is not None:
                 # a routine fight (batch 9): the engine's report is the story, and the scene it
                 # was fought in closes; the model is not asked
@@ -1276,6 +1288,8 @@ class TurnDesk:
             else:
                 await asyncio.to_thread(check_can_play, ws.records, save.name, save.value)
                 words = str(request.get("input") or "").strip()
+                if play is not None and (guide := protected_action(words)):
+                    raise TurnError("refused", guide + "本次行动未执行，材料未消耗。")
                 verb = None
                 if play is not None and not play.get("scene") and not play.get("opening") and (
                     words and not (request.get("option") or request.get("queue"))
@@ -1399,7 +1413,8 @@ class TurnDesk:
         if first is not None:
             run.emit("block", block=first)
         try:
-            await self.play_out(run, ws, action, actions, first, taken)
+            async with asyncio.timeout(GENERATION_SECONDS + 30):
+                await self.play_out(run, ws, action, actions, first, taken)
         except TurnError as error:
             if await self.finish_committed(run, ws):
                 return
@@ -1417,8 +1432,9 @@ class TurnDesk:
             if await self.finish_committed(run, ws):
                 return
             await self.end_failed(ws, run)
-            run.emit("error", code="engine_failed", message="回合未能完成，请稍后重试",
-                     retryable=True)
+            message = ("回合等待超时，可以重试或回到上一回合继续。"
+                       if isinstance(error, TimeoutError) else "回合未能完成，请稍后重试")
+            run.emit("error", code="engine_failed", message=message, retryable=True)
             run.finish("failed")
 
     async def end_failed(self, ws, run):
@@ -1848,7 +1864,7 @@ class TurnDesk:
             attempt = await asyncio.to_thread(ws.records.request, turn_id)
         return {"status": attempt["status"]}
 
-    async def undo(self, ws, save, version, to_turn=None):
+    async def undo(self, ws, save, version, to_turn=None, pending_id=None):
         """Take back the latest turn, or go back to the end of turn `to_turn`."""
         async with self.lock(ws.user.id, save.name):
             self.check_version(ws.user.id, save, version)
@@ -1856,6 +1872,8 @@ class TurnDesk:
                 raise TurnError("turn_in_progress", "回合正在进行，请等它结束或停止后再撤回")
             timeline = CardTimeline(ws.records)
             try:
+                if to_turn is not None and pending_id is not None:
+                    raise TurnError("refused", "请选择撤回待结算回合或回到指定回合")
                 if to_turn:
                     logs = settled_turns(save.data["logs"])
                     if not 1 <= to_turn <= len(logs):
@@ -1863,7 +1881,7 @@ class TurnDesk:
                     await asyncio.to_thread(timeline.restore_snapshot, save.name, save.version,
                                             logs[to_turn - 1]["id"])
                 else:
-                    await asyncio.to_thread(timeline.undo, save.name, save.version)
+                    await asyncio.to_thread(timeline.undo, save.name, save.version, pending_id)
             except HTTPException as error:
                 raise turn_error(error) from None
         after, view = await self.state_of(ws, save.archive_id)

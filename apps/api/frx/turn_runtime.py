@@ -999,7 +999,7 @@ async def repair_pilot(runtime, records, user_id, request_id, attempt, saved):
     if life:
         from .life_cards import kept_reply
         from .life_prompt import cards_rule
-        from .life_turns import life_settler
+        from .life_turns import fight_end_of, life_settler, settle_battle_report
 
         holder = SimpleNamespace(receipts=receipts)
         after, life_settle = life_settler(
@@ -1075,6 +1075,13 @@ async def repair_pilot(runtime, records, user_id, request_id, attempt, saved):
         # 1. The rules may have moved on since the turn stopped: settle the reply as it is.
         raw = original
         story, commands, branches, result, errors = await settle_reply(raw)
+        if errors and life and beat.get("fought") and fight_end_of(receipts):
+            raw, result = await settle_battle_report(
+                archive, attempt["seed"], context.get("knowledge"), receipts)
+            story, commands, branches = split_reply(raw)
+            receipts = result["receipts"]
+            after["cards"] = []
+            errors = []
         pilot = result.get("pilot") or {}
         if errors and not pilot.get("mismatches") and not pilot.get("protocol"):
             # 2. Only the state block failed: repair it and keep the story the player read.

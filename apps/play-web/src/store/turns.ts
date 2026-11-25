@@ -66,7 +66,7 @@ export interface TurnsStore {
   /** finishes the settlement of a turn whose text arrived but whose settlement did not (待结算) */
   settle: () => Promise<void>;
   /** back to the end of turn `toTurn` (回到此处); without it the last turn is taken back (撤回) */
-  undo: (toTurn?: number) => Promise<boolean>;
+  undo: (toTurn?: number, pendingTurnId?: string) => Promise<boolean>;
   /** forgets the failed or cancelled turn (改写行动) */
   discard: () => void;
   /** after a version conflict: the save's state and turns as they are now */
@@ -168,13 +168,20 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
       own.signal.addEventListener('abort', stopProbe, { once: true });
       try {
         const pending = await play.pending(saveId, probe.signal);
-        if (!stillFollowing() || pending?.status === 'streaming') return;
-        const saved = pending?.id === id ||
-          (await play.turns(saveId, undefined, probe.signal)).turns.some((turn) => turn.id === id);
-        if (!saved || !stillFollowing()) return;
+        if (!stillFollowing() || (pending?.status === 'streaming' && pending.id === id)) return;
+        const saved = pending || (await play.turns(saveId, undefined, probe.signal)).turns.some((turn) => turn.id === id);
+        if (!stillFollowing()) return;
         controller = null;
         own.abort();
-        await get().reload();
+        if (saved) {
+          await get().reload();
+        } else {
+          const live = get().live;
+          if (!live) return;
+          set({ reconnecting: 0, taken: false, live: { ...live, status: 'failed', open: null,
+            error: { code: 'network', message: '服务器上已没有正在执行的回合，可以重试或继续游玩。', retryable: true } } });
+          await catchUp(saveId);
+        }
       } catch {
         // Keep the existing stream while a status read fails or times out.
       } finally {
@@ -246,7 +253,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         conflict: get().conflict || problem.code === 'version_conflict',
         live: live && {
           ...live,
-          status: 'failed',
+          status: live.retryingSettlement ? 'pending' : 'failed',
           open: null,
           error: { code: problem.code, message: problem.message, retryable: problem.retryable },
         },
@@ -425,23 +432,23 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
       if (!saveId || pending?.status !== 'pending' || at === undefined) return;
       set({
         turns: turns.filter((turn) => turn.id !== pending.id),
-        live: { ...pending, status: 'streaming', settling: true, error: undefined },
+        live: { ...pending, status: 'streaming', settling: true, retryingSettlement: true, error: undefined },
         error: null,
       });
       await follow((signal) => play.retry(saveId, pending.id, { version: at }, signal));
     },
 
-    async undo(toTurn) {
+    async undo(toTurn, pendingTurnId) {
       const saveId = get().saveId;
       const at = version();
       if (!saveId || at === undefined || get().live?.status === 'streaming') return false;
       try {
         // 撤回 sends no turn: the server takes back its latest, pending ones included
-        const result = await play.undo(saveId, toTurn === undefined ? { version: at } : { version: at, toTurn });
+        const result = await play.undo(saveId, { version: at, toTurn, pendingTurnId });
         useStateStore.getState().set(result.state, [], { fresh: true });
         liveText.clear();
         const kept = result.state.turnNo;
-        set((s) => ({ turns: s.turns.filter((t) => t.no <= kept), live: null, error: null, request: null }));
+        set((s) => ({ turns: s.turns.filter((t) => t.no <= kept && t.id !== pendingTurnId), live: null, error: null, request: null }));
         return true;
       } catch (error) {
         const problem = failed(error);

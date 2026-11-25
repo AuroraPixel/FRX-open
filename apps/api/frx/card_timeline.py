@@ -35,7 +35,7 @@ class CardTimeline:
     def __init__(self, records):
         self.records = records
 
-    def row(self, session, name, version):
+    def row(self, session, name, version, allowed_ready=None):
         self.records.lock(session)
         row = self.records.record(session, "archives", name, lock=True)
         if not row or not row.value:
@@ -48,7 +48,7 @@ class CardTimeline:
         inflight = session.scalars(
             self.records.requests_of(name).where(CardRequest.status.in_(["generating", "ready"]))
         ).all()
-        if any(request_blocks_archive(request) for request in inflight):
+        if any(request.id != allowed_ready and request_blocks_archive(request) for request in inflight):
             raise HTTPException(409, "回合正在生成或结算，请先等待完成或停止")
         return row
 
@@ -213,10 +213,16 @@ class CardTimeline:
             count += len(carried)
         return self.restore(session, row, snapshot, count)
 
-    def undo(self, name, version):
+    def undo(self, name, version, pending_id=None):
         with self.records.sessions.begin() as session:
-            row = self.row(session, name, version)
+            row = self.row(session, name, version, allowed_ready=pending_id)
             logs = row.full["data"]["logs"]
+            if pending_id:
+                pending = self.records.attempt(session, pending_id, lock=True)
+                if not pending or pending.archive != name or pending.status not in {"pending", "repairing", "ready"}:
+                    raise HTTPException(409, "此回合已结束，请重新载入")
+                if pending.status == "ready":
+                    return self.abandon_ready(row, pending)
             index = next(
                 (i for i in range(len(logs) - 1, -1, -1) if logs[i].get("type") == "ai"
                  and not logs[i].get("isGhost") and not logs[i].get("isDeepSummary")), None
@@ -226,6 +232,8 @@ class CardTimeline:
                     raise HTTPException(409, COMPRESSED)
                 raise HTTPException(409, "没有可撤回的AI回合")
             log = logs[index]
+            if pending_id and (log.get("frxRequestId") != pending_id or not log.get("frxPending")):
+                raise HTTPException(409, "待结算的回合已变化，请重新载入")
             latest = session.scalars(self.records.requests_of(name).where(
                 CardRequest.status.in_(["committed", "pending", "repairing"])
             ).order_by(CardRequest.created_at.desc())).first()
@@ -279,3 +287,20 @@ class CardTimeline:
             if previous is None:
                 raise HTTPException(409, "旧档没有更早快照，无法安全撤回")
             return self.restore(session, row, self.log_snapshot(row.full, previous), previous + 1)
+
+
+    def abandon_ready(self, row, pending):
+        """A durable reply whose effects have not been applied can discard only its own input."""
+        value = row.full
+        logs = value["data"]["logs"]
+        context = pending.context or {}
+        user_log = context.get("userLogId")
+        if user_log:
+            if not logs or logs[-1].get("id") != user_log or logs[-1].get("type") != "user":
+                raise HTTPException(409, "待结算的行动已变化，请重新载入")
+            value["data"]["logs"] = logs[:-1]
+            row.value = value
+        pending.status = "cancelled"
+        pending.lease_until = None
+        row.version += 1
+        return self.records.envelope(row)

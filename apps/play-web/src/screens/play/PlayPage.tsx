@@ -16,8 +16,9 @@ import { useSettingsStore } from '../../store/settings';
 import { useStateStore } from '../../store/state';
 import { useTurnsStore } from '../../store/turns';
 import { type SheetName, useUiStore } from '../../store/ui';
-import { oddsWords } from '../../ui/Acts';
+import { Acts, oddsWords } from '../../ui/Acts';
 import { Chip } from '../../ui/Chip';
+import { Dialog } from '../../ui/Dialog';
 import { Opts } from '../../ui/Opts';
 import { Own } from '../../ui/Own';
 import { Toast } from '../../ui/Toast';
@@ -216,16 +217,26 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
   // ---------------------------------------------------------------- turns, scrolling
 
   const writing = live?.status === 'streaming';
-  const pending = live?.status === 'pending';
+  const lastSaved = turns.at(-1);
+  const pendingId = live?.status === 'pending' ? live.id : !live && lastSaved?.status === 'pending' ? lastSaved.id : undefined;
+  const pending = Boolean(pendingId);
+  const choicesAtRest = !live || live.status === 'cancelled' || live.status === 'failed';
   const shown = live ? turns.filter((t) => t.no !== live.no) : turns;
   const lastShown = shown[shown.length - 1];
   const current = live ? live.no : (lastShown?.no ?? null);
   // the options stand until a turn is sent; a cancelled turn gives them back
-  const options = (!live || live.status === 'cancelled') && lastShown ? optionsOf(lastShown.blocks) : undefined;
+  const options = (!live || live.status === 'cancelled') && !pending && lastShown ? optionsOf(lastShown.blocks) : undefined;
   // the cultivation life's action cards take the options' place, at the end of the turn being read
-  const cards = (!live || live.status === 'cancelled') && lastShown ? actsOf(lastShown.blocks) : undefined;
-  const perksUp = (!live || live.status === 'cancelled') && lastShown ? perksOf(lastShown.blocks) : undefined;
-  const cardList = useCallback(() => scrollRef.current?.querySelector<HTMLElement>('[data-current] ol[aria-label="抉择"]') ?? null, []);
+  const historyCards = choicesAtRest && !pending && lastShown ? actsOf(lastShown.blocks) : undefined;
+  const currentCards = view.play?.cards;
+  const historyMatches = historyCards && lastShown?.no === view.turnNo &&
+    (!currentCards || (currentCards.length === historyCards.items.length && currentCards.every((card, i) =>
+      card.index === historyCards.items[i]?.index && card.title === historyCards.items[i]?.title &&
+      card.sub === historyCards.items[i]?.sub)));
+  const fallbackCards = choicesAtRest && !pending && currentCards?.length && !historyMatches ? currentCards : undefined;
+  const cards = fallbackCards ? { items: fallbackCards } : historyCards;
+  const perksUp = (!live || live.status === 'cancelled') && !pending && lastShown ? perksOf(lastShown.blocks) : undefined;
+  const cardList = useCallback(() => scrollRef.current?.querySelector<HTMLElement>('ol[aria-label="抉择"]') ?? null, []);
   const reduced = useMedia('(prefers-reduced-motion: reduce)');
   const smooth = motion === 'full' && !reduced && pins().t === undefined;
   const loadEarlier = useCallback(() => void useTurnsStore.getState().loadEarlier(), []);
@@ -398,7 +409,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
     () =>
       play
         ? {
-            actsFor: !live || live.status === 'cancelled' ? (lastShown?.no ?? null) : null,
+            actsFor: choicesAtRest && !pending && !fallbackCards ? (lastShown?.no ?? null) : null,
             onAct: act,
             locked: inputLocked,
             hotkeys,
@@ -406,7 +417,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
             onPerk: (index: number) => void command({ kind: 'perk', index }),
           }
         : null,
-    [play, live, lastShown?.no, act, inputLocked, hotkeys, elaborate, command],
+    [play, choicesAtRest, pending, fallbackCards, lastShown?.no, act, inputLocked, hotkeys, elaborate, command],
   );
   // a fight under way (gameplay plan item 21): its commands take the bar on phones and the foot on desktops
   const fightNow = play?.fight;
@@ -524,6 +535,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
   );
   const own = (
     <Own
+      id="own-action"
       value={draft}
       onChange={setDraft}
       onSend={(text) => {
@@ -544,7 +556,17 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
       onBlur={() => setTyping(false)}
     />
   );
-  const pendingCard = pending && <PendingCard onSettle={() => void useTurnsStore.getState().settle()} />;
+  const [abandon, setAbandon] = useState<string | null>(null);
+  const pendingCard = pendingId && (
+    <PendingCard error={live?.error?.message} onSettle={() => void useTurnsStore.getState().settle()}
+      onAbandon={() => setAbandon(pendingId)} />
+  );
+  const confirmAbandon = async () => {
+    if (!abandon) return;
+    const accepted = await useTurnsStore.getState().undo(undefined, abandon);
+    setAbandon(null);
+    if (!accepted) notify(useTurnsStore.getState().error?.message ?? '回合状态已变化，请重新载入。');
+  };
   const optionList = options && !typing && (
     <Opts items={options.items} onPick={pick} hotkeys={hotkeys} disabled={inputLocked} className={inlineOptions ? bookStyles.inline : undefined} />
   );
@@ -670,6 +692,7 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
           >
             <LifeContext.Provider value={lifeReading}>
               {sections}
+              {fallbackCards && <Acts items={fallbackCards} onPick={act} disabled={inputLocked} hotkeys={hotkeys && !inputLocked} />}
               {live && (
                 <TurnSection
                   key={live.no}
@@ -734,6 +757,10 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
           />
         )}
       </div>
+      <Dialog open={abandon !== null} className={styles.solid} title="放弃待结算回合"
+        confirmLabel="放弃本回合" danger onConfirm={() => void confirmAbandon()} onCancel={() => setAbandon(null)}>
+        <p>将撤掉这一回合，回到行动前。此前已完成的回合会保留。</p>
+      </Dialog>
       <div className="visually-hidden" aria-live="polite" data-announce="">
         {said.map((line) => (
           <p key={line.key}>{line.text}</p>

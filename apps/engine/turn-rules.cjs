@@ -122,6 +122,9 @@ function useItem(env, { id, quantity, consumed = true }, source) {
   if (!effects.length && mechanics.isAid(name)) {
     return refusal('use_item', item, quantity, `「${name}」是冲关的辅助丹药，冲击境界时由breakthrough服用（填在aid_item_ids里），平时服下只会白白浪费`, source);
   }
+  if ((env.cultivationLife || env.play) && ['text', 'tool'].includes(source) && !effects.length && !life?.eases) {
+    return refusal('use_item', item, quantity, `「${name}」没有可结算的直接效果。若用于进阶或炼制，请从对应面板操作，物品未消耗`, source);
+  }
   const stats = playerStats(env);
   // Progress from a pill climbs the steps like any gain; at the bottleneck it would be wasted.
   const progress = effects.find(effect => effect.stat === '修为');

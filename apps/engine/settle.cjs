@@ -73,7 +73,10 @@ const knownIdsOf = archive => [...(archive.data.state.worldBookEntries || []).ma
   ...Object.keys(bookOf(archive))];
 
 function engineEnv(context, archive, seed) {
-  return { ctx: context, state: structuredClone(archive.data.state.currentState || {}),
+  const state = structuredClone(archive.data.state.currentState || {});
+  const cultivationLife = archive.data.state.frxPlay?.version === 1;
+  if (cultivationLife) require('./life/manual-items.cjs').normalizeManuals(state);
+  return { ctx: context, state, cultivationLife,
            dailyUses: archive.data.state.dailyItemUses, seed, archiveId: archive.data.archiveId || archive.name,
            progress: rules.mechanics.ledgerOf(archive.data.state.frxProgress),
            worldFactors: rules.mechanics.worldFactorsOf(archive.data.logs),
@@ -331,7 +334,9 @@ function storyThing(data, id, base, gifts, notes) {
     notes.push(`「${name}」已在储物袋里，不再登记一份`);
     return null;
   }
-  const type = textOf(data["2"]);
+  const writtenType = textOf(data["2"]);
+  const corrected = require('./life/manual-items.cjs').isManual(name, writtenType, data["3"]);
+  const type = corrected ? "功法" : writtenType;
   const piece = gifts.goods.gearTypeOf(name, type);
   if (piece && !broken(name, textOf(data["4"]))) {
     // its tier as its name or use says it (二阶), else the player's; the source's words are often a
@@ -357,7 +362,7 @@ function storyThing(data, id, base, gifts, notes) {
   let kept = KEEPSAKE_TYPES.has(type) ? type : KEEPSAKE;
   if (type === "功法") {
     const claimed = `${name} ${textOf(data["3"])} ${textOf(data["4"])}`.match(TIER_WORD);
-    const above = !!claimed && gifts.goods.TIERS.indexOf(`${claimed[1]}阶`) > gifts.goods.TIERS.indexOf(gifts.tier);
+    const above = !!claimed && gifts.goods.TIERS.indexOf(`${claimed[1]}阶`) > gifts.goods.TIERS.indexOf(gifts.tier) + 1;
     kept = above ? KEEPSAKE : type;
     if (above) notes.push(`「${name}」写的是${claimed[1]}阶，高过主角这一阶，记作重要物品，眼下修不了`);
   } else if (kept !== type) {
@@ -366,7 +371,8 @@ function storyThing(data, id, base, gifts, notes) {
   const at = freeItemId(id, gifts);
   gifts.received.push({ id: at, name, count, unit: kept === "功法" ? "部" : "件" });
   const effect = kept === "功法" ? data["4"] : wordsOnly(textOf(data["4"]));
-  return `set(${JSON.stringify({ ...data, 0: at, 2: kept, 4: effect, 5: String(count) })})`;
+  return `set(${JSON.stringify({ ...data, 0: at, 2: kept, 4: effect, 5: String(count),
+    ...(kept === "功法" && !textOf(data["9"]) && effect ? { 9: effect } : {}) })})`;
 }
 
 // The rest of a life save's numbers in the story's commands (ownPurseAndPanel's): an
@@ -912,6 +918,7 @@ async function settle(input) {
   // A save in the cultivation-life play: its favour, time row, map place and frxPlay are the
   // engine's (turn-rules.cjs lifeOwns). Other saves never load the life code.
   const life = Object.hasOwn(archive.data?.state || {}, "frxPlay") && !!require("./life/index.cjs").lifeOf(archive);
+  if (life) require('./life/manual-items.cjs').normalizeManuals(archive.data.state.currentState);
   const lifeReceipts = receipts => (life ? [...receipts, rules.lifeOwns(lifeWhere(archive, receipts))] : receipts);
   // Receipts that settle after the story (afterStory): what the engine did with something the
   // story's own commands brought, the opening's first method put on (plan item 25). Their commands
@@ -1172,6 +1179,7 @@ async function settle(input) {
   context.keepDeparted = life;
   const result = await vm.runInContext("applyChanges(stateInput, parsed.delta, {persistEffects:false, keepDeparted})", context, { timeout: 1500 });
   if (errors.length) return { errors };
+  if (life) require('./life/manual-items.cjs').normalizeManuals(result.newState);
   // A turn's settlement (it has a story) reports the gear its commands moved; a bare block of
   // commands returns exactly what the card's own settlement returned.
   const gear = "story" in input ? gearReceipts(context, wornBefore, result.newState, input.pilot?.receipts || []) : [];

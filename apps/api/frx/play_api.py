@@ -156,7 +156,7 @@ def play_router(store, runtime):
     @router.post("/saves/{archive_id}/undo")
     async def undo(archive_id: str, body: M.UndoRequest, ws: Workspace = Depends(workspace)):
         save = await save_of(ws, archive_id)
-        result = await desk.undo(ws, save, body.version, body.to_turn)
+        result = await desk.undo(ws, save, body.version, body.to_turn, body.pending_turn_id)
         return M.UndoResult.model_validate(result).wire()
 
     return router

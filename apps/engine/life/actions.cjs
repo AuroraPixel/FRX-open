@@ -398,7 +398,7 @@ function price(ctx, card) {
       if (have < amount) reasons.push(`${skill.cost.stat}不够：要 ${amount} 点，只剩 ${have} 点`);
     }
   }
-  if (kind.effect?.trade) {
+  if (kind.effect?.trade && !ctx.barter) {
     // Selling is trading a thing from the bag; anything else is buying.
     const sellWords = !ctx.fee && /卖|售|典当/.test(title) && !/买|购/.test(title);
     item = ctx.fee ? null : saleItem(bag, key, title, sellWords);
@@ -502,6 +502,8 @@ function price(ctx, card) {
       ...(seen ? [`${seen.name}${seen.tier}`, ...seen.how] : []), ...costs,
       ...(failure ? [`败了${failure}`] : fumble ? [`大失败则${fumble}`] : [])];
   } else if (gate) sub = [name, `需${gateLabel(gate, bag)}`, ...costs, DIRECT.label, '不掷骰'];
+  else if (ctx.barter) sub = [name, '以物易物', ...costs];
+  else if (trade?.price === null) sub = [name, '价格待议', ...costs];
   else if (kind.effect?.fight) sub = [name, kind.looks, ...(gap !== null && gap >= 1 ? [`对方高你${numeral(gap)}个大境界`] : [])];
   else sub = [name, ...(costs.length ? costs : kind.looks === '不掷骰' ? [] : [kind.looks]), '不掷骰'];
 
@@ -537,6 +539,7 @@ function price(ctx, card) {
     reason,
     cost,
     ...(trade ? { trade } : {}),
+    ...(ctx.quotedPrice !== undefined ? { quotedPrice: ctx.quotedPrice } : {}),
     outcomes,
     effect,
     failure,
@@ -600,7 +603,8 @@ function contextOf(env, card) {
   const fee = Number(card?.fee);
   const paysFee = plain(card?.kind) === '买卖' && Number.isSafeInteger(fee) && fee > 0;
   const priced = given(card?.price) && Number.isFinite(Number(card.price));
-  const deal = paysFee ? { price: fee, fee: true }
+  const barter = plain(card?.kind) === '买卖' && /以物易物|换宝|抵价|(?:以|用|拿|凭|交出|交付)[^，。；]{1,25}(?:换取|换得|抵作)/.test(plain(card?.title));
+  const deal = barter ? { barter: true } : paysFee ? { price: fee, fee: true }
     : plain(card?.kind) === '买卖' ? dealOf(env, card, bag) : null;
   return {
     stats, realm: plain(player['2']), stones: mechanics.stonesOf(player) ?? 0, bag, skills,
@@ -609,7 +613,7 @@ function contextOf(env, card) {
     ...clocks.clockStepsFor(env, { targetId: id || '', place: placeHere(env) }),
     perks: [...perkLib.owned(env), ...gear.traitNames(env), ...beasts.useNames(env), ...require('./world.cjs').checkNames(env)],
     hour: hourOf(env),
-    ...(!paysFee && priced ? { price: Number(card.price), ...(deal?.good ? { good: deal.good } : {}) } : deal || {}),
+    ...(!barter && !paysFee && priced ? { price: Number(card.price), quotedPrice: Number(card.price), ...(deal?.good ? { good: deal.good } : {}) } : deal || {}),
   };
 }
 
@@ -622,9 +626,8 @@ function contextOf(env, card) {
 // the act); a piece of gear the story names (买下那面玄甲盾) is the catalogue's piece of its kind at
 // the place's tier (goods.likeFor) and costs what a shop asks for that piece, and goes into the bag
 // under the story's name with that piece's numbers (rewards.grant); a piece of the story's in the
-// bag sells as that piece too (goods.ofItem). Buying anything else, a thing of the story's, costs
-// trade.json's `unlisted` price for the tier of the place (the player's own tier off the map), and
-// the story registers the thing.
+// bag sells as that piece too (goods.ofItem). With no named or agreed price, the card opens the
+// negotiation. Any actual payment is handled by the trade's engine receipt.
 function dealOf(env, card, bag) {
   const trade = require('./trade.cjs');
   const title = plain(card?.title), key = plain(card?.target);
@@ -643,9 +646,7 @@ function dealOf(env, card, bag) {
   const asked = pieceAsked(key, title);
   const like = asked && goods.likeFor({ name: asked.name, type: asked.type, text: title, tier });
   if (like) return { price: trade.each(env, like, 'buy'), good: { id: like.id, name: asked.name } };
-  const unlisted = data('trade').unlisted || {};
-  const price = Number(unlisted[tier] ?? unlisted.default);
-  return Number.isFinite(price) && price > 0 ? { price } : {};
+  return {};
 }
 
 // A card's deal, settled (act): the purchase's good granted (rewards.grant), a sale's thing taken
@@ -762,18 +763,36 @@ const statNumbers = entry => ({ before: Number(entry?.current ?? entry) || 0, ma
 const clockText = change => (change.started ? `惹上「${change.name}」`
   : `「${change.name}」${change.before}→${change.after}格${change.full ? '，已满' : change.gone ? '，平息' : ''}`);
 
+function shownCard(shown) {
+  return { kind: shown.leave ? LEAVE.kind : shown.kind, title: shown.title, target: shown.target,
+      tier: shown.proposed || '', gate: shown.gate?.text || '',
+      ...(shown.trade?.fee ? { fee: shown.trade.price } : {}),
+      ...(given(shown.quotedPrice) ? { price: shown.quotedPrice } : {}),
+      ...(shown.talk ? { talk: true } : {}),
+      ...(shown.intent ? { route: shown.route, intent: shown.intent } : {}),
+      ...(shown.said ? { said: shown.said } : {}),
+      ...(shown.beat ? { beat: shown.beat } : {}) };
+}
+
+function viewCards(env) {
+  const cards = Array.isArray(env.play.cards) ? env.play.cards : [];
+  if (env.play.encounter) return cards;
+  return cards.map(shown => {
+    if (shown?.trade?.direction !== 'buy' || shown.trade.fee || shown.trade.good
+        || given(shown.quotedPrice) || !given(shown.trade.price)) return shown;
+    // Old scenes saved a regional placeholder in trade.price. Recheck against the normal rules.
+    const raw = { ...shownCard(shown), index: shown.index, fallback: shown.fallback };
+    return price(contextOf(env, raw), raw);
+  });
+}
+
 // The card the player picked: a shown card by index, or an ad hoc one (free text, classified).
 function pickedCard(env, args) {
   if (given(args.index)) {
     const index = Number(args.index);
     const shown = Number.isInteger(index) && index >= 1 && Array.isArray(env.play.cards) ? env.play.cards[index - 1] : null;
     if (!shown) return { refused: `没有第${String(args.index).slice(0, 8)}张行动卡` };
-    return { index, raw: { kind: shown.leave ? LEAVE.kind : shown.kind, title: shown.title, target: shown.target,
-      tier: shown.proposed || '', gate: shown.gate?.text || '', ...(given(shown.trade?.price) ? { price: shown.trade.price } : {}),
-      ...(shown.talk ? { talk: true } : {}),
-      ...(shown.intent ? { route: shown.route, intent: shown.intent } : {}),
-      ...(shown.said ? { said: shown.said } : {}),
-      ...(shown.beat ? { beat: shown.beat } : {}) } };
+    return { index, raw: shownCard(shown) };
   }
   if (args.card && typeof args.card === 'object') {
     const { kind, title, target, tier, gate, price: cost, fee } = args.card;
@@ -948,4 +967,4 @@ async function act(env, args) {
   return { card, outcome: rolled?.outcome ?? null, ...(env.play.fight ? { fight: fights.view(env) } : {}) };
 }
 
-module.exports = { ACTIONS, CHECKS, TIERS, price, classify, kindName, favourTier, facesOf, contextOf, cards, act };
+module.exports = { ACTIONS, CHECKS, TIERS, price, classify, kindName, favourTier, facesOf, contextOf, cards, viewCards, act };

@@ -24,6 +24,7 @@ export function LiveState({ live, onCancel, onRetry, onRewrite }: { live: LiveTu
       {live.status === 'streaming' && live.settling && (
         <div className={bookStyles.waiting}>
           <Loading text="结算中……" />
+          <Btn className={bookStyles.stop} onClick={onCancel}>停止等待</Btn>
         </div>
       )}
       {live.status === 'streaming' && !live.settling && (
@@ -60,14 +61,17 @@ export function noticeAction(action: NonNullable<NoticeBlock['action']>) {
 }
 
 /** 待结算: the words came, the settlement did not. */
-export function PendingCard({ onSettle }: { onSettle: () => void }) {
+export function PendingCard({ error, onSettle, onAbandon }: {
+  error?: string;
+  onSettle: () => void;
+  onAbandon: () => void;
+}) {
   return (
     <div className={bookStyles.pending} role="status">
-      <p>这一回的正文已到，结算还没有完成。</p>
+      <p>{error ?? '这一回合还在等待结算。'}</p>
       <div className={bookStyles.actions}>
-        <Btn variant="solid" onClick={onSettle}>
-          继续结算
-        </Btn>
+        <Btn variant="solid" onClick={onSettle}>继续结算</Btn>
+        <Btn onClick={onAbandon}>放弃本回合</Btn>
       </div>
     </div>
   );

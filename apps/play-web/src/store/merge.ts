@@ -20,6 +20,7 @@ export interface LiveTurn {
   /** what the turn waits for before it starts (the work after the turn before), in the server's words */
   waiting?: string;
   /** why it failed, when it did */
+  retryingSettlement?: boolean;
   error?: { code: ErrorCode; message: string; retryable: boolean };
 }
 
@@ -122,7 +123,8 @@ export function applyEvent(live: LiveTurn | null, event: TurnEvent, text: LiveTe
         kind: 'live',
         live: {
           ...live,
-          status: event.code === 'cancelled' ? 'cancelled' : 'failed',
+          status: live.retryingSettlement ? 'pending' : event.code === 'cancelled' ? 'cancelled' : 'failed',
+          settling: undefined,
           open: null,
           error: { code: event.code, message: event.message, retryable: event.retryable },
         },

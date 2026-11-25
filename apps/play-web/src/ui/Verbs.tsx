@@ -142,7 +142,7 @@ export function Verbs({
   const ends = (
     <>
       {onOwn && (
-        <button type="button" className={styles.verb} aria-label="自写：写下你自己的行动" disabled={disabled} onClick={onOwn}>
+        <button type="button" className={styles.verb} aria-label="自写：写下你自己的行动" aria-controls="own-action" aria-expanded={false} disabled={disabled} onClick={onOwn}>
           <Diamond glyph="书" label="自写" />
         </button>
       )}

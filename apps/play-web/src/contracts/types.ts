@@ -1455,6 +1455,7 @@ export interface PlayView {
   place?: PlayPlace;
   near?: PlayNear[];
   scene?: PlayScene;
+  cards?: ActionCard[];
   verbs: PlayVerb[];
   clocks: PlayClock[];
   calendar: CalendarEntry[];
@@ -3208,6 +3209,7 @@ export interface VersionRequest {
 export interface UndoRequest {
   version: number;
   toTurn?: number;
+  pendingTurnId?: string;
 }
 /**
  * POST /saves/{id}/actions: gear on and off (itemId, slot), tidying the bag, marking a
