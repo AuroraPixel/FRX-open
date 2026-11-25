@@ -26,6 +26,7 @@ export interface SendInput {
   act?: number;
   move?: Move;
   step?: RealmStep;
+  lead?: string;
 }
 
 export interface TurnsStore {
@@ -334,13 +335,13 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
       await get().send({ text: '踏入仙途', requestId: opening });
     },
 
-    async send({ text, requestId = uuid(), option, queue, verb, act, move, step }) {
+    async send({ text, requestId = uuid(), option, queue, verb, act, move, step, lead }) {
       const saveId = get().saveId;
       const at = version();
       const busy = get().live?.status;
       if (!saveId || at === undefined || busy === 'streaming' || busy === 'pending') return;
       const no = (get().turns[get().turns.length - 1]?.no ?? 0) + 1;
-      const command = Boolean(verb || act || move || step);
+      const command = Boolean(verb || act || move || step || lead);
       const request: TurnRequest = {
         requestId,
         version: at,
@@ -351,6 +352,7 @@ export const useTurnsStore = create<TurnsStore>()((set, get) => {
         ...(act ? { act } : {}),
         ...(move ? { move } : {}),
         ...(step ? { step } : {}),
+        ...(lead ? { lead } : {}),
       };
       liveText.clear();
       set({ live: startLive(requestId, no, text, command ? undefined : queue), error: null, request, taken: false });

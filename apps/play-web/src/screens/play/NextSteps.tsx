@@ -125,7 +125,7 @@ export function NextSteps({ steps, onStep, verbs = [], disabled = false, lines =
 
 export interface NextLineProps {
   /** main: the main line's cinnabar seal; gate: the next gate's gold one */
-  kind: 'main' | 'gate';
+  kind: 'main' | 'gate' | 'lead';
   glyph: string;
   /** the one line: 「主线 · 第三章 · 太南风云」 */
   text: string;

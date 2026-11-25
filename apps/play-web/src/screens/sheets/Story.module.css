@@ -191,3 +191,25 @@
   border-color: var(--line);
   color: var(--soft);
 }
+
+.whereButton {
+  display: grid;
+  flex: none;
+  max-width: 9em;
+  gap: var(--s-4);
+  padding: var(--s-6) 0 var(--s-4) var(--s-6);
+  border: 0;
+  border-bottom: var(--hair) dotted var(--gold);
+  background: none;
+  color: var(--gold);
+  font: 400 var(--fs-13)/1.4 var(--f-serif);
+  text-align: right;
+}
+
+.whereButton span {
+  color: var(--soft);
+}
+
+.whereButton:disabled {
+  opacity: .55;
+}

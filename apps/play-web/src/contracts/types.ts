@@ -2002,6 +2002,8 @@ export interface PlayLead {
   proven: boolean;
   where?: string;
   chapter?: string;
+  action?: 'travel' | 'investigate' | 'ask';
+  place?: string;
 }
 /**
  * An entry of the ledger (因果, plan item 40): its seal (恩 someone owes you, 怨 someone hates
@@ -2872,6 +2874,7 @@ export interface TurnRequest {
   act?: number;
   move?: Move;
   step?: RealmStep;
+  lead?: string;
 }
 /**
  * A move in a fight of the cultivation life: the command and what it uses (a skill, an

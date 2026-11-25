@@ -3,8 +3,10 @@
 // condition with 齐 or 缺), 疑点 (play.leads: the open ones first, each with where to look, a proven one
 // sealed 实), 因果 (play.karma: 恩 怨 债 诺, a 诺's day, what is settled and what was broken) and 心结
 // (play.knots, each taking one off a gate's odds). A novel's save keeps its own card (Quests.tsx).
-import type { Mainline, PlayKarma, PlayKnot, PlayLead } from '../../contracts';
+import type { Mainline, PlayDate, PlayKarma, PlayKnot, PlayLead } from '../../contracts';
 import { Sub } from '../../ui/Sub';
+import { dayWords } from '../../lib/book';
+import { leadActionLabel } from '../play/commands';
 import { clueCount, clueWords } from '../play/MainlineCard';
 import styles from './Story.module.css';
 
@@ -29,7 +31,7 @@ export function karmaState(entry: PlayKarma): string {
 }
 
 /** The storyline's name and hook, then 这一章: the chapter, its goal and its conditions. */
-export function StoryHead({ line }: { line: Mainline }) {
+export function StoryHead({ line, date }: { line: Mainline; date?: PlayDate }) {
   const done = line.clues.filter((clue) => clue.done).length;
   return (
     <>
@@ -54,6 +56,9 @@ export function StoryHead({ line }: { line: Mainline }) {
             ))}
           </ul>
         )}
+        {date && line.clues.some((clue) => !clue.done && clue.text.startsWith('时间不早于')) && (
+          <p className={styles.note}>当前游戏时间为{dayWords(date)}</p>
+        )}
         {line.next && <em className={styles.next}>下一章 · {line.next.replace(/^第[一二三四五六七八九十百]+章\s*·\s*/, '')}</em>}
       </section>
     </>
@@ -61,7 +66,9 @@ export function StoryHead({ line }: { line: Mainline }) {
 }
 
 /** 疑点: an open one sealed 疑 with where to look, a proven one 实. */
-export function Leads({ leads }: { leads: PlayLead[] }) {
+export function Leads({ leads, disabled = false, onFollow }: {
+  leads: PlayLead[]; disabled?: boolean; onFollow?: (lead: PlayLead) => void;
+}) {
   if (!leads.length) return null;
   return (
     <section className={styles.part} aria-label="疑点">
@@ -74,7 +81,16 @@ export function Leads({ leads }: { leads: PlayLead[] }) {
               <span>{lead.text}</span>
               {lead.chapter && <small>{lead.chapter}</small>}
             </span>
-            {lead.proven ? <em className={styles.proven}>已查实</em> : lead.where && <em className={styles.where}>{lead.where}</em>}
+            {lead.proven ? <em className={styles.proven}>已查实</em> : (
+              lead.action && onFollow ? (
+                <button type="button" className={styles.whereButton} disabled={disabled}
+                  aria-label={`${leadActionLabel(lead)}：${lead.where || lead.text}`}
+                  onClick={() => onFollow(lead)}>
+                  {lead.where && <span>{lead.where}</span>}
+                  <b>{leadActionLabel(lead)}</b>
+                </button>
+              ) : lead.where && <em className={styles.where}>{lead.where}</em>
+            )}
             <span className="visually-hidden">{lead.proven ? '，已查实' : '，未查'}</span>
           </li>
         ))}

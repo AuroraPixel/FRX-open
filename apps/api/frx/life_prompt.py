@@ -246,6 +246,7 @@ class LifeBeat:
     taking: dict | None = None
     threadFacts: bool = False
     clockTasks: list | None = None
+    investigation: dict | None = None
     # Frozen with the request: bounded committed history, current clock and settled action.
     # This is evidence for continuity, not hidden future outcomes or higher-priority rules.
     continuity: dict | None = None
@@ -311,6 +312,17 @@ class LifeBeat:
             shown = (self.act.get("encounter") or {}).get("text")
             if shown:
                 lines.append(fill(said["shown"], {"结果": shown}))
+        if self.investigation:
+            clue = self.investigation
+            lines.append(f"【本拍所查疑点】{clue.get('id')} {clue.get('line')}，"
+                         f"调查方向：{clue.get('where') or '依眼前的线索'}。")
+            if clue.get("proven"):
+                lines.append("引擎已查实。写出能核对的回答或实物证据，优先联系已得到的人证物证，把它接到当前剧情。")
+            elif clue.get("ask"):
+                lines.append("目前只在寻访去处。若成功，给出具体的地点、物证或可拜访的人。"
+                             "这一拍不要写成已查实。")
+            else:
+                lines.append("尚未查实。写明具体阻碍和下一条可行的路，不要跳过检定。")
         if self.fighting:
             lines.append(said["fightOpen"])
         if self.met and not self.met.get("first"):

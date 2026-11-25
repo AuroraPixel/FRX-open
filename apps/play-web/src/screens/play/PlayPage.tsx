@@ -39,6 +39,7 @@ import { LifeContext, LifePerks, type LifeReading, actsOf, annalRuns, annalTurn,
 import { LegacyCard } from './LegacyCard';
 import { MainlineCard, mainlineLabel } from './MainlineCard';
 import { NextGate, nextGateLabel } from './NextGate';
+import { followLead, leadActionLabel } from './commands';
 import { NextLine, NextSteps, nextOf } from './NextSteps';
 import { gateMoved, mainlineMoved } from './moved';
 import { isFollow } from './threads';
@@ -486,7 +487,15 @@ export function PlayPage({ saveId, view }: { saveId: string; view: StateView }) 
         onOpen={() => openSheet('gate')}
       />
     ) : null;
-  const folded = [mainlineLine, gateLine].filter((line) => line !== null);
+  const openLeads = play?.leads?.filter((lead) => !lead.proven && lead.action) ?? [];
+  const lead = openLeads.find((item) => item.action === 'investigate')
+    ?? (daysEnd ? openLeads.find((item) => item.action === 'travel') : undefined)
+    ?? openLeads.find((item) => item.action === 'ask');
+  const leadLine = lead && choicesAtRest && !inputLocked ? (
+    <NextLine key="lead" kind="lead" glyph="疑" text={`${leadActionLabel(lead)} · ${lead.where || lead.text}`}
+      label={`${leadActionLabel(lead)}：${lead.where || lead.text}`} onOpen={() => followLead(lead)} />
+  ) : null;
+  const folded = [leadLine, mainlineLine, gateLine].filter((line) => line !== null);
   // the first three scenes of a life that close say how to go on from them (the server's first-time note
   // close, kept in frxPlay.seen): a quiet line under 接下来, not in the turn
   const closeNote = daysEnd

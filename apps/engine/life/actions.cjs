@@ -809,7 +809,10 @@ function pickedCard(env, args) {
 
 async function act(env, args) {
   if (env.play.fight || String(env.state['0']?.B1?.['31']).trim() === 'true') return env.refuse('斗法之中只能出招');
-  const picked = pickedCard(env, args);
+  const leads = args.lead ? require('./leads.cjs') : null;
+  const investigation = leads?.investigation(env, args.lead);
+  if (investigation?.refused) return env.refuse(investigation.refused);
+  const picked = pickedCard(env, investigation ? { card: investigation.card } : args);
   if (picked.refused) return env.refuse(picked.refused);
   // An encounter's beat is played with its own cards (encounter.cjs, required here: it requires
   // this module).
@@ -929,6 +932,8 @@ async function act(env, args) {
       consequence: result.text, effects, target, reason: card.title, seed: rolled.seed, rulesVersion: RULES.version,
       ...(rolled.reroll ? { reroll: rolled.reroll } : {}) } } : {}),
     outcome: rolled?.outcome ?? null, effects, paid,
+    ...(investigation ? { investigation: { id: investigation.lead.id, line: investigation.lead.line,
+      where: investigation.lead.where, ask: investigation.ask } } : {}),
     ...(favour ? { favour } : {}),
     // 进斗法: the fight opens once this receipt is settled (below); a beat card's fight is the beat's.
     ...(spec.fight && !card.beat ? { fight: true } : {}),
@@ -955,7 +960,11 @@ async function act(env, args) {
     parts.push(mind.said(talked));
   }
   receipt.summary = `行动「${card.title}」：` + parts.join('；');
-  scene.noteAct(env, { rolled: !!rolled, won: ['成功', '大成功'].includes(rolled?.outcome), clocks: moved });
+  const won = ['成功', '大成功'].includes(rolled?.outcome);
+  scene.noteAct(env, { rolled: !!rolled, won, clocks: moved });
+  if (investigation && won && !investigation.ask && !spec.fight) {
+    await leads.confirm(env, investigation.lead, '循线索查证', 'engine');
+  }
   // What the card does to an encounter's beat (encounter.after), or the fight it starts (item 19):
   // the card's target is the foe (by its name when the story never registered it: fight.storyFoe),
   // and the outcome says who is caught unawares (fight.fromAct; a target that is no one to fight

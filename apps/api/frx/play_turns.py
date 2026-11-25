@@ -329,8 +329,8 @@ def option_text(value, index):
 
 # What a turn request carries besides its version, kept with the turn's request row for a retry: the
 # words, the option and the chips, or one of the cultivation life's verb, card or move.
-REQUEST_KEYS = ("input", "option", "queue", "verb", "act", "move", "step")
-LIFE_KEYS = ("verb", "act", "move", "step")
+REQUEST_KEYS = ("input", "option", "queue", "verb", "act", "move", "step", "lead")
+LIFE_KEYS = ("verb", "act", "move", "step", "lead")
 
 
 def life_request(request):
@@ -528,8 +528,13 @@ class TurnPlay:
         # card the player took or the words they wrote (life_turns.before_story).
         life = None
         if life_of(value) is not None:
-            act = (self.request or {}).get("act")
-            life = {"act": act} if act else {"text": self.action.get("text", "")}
+            sent = self.request or {}
+            if sent.get("lead"):
+                life = {"lead": sent["lead"]}
+            elif sent.get("act"):
+                life = {"act": sent["act"]}
+            else:
+                life = {"text": self.action.get("text", "")}
         turn = await asyncio.to_thread(
             play_prompt.read_turn_input,
             records,
@@ -1283,6 +1288,18 @@ class TurnDesk:
                 action = {"move": request["move"],
                           "words": move_words(request["move"], save.value)}
                 actions = []
+            elif request.get("lead") is not None:
+                lead = next((row for row in play.get("leads") or [] if isinstance(row, dict)
+                             and row.get("id") == request["lead"] and not row.get("proven")), None)
+                if lead is None:
+                    raise TurnError("refused", "这条疑点已查实或已不在任务中")
+                if play.get("opening") or play.get("realm") or play.get("offer"):
+                    raise TurnError("refused", "请先处理眼前的事，再调查疑点")
+                await asyncio.to_thread(check_can_play, ws.records, save.name, save.value)
+                if not self.runtime.profiles.load("default").model:
+                    raise TurnError("model_not_configured", "请先在模型连接中配置模型", 400)
+                subject = str(lead.get("where") or lead.get("line") or request["lead"])
+                action, actions = {"text": f"调查疑点：{subject}"}, []
             elif request.get("act") is not None:
                 # The card the player took, from the beat before: a missing or ineligible one is
                 # refused before anything is written; the model writes the beat on its outcome.

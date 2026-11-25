@@ -25,6 +25,9 @@
  */
 const clock = require('./clock.cjs');
 const chronicle = require('./chronicle.cjs');
+const mechanics = require('../mechanics.cjs');
+const { plain } = require('../item-use.cjs');
+const places = require('./places.cjs');
 const { data } = require('./data.cjs');
 const { list, nextId, ownsNothing } = require('./play.cjs');
 
@@ -91,7 +94,50 @@ function take(env, { leads, chapter, title, resolved } = {}) {
   return { taken, dropped, reveals: chapters.map(each => reveal(env, each)).filter(Boolean) };
 }
 
-async function prove(env, args) {
+const success = outcome => outcome === '成功' || outcome === '大成功';
+
+function guidance(env, lead) {
+  const where = plain(lead.where);
+  const names = places.poisOf(env.worldMap).map(poi => poi.name).filter(Boolean);
+  const exact = names.filter(place => where.includes(place)).sort((a, b) => b.length - a.length)[0];
+  const shortened = exact ? [] : names.filter(place => {
+    const short = place.replace(/(?:山|城|驿|坊市)$/, '');
+    return short !== place && short.length >= 2 && where.includes(short);
+  });
+  const name = exact || (shortened.length === 1 ? shortened[0] : null);
+  const here = places.placeFacts(env);
+  if (name && here.place !== name) return { kind: 'travel', place: name };
+  const person = Object.entries(env.state['0'] || {}).find(([id, row]) => {
+    const known = plain(row?.['1']).split('|')[0].trim();
+    return /^[CG]/.test(id) && known.length >= 2 && where.includes(known)
+      && !mechanics.isFallen(env.ctx, row);
+  });
+  const localSpot = here.spot && here.spot.length >= 2 && where.includes(here.spot);
+  const stored = env.ctx.storedItemIds(env.state);
+  const item = Object.entries(env.state['1'] || {}).some(([id, row]) => {
+    const known = plain(row?.['1']).split('|')[0].trim();
+    return !stored.has(id) && known.length >= 2 && where.includes(known);
+  });
+  return { kind: name || person || localSpot || item ? 'investigate' : 'ask',
+    ...(person ? { target: person[0] } : {}) };
+}
+
+function investigation(env, id) {
+  const lead = all(env).find(each => each.id === id);
+  if (!lead || lead.proven) return { refused: '这条疑点已查实或已不在任务中' };
+  if (!env.play.scene || env.play.opening || env.play.fight || env.play.encounter
+      || env.play.realm || list(env.play.offer).length) {
+    return { refused: '请先处理眼前的事，再调查疑点' };
+  }
+  const route = guidance(env, lead);
+  if (route.kind === 'travel') return { refused: `请先前往${route.place}再调查这条疑点` };
+  const where = plain(lead.where) || plain(lead.line);
+  const ask = route.kind === 'ask';
+  return { lead, ask, card: { kind: ask || /^(?:向|问|拜访)/.test(where) ? '交涉' : '探查',
+    title: ask ? `打听疑点的去处：${where}` : `调查疑点：${where}`, target: route.target || '' } };
+}
+
+async function prove(env, args, earlier = []) {
   const said = RULES.refused;
   const id = cut(args.id, 8);
   const lead = all(env).find(each => each.id === id);
@@ -99,12 +145,22 @@ async function prove(env, args) {
   if (lead.proven) return env.refuse(chronicle.fill(said.proven, { 疑点: lead.line }));
   const scene = env.play.scene;
   if (!scene) return env.refuse(said.scene);
-  if (!scene.won) return env.refuse(said.check);
+  const attempt = earlier.findLast(receipt => receipt.kind === 'act' && receipt.investigation?.id === id);
+  if (!scene.won || (attempt && (!success(attempt.outcome) || attempt.investigation.ask))) {
+    return env.refuse(said.check);
+  }
+  const route = guidance(env, lead);
+  if (route.kind === 'travel') return env.refuse(`请先前往${route.place}再查实这条疑点`);
+  return confirm(env, lead, cut(args.how, 60), 'tool');
+}
+
+async function confirm(env, lead, how, source) {
+  const { id } = lead;
+  const scene = env.play.scene;
   env.play.leads = all(env).map(each => (each.id === id ? { ...each, proven: { date: todayKey(env), by: 'check', scene: scene.id } } : each));
   const hook = reveal(env, lead.chapter);
-  const how = cut(args.how, 60);
   await env.settle({
-    kind: 'lead', ok: true, source: 'tool', action: 'prove',
+    kind: 'lead', ok: true, source, action: 'prove',
     lead: { id, line: lead.line, ...(lead.where ? { where: lead.where } : {}) },
     ...(hook ? { reveal: { id: hook.id, chapter: lead.chapter } } : {}),
     commands: '', owns: ownsNothing(),
@@ -114,9 +170,16 @@ async function prove(env, args) {
 }
 
 function view(env) {
-  const shown = all(env).map(lead => ({ id: lead.id, text: lead.line, proven: !!lead.proven,
-    ...(lead.where ? { where: lead.where } : {}), ...(lead.title ? { chapter: lead.title } : {}) }));
+  const play = env.play;
+  const held = play.opening || play.fight || play.encounter || play.realm || list(play.offer).length
+    || play.legacy?.state === 'choosing';
+  const shown = all(env).map(lead => {
+    const route = !lead.proven && !held ? guidance(env, lead) : null;
+    return { id: lead.id, text: lead.line, proven: !!lead.proven,
+      ...(lead.where ? { where: lead.where } : {}), ...(lead.title ? { chapter: lead.title } : {}),
+      ...(route ? { action: route.kind } : {}), ...(route?.place ? { place: route.place } : {}) };
+  });
   return [...shown.filter(lead => !lead.proven), ...shown.filter(lead => lead.proven)];
 }
 
-module.exports = { RULES, take, prove, view };
+module.exports = { RULES, take, prove, view, investigation, confirm };

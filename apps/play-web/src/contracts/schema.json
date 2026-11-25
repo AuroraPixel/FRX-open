@@ -6529,6 +6529,17 @@
         },
         "chapter": {
           "type": "string"
+        },
+        "action": {
+          "enum": [
+            "travel",
+            "investigate",
+            "ask"
+          ],
+          "type": "string"
+        },
+        "place": {
+          "type": "string"
         }
       },
       "required": [
@@ -9352,6 +9363,10 @@
         },
         "step": {
           "$ref": "#/definitions/RealmStep"
+        },
+        "lead": {
+          "pattern": "^F[0-9]{1,4}$",
+          "type": "string"
         }
       },
       "required": [

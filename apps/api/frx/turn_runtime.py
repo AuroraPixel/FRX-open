@@ -704,7 +704,7 @@ async def plan_turn(
             if storyline:
                 # The engine marks the current chapter's conditions and pays chapter rewards.
                 engine_input["plot"] = storyline
-            if life is not None and life.get("act"):
+            if life is not None and (life.get("act") or life.get("lead")):
                 # A card the player took is settled by the engine's act (before_story): the words
                 # on it settle nothing before it. 「服下地火莲借药力压伤」 used the 地火莲 up here,
                 # and the act then found it gone (batch 8's real-model run); with two it would have
