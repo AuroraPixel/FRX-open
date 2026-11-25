@@ -335,7 +335,7 @@ function storyThing(data, id, base, gifts, notes) {
     return null;
   }
   const writtenType = textOf(data["2"]);
-  const corrected = require('./life/manual-items.cjs').isManual(name, writtenType, data["3"]);
+  const corrected = require('./life/manual-items.cjs').isManual(name, writtenType, data["3"], data["4"]);
   const type = corrected ? "功法" : writtenType;
   const piece = gifts.goods.gearTypeOf(name, type);
   if (piece && !broken(name, textOf(data["4"]))) {

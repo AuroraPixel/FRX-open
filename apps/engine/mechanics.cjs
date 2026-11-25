@@ -888,7 +888,7 @@ function tradeItem(env, args, source) {
     const effect = plain(args.effect) || plain(listed?.['4'] ?? listed?.effect) || '无';
     let type = ITEM_TYPES.includes(plain(args.item_type)) ? plain(args.item_type)
       : ITEM_TYPES.includes(plain(listed?.['2'] ?? listed?.type)) ? plain(listed['2'] ?? listed.type) : itemTypeFor(name);
-    const corrected = (env.cultivationLife || env.play) && require('./life/manual-items.cjs').isManual(name, type, description);
+    const corrected = (env.cultivationLife || env.play) && require('./life/manual-items.cjs').isManual(name, type, description, effect);
     if (corrected) type = '功法';
     // Goods go into the bag: a stack locked away in storage is not merged into.
     const locked = env.ctx.storedItemIds(env.state);

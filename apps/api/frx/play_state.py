@@ -299,17 +299,21 @@ def item_view(entry, quantity=None):
     raw_name = to_text(field("name", "1")) if truthy(field("name", "1")) else ""
     name = art.plain_name(raw_name) or "无名之物"
     text = text_of(field("description", "3"))
+    listed_effect = text_of(field("effect", "4"))
+    manual_texts = (text, listed_effect)
     inferred = (
         raw_type in MANUAL_ITEMS["ambiguousTypes"] and MANUAL_NAME.search(name)
-        and MANUAL_DESCRIPTION.search(text) and not MANUAL_EXCLUSIONS.search(name)
-        and not MANUAL_EXCLUSIONS.search(re.split(r"[，,。；;、：:\n]", text, maxsplit=1)[0])
+        and not MANUAL_EXCLUSIONS.search(name)
+        and not any(MANUAL_EXCLUSIONS.search(re.split(r"[，,。；;、：:\n]", part, maxsplit=1)[0])
+                    for part in manual_texts)
+        and any(MANUAL_DESCRIPTION.search(part) for part in manual_texts)
     )
     if inferred:
         item_type = "功法"
     effect = (
-        (text_of(field("currentEffect", "9")) or (text_of(field("effect", "4")) if inferred else ""))
+        (text_of(field("currentEffect", "9")) or (listed_effect if inferred else ""))
         if item_type == "功法"
-        else text_of(field("effect", "4"))
+        else listed_effect
     )
     if quantity is None:
         count = parse_int(field("quantity", "5"))
