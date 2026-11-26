@@ -6,7 +6,6 @@ on the tables that hold players' data), and a flush that adds a save or makes on
 to the user's storage limits.
 """
 
-import json
 import logging
 import time
 from contextlib import contextmanager
@@ -190,7 +189,7 @@ def _storage_limits(session, _flush_context, _instances):
     from fastapi import HTTPException
     from sqlalchemy import func, inspect, select
 
-    from .save_schema import Archive
+    from .save_schema import Archive, archive_storage_bytes
 
     added, written = 0, []
     for row in list(session.new) + list(session.dirty):
@@ -207,9 +206,7 @@ def _storage_limits(session, _flush_context, _instances):
         written.append(row)
     if limits.save_bytes is not None:
         for row in written:
-            from .save_schema import archive_value
-
-            size = len(json.dumps(archive_value(row), ensure_ascii=False).encode())
+            size = archive_storage_bytes(row)
             if size > limits.save_bytes:
                 raise HTTPException(
                     413,

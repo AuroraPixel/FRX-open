@@ -1262,7 +1262,7 @@ async def before_story(plan, archive, seed, knowledge, admitted, life):
             result = None
         made = (result or {}).get("receipts") or []
         found = next((receipt for receipt in made if receipt.get("kind") == "act"), None)
-        if found and (found.get("check") or opens_fight(made)
+        if found and (found.get("check") or found.get("retrieved") or opens_fight(made)
                       or (found.get("owns") or {}).get("currency")):
             receipts += made
             act = found
