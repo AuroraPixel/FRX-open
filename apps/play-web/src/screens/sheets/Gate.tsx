@@ -87,7 +87,7 @@ export function GateHero({ sheet }: { sheet: GateSheet }) {
       <p>
         {sheet.foundation && (
           <strong>
-            <em>根基</em>
+            <em>本次冲关预计根基</em>
             {sheet.foundation.grade}
           </strong>
         )}

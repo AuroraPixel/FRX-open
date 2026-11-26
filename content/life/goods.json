@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "图鉴（玩法设计第十二节「材料与奖励」，执行计划第 29 项）：云汀湾这一段用得上的东西，每样一行。id 编号，name 名字，class 类别（classes 那六类），tier 品阶（tiers：一阶对炼气，二阶对筑基），price 底价（多少块下品灵石；尺度照第十二节「价目的尺度」：炼气期握灵石修炼每日 1 块，外门月俸 3 块，一件差事 5 到 20 块；筑基这一阶照灵石的日耗大十倍；冲关的辅助丹药约是服它那一境界握灵石修炼六百日的灵石，元婴起日耗不再涨，底价也就不再涨），uses 用途，element 五行（有的才写，取 elements 里的字），key 是不是关键材料。灵草另记年份 age；妖兽材料另记部位 part（parts）和妖兽的种类 species（content/art/species.json 的种类，null 是认不出是哪一种的；content/life/foes.json 遭遇表里的每一种妖兽都有自己的）；成品另记 kind（kinds）；器物方子（kind 方）另记品 q recipe：哪门技艺 craft、每炉的材料 materials、每炉几日 days、出什么 ouality（下、中、上、极：加成照 content/life/geartput（第 42 项的炼制读它，content/life/crafts.json 按阶和品算，effect 写的是那几项、照算出的数写）。放进储物袋时：物品类型是 type（不写照类别的），描述是 uses，效果是 effect（不写是「无」），量词是 unit（不写照类别的）。丹药照引擎认得的名字和写法收进来：用物的规则（apps/engine/turn-rules.cjs 的 useItem）读 effect 里的「恢复30点法力」「修为+5」「每日限服一枚」；mechanics.isAid 认的冲关辅助丹药按原名收，effect 不写数，平时服下会被拒，冲关时才起作用。aliases 是同一样东西的别的叫法。图鉴里查不到的东西没有市价（none），店里不收，只当线索。炼出来的东西有成色（qualities：精、常、残），写在名字后头的括号里（回气丹（精））；没写的算常，查图鉴时照原名查。三阶以上的东西眼下只为认得名字、有个底价：奖励表里还没有它们，做到那一段时再标关键材料、补来路。shop 为 false 的东西店里不卖（听澜帖、神器碎片只从别处来）。功法（数值平衡第二轮，功法上限是目标不是墙）：一阶到五阶每阶五部，金木水火土各一部（element），没写上限，修到它那一阶的境界为止；底价和那一境界的冲关丹药一个尺度（二阶六百、三阶六千、四阶六万、五阶六十万）；坊市和大城的店常年摆一二阶的（trade.json methods），藏经阁换到三阶（sects.json exchange），拍卖会有时出三四阶（trade.json auction），奇遇的格子里有高一阶的一部，主线在上限挡关时给一部；五阶 shop 为 false，只有剧情的机缘给。apps/engine/life/goods.cjs 读这份文件；数都是初值。",
+  "description": "图鉴（玩法设计第十二节「材料与奖励」，执行计划第 29 项）：云汀湾这一段用得上的东西，每样一行。id 编号，name 名字，class 类别（classes 那六类），tier 品阶（tiers：一阶对炼气，二阶对筑基），price 底价（多少块下品灵石；尺度照第十二节「价目的尺度」：炼气期握灵石修炼每日 1 块，外门月俸 3 块，一件差事 5 到 20 块；筑基这一阶照灵石的日耗大十倍；冲关的辅助丹药约是服它那一境界握灵石修炼六百日的灵石，元婴起日耗不再涨，底价也就不再涨），uses 用途，element 五行（有的才写，取 elements 里的字），key 是不是关键材料。灵草另记年份 age；妖兽材料另记部位 part（parts）和妖兽的种类 species（content/art/species.json 的种类，null 是认不出是哪一种的；content/life/foes.json 遭遇表里的每一种妖兽都有自己的）；成品另记 kind（kinds）；器物方子（kind 方）另记品 q recipe：哪门技艺 craft、每炉的材料 materials、每炉几日 days、出什么 ouality（下、中、上、极：加成照 content/life/geartput（第 42 项的炼制读它，content/life/crafts.json 按阶和品算，effect 写的是那几项、照算出的数写）。放进储物袋时：物品类型是 type（不写照类别的），描述是 uses，效果是 effect（不写是「无」），量词是 unit（不写照类别的）。丹药照引擎认得的名字和写法收进来：用物的规则（apps/engine/turn-rules.cjs 的 useItem）读 effect 里的「恢复30点法力」「修为+5」「每日限服一枚」；mechanics.isAid 认的冲关辅助丹药按原名收，effect 不写数，平时服下会被拒，冲关时才起作用。aliases 是同一样东西的别的叫法。未收录的普通带阶灵材可在大城折价出售（salvage）；线索、凭证和其他无定价物品无市价（none）。炼出来的东西有成色（qualities：精、常、残），写在名字后头的括号里（回气丹（精））；没写的算常，查图鉴时照原名查。三阶以上的东西眼下只为认得名字、有个底价：奖励表里还没有它们，做到那一段时再标关键材料、补来路。shop 为 false 的东西店里不卖（听澜帖、神器碎片只从别处来）。功法（数值平衡第二轮，功法上限是目标不是墙）：一阶到五阶每阶五部，金木水火土各一部（element），没写上限，修到它那一阶的境界为止；底价和那一境界的冲关丹药一个尺度（二阶六百、三阶六千、四阶六万、五阶六十万）；坊市和大城的店常年摆一二阶的（trade.json methods），藏经阁换到三阶（sects.json exchange），拍卖会有时出三四阶（trade.json auction），奇遇的格子里有高一阶的一部，主线在上限挡关时给一部；五阶 shop 为 false，只有剧情的机缘给。apps/engine/life/goods.cjs 读这份文件；数都是初值。",
   "classes": {
     "灵石": {
       "unit": "块",
@@ -62,7 +62,11 @@
     "残"
   ],
   "none": "无市价",
+  "salvage": { "一阶": 3, "二阶": 25, "三阶": 180, "四阶": 850, "五阶": 3800 },
   "goods": [
+    { "id": "winged-yaksha-wings", "name": "骨翼夜叉的双翼", "aliases": ["骨翼夜叉双翼", "夜叉双翼"], "class": "妖兽材料", "tier": "三阶", "price": 1450, "uses": "炼制风属性飞舟与遁器的一对骨翼", "key": false, "shop": false, "marketSalvage": true, "unit": "对" },
+    { "id": "ore-dark-ice", "name": "二阶玄冰煞石", "aliases": ["玄冰煞石"], "class": "矿材", "tier": "二阶", "price": 90, "uses": "凝练冰道根基、淬炼法宝的冰煞灵材", "key": false, "shop": false, "marketSalvage": true },
+
     {
       "id": "stone-low",
       "name": "下品灵石",

@@ -291,9 +291,12 @@ function judge(env, { aids, more = 0 } = {}) {
   if (rule.prepares.includes('polish')) {
     const most = GATES.foundation.polish.most;
     const per = stepDaysOf(c.major) * GATES.foundation.polish.perPoint;
-    const more = Math.ceil((polished + 1) * per - polishedDays(env, key));
+    const days = polishedDays(env, key);
+    const more = Math.ceil((polished + 1) * per - days);
+    const total = Math.ceil(most * per);
+    const record = `累计打磨${chronicle.numeral(days)}日（压境 ${polished}/${most} 分）`;
     prepares.push({ key: 'polish', label: label('polish'), state: polished >= most ? 'have' : 'can', points: polished,
-      text: polished >= most ? `已打磨${chronicle.numeral(polishedDays(env, key))}日` : `再打磨${chronicle.numeral(more)}日，根基 +1` });
+      text: polished >= most ? record : `${record}，再打磨${chronicle.numeral(more)}日得 1 分，打磨满需${chronicle.numeral(total)}日` });
   }
   const demonGate = karma.RULES.demons.gates.includes(key);
   prepares.push({ key: 'knots', label: label('knots'), state: knots ? 'miss' : 'have',

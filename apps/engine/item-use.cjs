@@ -29,7 +29,7 @@ const purpose = /\s|(?:用来|以便|来|尝试|恢复|补充|治疗|疗伤|回�
 const grade = /^(?:[下中上极凡良精绝]品|劣质|普通|[低中高]阶|[一二三四五六七八九十][阶品]|[天地玄黄]阶(?:[上中下]品)?)$/;
 // What the player calls up that is no thing in a bag: a gift, an art, the qi in the body. 「催动入梦者的
 // 奇能」, 「催动先天气运「入梦者」潜入梦境」 and 「催动“入梦者”奇能」 are a trait at work, not an item.
-const POWERS = '技能|法术|功法|剑法|法力|灵力|神识|力量|方法|技巧|能力|奇能|异能|天赋|神通|本领|本事|真气|真元|内力|内息|气机|元神|神魂|血脉|气运|灵根|功力|剑气|剑意';
+const POWERS = '技能|法术|法诀|咒语|功法|剑法|法力|灵力|神识|力量|方法|技巧|能力|奇能|异能|天赋|神通|本领|本事|真气|真元|内力|内息|气机|元神|神魂|血脉|气运|灵根|功力|剑气|剑意';
 const power = new RegExp('(?:' + POWERS + '|术|诀)$');
 const powerFirst = new RegExp('^(?:先天|后天|体内|自身|周身|丹田|全身|一身)?(?:' + POWERS + ')');
 const powerAfterQuote = new RegExp('^(?:的|之)?(?:' + POWERS + '|之力)');

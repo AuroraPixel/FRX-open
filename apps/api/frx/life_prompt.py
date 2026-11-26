@@ -334,6 +334,8 @@ class LifeBeat:
                       if gate.get("success") else
                       fill(said["gateLost"], {"后果": gate.get("consequence", "")}))
             lines.append(fill(said["gated"], {"关": gate.get("name", ""), "结果": result}))
+            if gate.get("success") and gate.get("foundation") == "虚浮":
+                lines.append("这次晋阶已经成功，根基仍虚浮。写境界与修为的变化，根基留待之后巩固。")
             volume = gate.get("volume")
             if isinstance(volume, dict):
                 # the volume the gate closed (item 38): its page's words, from its annals

@@ -140,7 +140,22 @@ function ofItem(texts) {
   return GEAR_TYPES.includes(type) ? pieces.find(piece => piece.type === type && pieceEffect(piece) === effect) || null : null;
 }
 
+function forSale(item) {
+  const known = ofItem(item);
+  if (known) return known;
+  const name = plain(item?.['1']).split('|')[0].trim();
+  const type = plain(item?.['2']);
+  if (!name || !/^(?:材料|炼器材料|妖兽材料|矿材|灵材|灵物|灵草)$/.test(type)
+      || /凭证|信物|任务|令牌|钥匙|挪移令|阵图|玉简|残页|名册/.test(name)) return null;
+  const detail = [name, item?.['4'], item?.['3']].map(plain).join(' ');
+  const tier = detail.match(/(?:^|[\s（(，])([一二三四五]阶)(?=[^人修]|$)/)?.[1];
+  if (!tier || !FILE.salvage[tier]) return null;
+  const category = /兽|妖丹|皮骨|兽骨|兽翼/.test(type + name) ? '妖兽材料'
+    : /铁|铜|矿|石|砂/.test(type + name) ? '矿材' : type === '灵草' ? type : '灵物';
+  return { id: `salvage:${name}`, name, class: category, tier, price: FILE.salvage[tier], marketSalvage: true };
+}
+
 module.exports = {
   GOODS, CLASSES, TIERS, NONE, QUALITIES, GEAR_TYPES, lookup, appraise, byId, tierOf, row, unitOf, said, listed, qualityOf, named,
-  gearTypeOf, likeFor, pieceEffect, ofItem,
+  gearTypeOf, likeFor, pieceEffect, ofItem, forSale,
 };
