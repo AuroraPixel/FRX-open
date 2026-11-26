@@ -87,7 +87,7 @@ def test_foundation_is_estimated_for_the_next_gate_and_stronger_prose_is_rejecte
     template = "<content>{}</content><upstore></upstore>"
     assert life_protocol(template.format("结丹虽成，气机仍未沉凝稳固。"), beat, [], []) == []
     assert any("根基仍虚浮" in error for error in life_protocol(
-        template.format("丹成了，周身气机终于沉凝稳固。"), beat, [], [],
+        template.format("丹成了，原本虚浮的气机受真元反复冲刷，终于沉凝稳固。"), beat, [], [],
     ))
 
 

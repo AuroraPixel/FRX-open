@@ -2059,10 +2059,10 @@ def life_protocol(raw, beat, receipts, cards):
         narration = plain(story_of(content[0]))
         misleading = (
             r"根基(?:已然|已|终于|随之|迅速|完全|变得|转为|沉凝|彻底){0,3}(?:稳固|圆满)"
-            r"|(?:气机|丹基)[^，。；！？]{0,18}(?:沉凝稳固|彻底稳固)"
+            r"|(?:气机|丹基)[^。；！？]{0,52}(?:沉凝稳固|彻底稳固)"
         )
-        if any(re.search(misleading, line) and not re.search(r"尚未|仍未|并未|没有|还没|待|方能", line)
-               for line in re.split(r"[，。；！？]", narration)):
+        if any(not re.search(r"尚未|仍未|并未|没有|还没|待|方能", claim[0])
+               for claim in re.finditer(misleading, narration)):
             errors.append("本次冲关虽成，根基仍虚浮。正文须写出根基尚需巩固，不能写成稳固或圆满")
     closed = any(receipt.get("kind") == "close" for receipt in receipts)
     if (not beat.get("scene") or closed or beat.get("fighting") or beat.get("met")
