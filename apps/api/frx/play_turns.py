@@ -1303,7 +1303,15 @@ class TurnDesk:
             elif request.get("act") is not None:
                 # The card the player took, from the beat before: a missing or ineligible one is
                 # refused before anything is written; the model writes the beat on its outcome.
-                card = picked_card(play, request["act"])
+                selection = play
+                index = request["act"]
+                cards = play.get("cards") or []
+                previous = cards[index - 1] if 1 <= index <= len(cards) else None
+                if (isinstance(previous, dict) and previous.get("locked")
+                        and (previous.get("kind") == "施术" or (previous.get("trade") or {}).get("direction") == "sell")):
+                    fresh = await life_op(save.value, "card-preview", {}, [], "view", {})
+                    selection = {**play, "cards": (fresh.get("view") or {}).get("cards", cards)}
+                card = picked_card(selection, index)
                 await asyncio.to_thread(check_can_play, ws.records, save.name, save.value)
                 if not self.runtime.profiles.load("default").model:
                     raise TurnError("model_not_configured", "请先在模型连接中配置模型", 400)

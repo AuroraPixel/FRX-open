@@ -17,7 +17,7 @@ export interface NextGateProps {
 /** What a screen reader hears for the card. */
 export function nextGateLabel(gate: PlayGate, blocked?: string): string {
   const missing = gate.missing.length ? `还缺${gate.missing.join('、')}，` : '';
-  return `下一关 · ${gate.name}：${missing}根基${gate.foundation}，成算${oddsWords(gate.odds)}。${blocked ? `${blocked}。` : ''}打开准备单`;
+  return `下一关 · ${gate.name}：${missing}预计根基${gate.foundation}，成算${oddsWords(gate.odds)}。${blocked ? `${blocked}。` : ''}打开准备单`;
 }
 
 export function NextGate({ gate, onOpen, blocked }: NextGateProps) {
@@ -33,7 +33,7 @@ export function NextGate({ gate, onOpen, blocked }: NextGateProps) {
             <u key={miss}>{miss}</u>
           ))}
           <span>
-            根基 <b>{gate.foundation}</b>
+            预计根基 <b>{gate.foundation}</b>
           </span>
           <span>
             成算 <b data-tone={gate.odds >= 60 ? 'good' : gate.odds < 30 ? 'poor' : undefined}>{oddsWords(gate.odds)}</b>

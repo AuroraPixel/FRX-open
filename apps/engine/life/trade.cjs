@@ -190,14 +190,16 @@ const haggledAt = (env, place) => (env.play?.haggled && typeof env.play.haggled 
 
 // The bag's things the place takes: catalogue goods its buys name, not stored away.
 function takes(env, place) {
-  const buys = places.factsOf(place, env.worldMap).trade.buys;
+  const facts = places.factsOf(place, env.worldMap);
+  const buys = facts.trade.buys;
   const stored = env.ctx.storedItemIds(env.state);
   return Object.entries(env.state['1'] || {}).flatMap(([id, row]) => {
     if (!row || stored.has(id)) return [];
     // a piece of the story's sells as the catalogue's piece it is (goods.ofItem), under its own name
-    const good = goods.ofItem(row);
+    const good = goods.forSale(row);
     const count = Number(env.ctx.itemStackCount(row['5']));
-    if (!good || good.class === STONES || !named(good, buys) || !Number.isSafeInteger(count) || count < 1) return [];
+    if (!good || good.class === STONES || !Number.isSafeInteger(count) || count < 1) return [];
+    if (!named(good, buys) && !(facts.big && good.marketSalvage)) return [];
     return [{ id, good, count, name: goods.lookup(row['1']) ? good.name : plain(row['1']).split('|')[0].trim() }];
   });
 }

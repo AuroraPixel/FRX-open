@@ -243,14 +243,26 @@ function findIn(list, key) {
 // The entry whose name the title mentions (the longest, two characters or more).
 function namedIn(list, title) {
   const text = plain(title);
-  return list.filter(entry => plain(entry.name).length >= 2 && text.includes(plain(entry.name)))
-    .sort((a, b) => plain(b.name).length - plain(a.name).length)[0] || null;
+  return list.flatMap(entry => [entry.name, ...(entry.aliases || [])].map(name => ({ entry, name: plain(name) })))
+    .filter(({ name }) => name.length >= 2 && text.includes(name))
+    .sort((a, b) => b.name.length - a.name.length)[0]?.entry || null;
 }
 
 // A reason for the player names a thing by its name, never by an id (I3, C2-1).
 const isName = key => /[\u4e00-\u9fff]/.test(key);
 const missingItem = key => (isName(key) ? `行囊里没有「${key}」` : '行囊里没有这件东西');
 const missingSkill = key => (isName(key) ? `还没学会「${key}」` : '还没学会这门术法');
+const ARRAY_TRAVEL = /(?:催动|激发|激活|启动|启用|开启|运转|踏入|进入|借|乘|通过|使用)[^，。；！？]{0,24}(?:古(?:代|老)?传送阵|(?:大)?挪移(?:大阵|阵)|跨域传送阵|远距(?:离)?传送阵)/;
+const CHANNEL_QI = /(?:真元|真气|法力|灵力|法诀)|(?:布设|布下|温养|稳固|修补|封堵)[^，。；！？]{0,16}(?:阵|禁制|警禁)/;
+
+function channelOf(ctx, key, title, person) {
+  const methods = ctx.methods || [];
+  const manual = findIn(methods, key) || namedIn(methods, title);
+  const generic = CHANNEL_QI.test(title) && !/[《「『][^》」』]{1,28}[》」』]/.test(title);
+  const localTarget = /阵[盘眼脉法纹]|阵枢|禁制|警禁|阵门/.test(key) && title.includes(key);
+  if (!manual && (!generic || (key && !person && !localTarget) || !methods.length)) return null;
+  return { stat: '法力', amount: mechanics.spellManaCost(statNumbers(ctx.mana).max) };
+}
 
 // ---------------------------------------------------------------- gates
 
@@ -372,11 +384,13 @@ function price(ctx, card) {
   if (key && /^[CG]\d+$/.test(key) && !person) notes.push(`对象 ${key} 不在场，按没有对象标价`);
   const reasons = [];
   const cost = { minutes: kind.minutes, stones: 0, stats: [], items: [] };
-  let item = null, skill = null, trade = null;
+  let item = null, skill = null, channel = null, trade = null;
 
   // What the kind itself needs: the thing to use, the skill and its cost, the stones to pay. The
   // object is found by id or name, else by a name the title mentions.
-  if (kind.effect?.use) {
+  if (ARRAY_TRAVEL.test(title)) {
+    reasons.push('远距传送由地图结算，请收场后查看可用阵口');
+  } else if (kind.effect?.use) {
     item = findIn(bag, key) || namedIn(bag, title);
     // A consumable is used up unless the title only shows it (亮出, 出示); anything else is shown.
     const shown = (kind.shows || []).some(word => title.includes(word));
@@ -389,13 +403,16 @@ function price(ctx, card) {
     if (consumed && item.aid) reasons.push(`「${plain(item.name)}」要留到冲关时服用`);
     else if (consumed && plain(item.unusable)) reasons.push(plain(item.unusable));
   }
-  if (kind.object === 'skill') {
+  if (kind.object === 'skill' && !ARRAY_TRAVEL.test(title)) {
     skill = findIn(skills, key) || namedIn(skills, title);
-    if (!skill) reasons.push(missingSkill(key));
-    else if (skill.cost?.stat && Number.isFinite(Number(skill.cost.amount))) {
-      const amount = Number(skill.cost.amount), have = statOf(ctx.stats, skill.cost.stat);
-      cost.stats.push({ stat: skill.cost.stat, amount });
-      if (have < amount) reasons.push(`${skill.cost.stat}不够：要 ${amount} 点，只剩 ${have} 点`);
+    if (!skill) channel = channelOf(ctx, key, title, person);
+    const payment = skill?.cost || channel;
+    if (!skill && !channel) reasons.push(missingSkill(key));
+    else if (payment?.stat && Number.isFinite(Number(payment.amount))) {
+      const { stat, amount } = payment;
+      const have = statOf(channel ? { 法力: ctx.mana } : ctx.stats, stat);
+      cost.stats.push({ stat, amount });
+      if (have < amount) reasons.push(`${stat}不够：要 ${amount} 点，只剩 ${have} 点`);
     }
   }
   if (kind.effect?.trade && !ctx.barter) {
@@ -538,6 +555,8 @@ function price(ctx, card) {
     locked,
     reason,
     cost,
+    ...(skill ? { skillId: skill.id } : {}),
+    ...(channel ? { channel } : {}),
     ...(trade ? { trade } : {}),
     ...(ctx.quotedPrice !== undefined ? { quotedPrice: ctx.quotedPrice } : {}),
     outcomes,
@@ -592,6 +611,7 @@ function contextOf(env, card) {
   const bag = Object.entries(env.state['1'] || {}).filter(([id, row]) => row && !stored.has(id)).map(([id, row]) => ({
     id, name: rowName(row), count: env.ctx.itemStackCount(row['5']), type: plain(row['2']), aid: mechanics.isAid(rowName(row)),
     unusable: unusable(env, id, row),
+    ...(plain(card?.kind) === '买卖' ? { aliases: goods.lookup(rowName(row))?.aliases } : {}),
   }));
   const skills = Object.entries(env.state['8'] || {}).filter(([, row]) => row)
     .map(([id, row]) => ({ id, name: rowName(row), cost: mechanics.skillCost(row, stats) }));
@@ -609,6 +629,10 @@ function contextOf(env, card) {
     : plain(card?.kind) === '买卖' ? dealOf(env, card, bag) : null;
   return {
     stats, realm: plain(player['2']), stones: mechanics.stonesOf(player) ?? 0, bag, skills,
+    ...(kindName(plain(card?.kind)) === '施术' || classify(plain(card?.title)) === '施术' ? {
+      mana: mechanics.readStats(env, 'B1')['法力'],
+      methods: gear.activeGear(env).filter(piece => piece.slot === 'technique'),
+    } : {}),
     target: row ? { id, name: rowName(row), realm: plain(row['2']), favour: favourOf(row) } : null,
     relationshipGains: env.play.scene?.relationshipGains,
     ...clocks.clockStepsFor(env, { targetId: id || '', place: placeHere(env) }),
@@ -635,8 +659,8 @@ function dealOf(env, card, bag) {
   const sellWords = /卖|售|典当/.test(title) && !/买|购/.test(title);
   const item = saleItem(bag, key, title, sellWords);
   if (item || sellWords) {
-    const good = item ? goods.ofItem(env.state['1']?.[item.id] || { 1: item.name }) : null;
-    return good && good.class !== STONES ? { price: trade.each(env, good, 'sell') } : item ? { unpriced: true } : {};
+    const good = item ? goods.forSale(env.state['1']?.[item.id] || { 1: item.name }) : null;
+    return good && good.class !== STONES ? { price: trade.each(env, good, 'sell', false, places.placeFacts(env).place) } : item ? { unpriced: true } : {};
   }
   const method = METHOD_PURCHASE.test(purchaseName(title));
   const good = [goods.lookup(key)].find(each => each && each.class !== STONES && (!method || each.type === '功法'))
@@ -689,7 +713,7 @@ function auctionBid(title) {
 
 function saleItem(bag, key, title, sellWords) {
   if (AUCTION.test(title) && !sellWords) return null;
-  const target = findIn(bag, key);
+  const target = findIn(bag, key) || bag.find(entry => entry.aliases?.includes(key));
   if (/买|购/.test(title) && !sellWords) return null;
   return target || (sellWords ? namedIn(bag, title) : null);
 }
@@ -784,9 +808,12 @@ function viewCards(env) {
   const cards = Array.isArray(env.play.cards) ? env.play.cards : [];
   if (env.play.encounter) return cards;
   return cards.map(shown => {
-    if (shown?.trade?.direction !== 'buy' || shown.trade.fee || shown.trade.good
-        || given(shown.quotedPrice) || !given(shown.trade.price)) return shown;
-    // Old scenes saved a regional placeholder in trade.price. Recheck against the normal rules.
+    const oldBuy = shown?.trade?.direction === 'buy' && !shown.trade.fee && !shown.trade.good
+      && !given(shown.quotedPrice) && given(shown.trade.price);
+    const affected = shown?.kind === '施术' || (shown?.kind === '用物' && ARRAY_TRAVEL.test(shown.title))
+      || (shown?.trade?.direction === 'sell' && shown.locked);
+    if (!oldBuy && !affected) return shown;
+    // Reprice stored cards against current gear, resources and the current catalogue.
     const raw = { ...shownCard(shown), index: shown.index, fallback: shown.fallback };
     return price(contextOf(env, raw), raw);
   });
@@ -825,8 +852,8 @@ async function act(env, args) {
   const kind = ACTIONS.kinds[card.kind];
   // What the old rules settle in their own receipts: the skill (mana, proficiency, its limits) and
   // the thing used up (its effect, its daily limits).
-  if (kind.object === 'skill' && card.object?.type === 'skill') {
-    const cast = mechanics.useSkill(env, { skill_id: card.object.id, reason: card.title }, 'card');
+  if (card.skillId) {
+    const cast = mechanics.useSkill(env, { skill_id: card.skillId, reason: card.title }, 'card');
     if (!cast.ok) return env.refuse(cast.reason);
     await env.settle(cast);
   }
@@ -878,6 +905,7 @@ async function act(env, args) {
   // 买卖 settled by the engine (dealOf): the good a purchase names goes into the bag; a sale takes
   // the thing out and pays its price. A thing of the story's that was bought the story registers.
   if (card.trade && !meeting) dealt(env, card, commands, owns, paid);
+  if (card.channel) paid.push(spend(card.channel.stat, card.channel.amount));
   if (spec.doubleCost) for (const { stat, amount } of card.cost.stats) effects.push(spend(stat, amount));
   if (spec.harm) {
     // As resolveCheck takes it: the percent of the full bar, rounded up.

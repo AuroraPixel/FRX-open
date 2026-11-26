@@ -436,8 +436,15 @@ METHOD_INPUT = re.compile(
 ASKING_ABOUT = re.compile(r"打听|请教|询问|求教|问问|问他|查看|翻阅|查找|了解|筹备|为将来|准备日后|将来|日后|暂不|不急着")
 
 
+ARRAY_ACTIVATION = re.compile(
+    r"(?:催动|激发|激活|启动|启用|开启|运转|踏入|进入|借|乘|通过|使用)"
+    r"[^，,。；;！？]{0,24}(?:古(?:代|老)?传送阵|(?:大)?挪移(?:大阵|阵)|跨域传送阵|远距(?:离)?传送阵)"
+)
+SEA_VOYAGES = json.loads((ROOT / "content/life/star-sea.json").read_text(encoding="utf-8"))["voyages"]
+
+
 def protected_action(text):
-    """Direct a deliberate gate or equipment change to its engine-controlled entry point."""
+    """Send actions that require the game rules to their controls."""
     for clause in re.split(r"[，,；;。！？\n]", text):
         if ASKING_ABOUT.search(clause):
             continue
@@ -445,6 +452,11 @@ def protected_action(text):
             return "请打开「冲关准备单」选择辅助材料并冲关。"
         if METHOD_INPUT.search(clause):
             return "请打开角色面板，在「功法」格装备或更换主修功法。"
+        hypothetical = re.search(r"不要|未启|不启|不使用|不催动|如果|要是|可否|能否", clause)
+        if ARRAY_ACTIVATION.search(clause) and not hypothetical:
+            public = next((path for path in SEA_VOYAGES if not path.get("repair")), None)
+            route = f'。出海可在地图查看「{public["station"]} → {public["landing"]}」' if public else ""
+            return f"远距传送由地图结算。请先收场，再选择可用阵口{route}。"
     return None
 
 
@@ -2042,6 +2054,16 @@ def life_protocol(raw, beat, receipts, cards):
             errors.append(f"<{tag}>标签没有完整闭合")
         elif tag in {"content", "upstore", "actions"} and opened > 1:
             errors.append(f"<{tag}>只能有一个完整块")
+    gate = beat.get("gated") or {}
+    if gate.get("success") and gate.get("foundation") == "虚浮" and content:
+        narration = plain(story_of(content[0]))
+        misleading = (
+            r"根基(?:已然|已|终于|随之|迅速|完全|变得|转为|沉凝|彻底){0,3}(?:稳固|圆满)"
+            r"|(?:气机|丹基)[^。；！？]{0,52}(?:沉凝稳固|彻底稳固)"
+        )
+        if any(not re.search(r"尚未|仍未|并未|没有|还没|待|方能", claim[0])
+               for claim in re.finditer(misleading, narration)):
+            errors.append("本次冲关虽成，根基仍虚浮。正文须写出根基尚需巩固，不能写成稳固或圆满")
     closed = any(receipt.get("kind") == "close" for receipt in receipts)
     if (not beat.get("scene") or closed or beat.get("fighting") or beat.get("met")
             or beat.get("gated")):
