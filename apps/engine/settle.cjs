@@ -810,6 +810,9 @@ async function toolsMode(input) {
   await replayReceipts(context, env, input.receipts);
   let ordinal = (input.receipts || []).length;
   const results = [], settled = [...(input.receipts || [])];
+  const retrieved = new Set(settled.filter(r => r.ok && r.retrieved).map(r => r.retrieved.id));
+  const retained = kind => ({ kind, ok: false, readOnly: true, reason: '本次只收回物品，数量保持不变',
+    summary: '物品已收回，数量不变', commands: '' });
   // A use may name the item a claim in this turn just moved (the NPC's own ID), or an item
   // bought this turn by its name.
   const aliases = {};
@@ -829,8 +832,10 @@ async function toolsMode(input) {
     let receipt;
     if (call.name === "lookup_inventory") receipt = rules.lookupInventory(env, args);
     else if (call.name === "use_item") {
-      const id = String(args.item_id || "");
-      receipt = rules.useItem(env, { id: env.state["1"]?.[id] ? id : aliases[id] || id, quantity: args.quantity ?? 1, consumed: true }, "tool");
+      const key = String(args.item_id || "");
+      const id = env.state["1"]?.[key] ? key : aliases[key] || key;
+      receipt = retrieved.has(id) ? retained("use_item")
+        : rules.useItem(env, { id, quantity: args.quantity ?? 1, consumed: true }, "tool");
     } else if (call.name === "claim_item") {
       receipt = rules.claimItem(env, { ...args, quantity: args.quantity ?? 1 }, "tool");
       if (receipt.ok) { receipt.claimedId = String(args.item_id || ""); aliases[receipt.claimedId] = receipt.item.id; }
@@ -844,6 +849,7 @@ async function toolsMode(input) {
     else if (call.name === "breakthrough") receipt = rules.mechanics.breakthrough(env, args, "tool", ordinal);
     else if (call.name === "trade_item") {
       receipt = rules.mechanics.tradeItem(env, args, "tool");
+      if (receipt.ok && receipt.owns.items.some(id => retrieved.has(id))) receipt = retained("trade_item");
       if (receipt.ok && receipt.direction === "buy") aliases[receipt.item.name] = receipt.item.id;
     }
     else if (call.name === "move_place") receipt = await movePlace(input, settled, args);

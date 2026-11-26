@@ -530,6 +530,8 @@ def act_words(act, fighting=False):
         words = fill(said["direct"], {**values, "门槛": card["gate"]})
     else:
         words = fill(said["plain"], values)
+    if retrieved := act.get("retrieved"):
+        words += f" 「{retrieved['name']}」已收回并保留在行囊，数量不变。"
     intent = card.get("intent")
     if intent:
         # A decision following a question still belongs to the player, even if the roll succeeds.

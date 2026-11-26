@@ -199,6 +199,7 @@ const IGNORED = (ACTIONS.classify.ignore || []).length ? new RegExp(ACTIONS.clas
 // The kind a sentence describes: the first kind in the classify order with a word in it, else 静观.
 function classify(text) {
   const source = IGNORED ? plain(text).replace(IGNORED, '，') : plain(text);
+  if (retrieving(source)) return '用物';
   for (const name of ACTIONS.classify.order) {
     if (PATTERNS[name].some(pattern => pattern.test(source))) return name;
   }
@@ -252,6 +253,14 @@ function namedIn(list, title) {
 const isName = key => /[\u4e00-\u9fff]/.test(key);
 const missingItem = key => (isName(key) ? `行囊里没有「${key}」` : '行囊里没有这件东西');
 const missingSkill = key => (isName(key) ? `还没学会「${key}」` : '还没学会这门术法');
+const RETRIEVE = /^(?:(?:先|随即|顺势|趁机|当即)\s*)?(?:从[^，。；！？]{1,18}?)?(?:收回|取回|拿回|收起|收好|收进|收入)/;
+const STOW = /^(?:将|把)[^，。；！？]{1,32}?(?:收回|取回|拿回|收起|收好|收进|收入)/;
+const SPEND_ITEM = /服下|服用|吞下|吞服|吃下|捏碎|焚毁|消耗|用掉|卖给|售予|典当|交给|交付|抵价/;
+
+function retrieving(title) {
+  const first = plain(title).split(/[，,。；;！？]/, 1)[0];
+  return (RETRIEVE.test(first) || STOW.test(first)) && !SPEND_ITEM.test(first);
+}
 const ARRAY_TRAVEL = /(?:催动|激发|激活|启动|启用|开启|运转|踏入|进入|借|乘|通过|使用)[^，。；！？]{0,24}(?:古(?:代|老)?传送阵|(?:大)?挪移(?:大阵|阵)|跨域传送阵|远距(?:离)?传送阵)/;
 const CHANNEL_QI = /(?:真元|真气|法力|灵力|法诀)|(?:布设|布下|温养|稳固|修补|封堵)[^，。；！？]{0,16}(?:阵|禁制|警禁)/;
 
@@ -385,16 +394,17 @@ function price(ctx, card) {
   const reasons = [];
   const cost = { minutes: kind.minutes, stones: 0, stats: [], items: [] };
   let item = null, skill = null, channel = null, trade = null;
+  const retrieve = kind.effect?.use && retrieving(title);
 
   // What the kind itself needs: the thing to use, the skill and its cost, the stones to pay. The
   // object is found by id or name, else by a name the title mentions.
   if (ARRAY_TRAVEL.test(title)) {
     reasons.push('远距传送由地图结算，请收场后查看可用阵口');
   } else if (kind.effect?.use) {
-    item = findIn(bag, key) || namedIn(bag, title);
-    // A consumable is used up unless the title only shows it (亮出, 出示); anything else is shown.
+    item = findIn(bag, key) || bag.find(entry => entry.aliases?.includes(key)) || namedIn(bag, title);
+    // Retrieval and display leave the bag alone; activation follows the ordinary item rules.
     const shown = (kind.shows || []).some(word => title.includes(word));
-    const consumed = !!item && !shown && rules.expendable(item.type, true);
+    const consumed = !!item && !retrieve && !shown && rules.expendable(item.type, true);
     if (item) cost.items.push({ id: item.id, name: plain(item.name), count: 1, consumed });
     else reasons.push(missingItem(key));
     // A breakthrough pill does its work only in a breakthrough (mechanics.isAid); a thing the act
@@ -500,7 +510,7 @@ function price(ctx, card) {
   const costs = [
     ...cost.stats.map(s => `${s.stat} ${s.amount}`),
     ...(cost.stones ? [`灵石 ${cost.stones} 块`] : []),
-    ...cost.items.map(i => (sold !== null ? `卖出${i.name}得${sold}块` : `${i.consumed ? '用掉' : '亮出'}${i.name}`)),
+    ...cost.items.map(i => (sold !== null ? `卖出${i.name}得${sold}块` : `${i.consumed ? '用掉' : retrieve ? '收回' : '亮出'}${i.name}`)),
     ...(cost.minutes > 0 ? [spanText(cost.minutes)] : []),
   ];
   // What the card is about, as found: the person, the thing in the bag, the skill.
@@ -555,6 +565,7 @@ function price(ctx, card) {
     locked,
     reason,
     cost,
+    ...(retrieve && item ? { retrieved: { id: item.id, name: item.name } } : {}),
     ...(skill ? { skillId: skill.id } : {}),
     ...(channel ? { channel } : {}),
     ...(trade ? { trade } : {}),
@@ -611,7 +622,8 @@ function contextOf(env, card) {
   const bag = Object.entries(env.state['1'] || {}).filter(([id, row]) => row && !stored.has(id)).map(([id, row]) => ({
     id, name: rowName(row), count: env.ctx.itemStackCount(row['5']), type: plain(row['2']), aid: mechanics.isAid(rowName(row)),
     unusable: unusable(env, id, row),
-    ...(plain(card?.kind) === '买卖' ? { aliases: goods.lookup(rowName(row))?.aliases } : {}),
+    ...(['买卖', '用物'].includes(plain(card?.kind)) || retrieving(card?.title)
+      ? { aliases: goods.lookup(rowName(row))?.aliases } : {}),
   }));
   const skills = Object.entries(env.state['8'] || {}).filter(([, row]) => row)
     .map(([id, row]) => ({ id, name: rowName(row), cost: mechanics.skillCost(row, stats) }));
@@ -810,7 +822,8 @@ function viewCards(env) {
   return cards.map(shown => {
     const oldBuy = shown?.trade?.direction === 'buy' && !shown.trade.fee && !shown.trade.good
       && !given(shown.quotedPrice) && given(shown.trade.price);
-    const affected = shown?.kind === '施术' || (shown?.kind === '用物' && ARRAY_TRAVEL.test(shown.title))
+    const affected = shown?.kind === '施术'
+      || (shown?.kind === '用物' && (ARRAY_TRAVEL.test(shown.title) || retrieving(shown.title)))
       || (shown?.trade?.direction === 'sell' && shown.locked);
     if (!oldBuy && !affected) return shown;
     // Reprice stored cards against current gear, resources and the current catalogue.
@@ -883,6 +896,10 @@ async function act(env, args) {
     spec = card.outcomes[rolled.outcome];
   }
   const commands = [], effects = [], paid = [], owns = ownsNothing();
+  if (card.retrieved) {
+    owns.items.push(card.retrieved.id);
+    owns.grants.push(card.retrieved.name);
+  }
   if (rolled) owns.forbid.push(...(CHECKS[card.check].results[rolled.outcome].forbid || []));
   const stats = mechanics.readStats(env, 'B1');
   const spend = (stat, amount) => {
@@ -934,7 +951,7 @@ async function act(env, args) {
   // The pressure clocks: what the clocks' own rules make of the act (a fumble, a strike in their
   // scope, a thing shown, a clock started), then the card's outcome on the clock it bears on, unless
   // the rules moved that one already.
-  const shown = kind.effect?.use ? card.cost.items.find(entry => !entry.consumed)?.name : '';
+  const shown = kind.effect?.use && !card.retrieved ? card.cost.items.find(entry => !entry.consumed)?.name : '';
   const moved = clocks.raiseFor(env, { kind: card.kind, outcome: rolled?.outcome ?? '', place: placeHere(env), ...(shown ? { item: shown } : {}) });
   // Gear (gear.cjs): a critical failure damages one of the active pieces the check leaned on;
   // selling stolen goods where their owner's people are is noticed.
@@ -960,6 +977,7 @@ async function act(env, args) {
       consequence: result.text, effects, target, reason: card.title, seed: rolled.seed, rulesVersion: RULES.version,
       ...(rolled.reroll ? { reroll: rolled.reroll } : {}) } } : {}),
     outcome: rolled?.outcome ?? null, effects, paid,
+    ...(card.retrieved ? { retrieved: card.retrieved } : {}),
     ...(investigation ? { investigation: { id: investigation.lead.id, line: investigation.lead.line,
       where: investigation.lead.where, ask: investigation.ask } } : {}),
     ...(favour ? { favour } : {}),
@@ -975,6 +993,7 @@ async function act(env, args) {
     ...(rolled?.reroll ? [`${card.kind}检定1d${RULES.die}=${rolled.reroll.roll}，${rolled.reroll.outcome}；悟得「${rolled.reroll.perk}」重掷`] : []),
     rolled ? `${card.kind}检定（${card.tier}，难度${card.dc}）：1d${RULES.die}=${rolled.roll}，${card.attribute}修正${sign(card.modifier)}，总值${rolled.total} → ${rolled.outcome}：${result.text}`
       : `${card.kind}，${card.leave ? '离开' : '直行'}`,
+    ...(card.retrieved ? [`收回「${card.retrieved.name}」，数量不变`] : []),
     ...paid.map(p => `${p.stat} ${num(p.before)}→${num(p.after)}`),
     ...effects.map(e => `${e.stat} ${num(e.before)}→${num(e.after)}`),
     ...(spec.fight && !card.beat ? ['动起手来'] : []),

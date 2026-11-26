@@ -8,6 +8,7 @@ game's evolving state fields and individual snapshot payloads.
 import copy
 import hashlib
 import json
+from contextlib import nullcontext
 from functools import lru_cache
 from uuid import uuid4
 
@@ -117,6 +118,12 @@ class Archive(Base):
 
     @value.setter
     def value(self, value):
+        session = object_session(self)
+        # Replacing snapshot relationships can lazy-load. Validate limits after the whole write.
+        with session.no_autoflush if session is not None else nullcontext():
+            self._set_value(value)
+
+    def _set_value(self, value):
         self._value_written = True
         if value is None:
             self.deleted = True
@@ -279,10 +286,13 @@ class ArchiveLog(Base):
             refs.append(ref)
         self.snapshots = refs
 
-    def value(self, lean=False, keep_tables=True, seen=None, payloads=None):
-        result = clone(self.extra or {})
+    def fields_value(self):
         fields = {"id": "log_id", "type": "kind", "content": "content", "timestamp": "timestamp"}
-        result.update({field: clone(getattr(self, fields[field])) for field in self.present or []})
+        return {**clone(self.extra or {}),
+                **{field: getattr(self, fields[field]) for field in self.present or []}}
+
+    def value(self, lean=False, keep_tables=True, seen=None, payloads=None):
+        result = self.fields_value()
         for ref in self.snapshots:
             if lean and (ref.field in SERVER_FIELDS or (ref.field == TABLES and not keep_tables)):
                 stub = {"codec": KEPT, "sha256": ref.snapshot_digest, "bytes": ref.size}
@@ -549,6 +559,21 @@ def add_demo_coast(state):
         names = {entry.get("name") for entry in existing if isinstance(entry, dict)}
         world[field] = existing + [clone(entry) for entry in expanded[field] if entry["name"] not in names]
     return state
+
+
+def archive_storage_bytes(row):
+    """Count the stored archive fields and each referenced snapshot once, using reference sizes."""
+    size = len(encoded({
+        **(row.document_meta or {}), "name": row.name,
+        "data": {**(row.data_meta or {}), "archiveId": row.archive_id,
+                 "state": row.state.value, "logs": []},
+    }).encode())
+    snapshots = {}
+    for log in row.logs:
+        size += len(encoded(log.fields_value()).encode())
+        for ref in log.snapshots:
+            snapshots[ref.snapshot_digest] = ref.size
+    return size + sum(snapshots.values())
 
 
 def archive_value(row, lean=False):
