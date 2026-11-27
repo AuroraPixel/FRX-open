@@ -59,6 +59,7 @@ const DAY = clock.DAY_MINUTES;
 const DIE = rules.RULES.die;
 const OUTCOMES = ['大成功', '成功', '失败', '大失败'];
 const LADDER = RULES.ladder;
+const RECIPES = goods.GOODS.filter(good => good.kind === '方' && good.recipe);
 
 const isObject = value => value && typeof value === 'object' && !Array.isArray(value);
 const bookOf = env => (isObject(env.play?.crafts) ? env.play.crafts : {});
@@ -116,7 +117,24 @@ function stacksOf(env, good) {
     .sort((a, b) => LADDER.indexOf(b.quality) - LADDER.indexOf(a.quality) || a.id.localeCompare(b.id));
 }
 
-const owned = (env, recipe) => stacksOf(env, recipe).length > 0;
+function readRecipes(env) {
+  const stored = env.ctx.storedItemIds(env.state);
+  return Object.entries(env.state['1'] || {}).flatMap(([itemId, row]) => {
+    if (stored.has(itemId) || !(env.ctx.itemStackCount(row?.['5']) > 0)) return [];
+    const name = plain(row['1']).split('|')[0].replace(/^[《「]|[》」]$/g, '');
+    const known = goods.lookup(name);
+    const owned = RECIPES.filter(good => good.id === known?.id
+      || (good.recipe.scroll === name && plain(row['4']).includes(good.recipe.output.name)));
+    if (owned.length) return owned.map(good => ({ itemId, recipe: good.name, craft: good.recipe.craft, makes: good.recipe.output.name }));
+    const fragment = name.match(/^(.*?)(丹方|器谱|符谱|阵图)(?:的)?(?:残卷|残页|残篇)$/);
+    if (!fragment) return [];
+    const [, makes, type] = fragment;
+    return [{ itemId, recipe: name, craft: { 丹方: '炼丹', 器谱: '炼器', 符谱: '制符', 阵图: '布阵' }[type],
+      makes, note: '此配方尚有残缺，补齐后才能炼制' }];
+  });
+}
+
+const owned = (env, recipe) => readRecipes(env).some(found => !found.note && found.recipe === recipe.name);
 
 // What `batches` batches take from the bag: { missing } with what is short, or { poor, commands,
 // items, spent }: poor[n] whether every material batch n used was 残, the commands that take them,
@@ -216,6 +234,7 @@ function craftPlan(env, verb, upTo = null) {
   const batches = /^\d{1,2}$/.test(String(verb.batches ?? 1).trim()) ? Number(verb.batches ?? 1) : 0;
   if (batches < 1 || batches > RULES.most) return { refused: `一次做一到${chronicle.numeral(RULES.most)}炉` };
   const tierAt = goods.TIERS.indexOf(recipe.tier);
+  if (recipe.recipe.scroll && !owned(env, recipe)) return { refused: `手里没有记载此方的「${recipe.recipe.scroll}」` };
   if (verb.hire === true) return hirePlan(env, { recipe, craft, rule, facts, here, venue, batches, tierAt });
   if (!owned(env, recipe)) return { refused: `手里没有「${recipe.name}」` };
   const mastery = masteryOf(env, craft);
@@ -359,4 +378,4 @@ function install(verbs, beasts = null) {
   };
 }
 
-module.exports = { RULES, masteryOf, modifier, practise, taming, deliver, listed, install, craftPlan, oddsOf };
+module.exports = { RULES, masteryOf, modifier, practise, taming, deliver, listed, readRecipes, install, craftPlan, oddsOf };

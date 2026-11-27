@@ -1485,6 +1485,7 @@ export interface PlayView {
   book?: PlayBook;
   next?: PlayHint[];
   home?: PlayHome;
+  recipes?: PlayRecipe[];
   arrays?: PlayArrays;
   beasts?: PlayBeasts;
   sect?: PlaySect;
@@ -2205,7 +2206,8 @@ export interface Verb {
   charge?: number;
   person?: string;
   repair?: boolean;
-  action?: 'buy' | 'rent' | 'claim' | 'take' | 'build' | 'plant' | 'harvest' | 'leave';
+  action?:
+    'buy' | 'rent' | 'claim' | 'take' | 'build' | 'plant' | 'harvest' | 'leave' | 'enter' | 'exit';
   room?: '丹房' | '器室';
 }
 /**
@@ -2220,6 +2222,7 @@ export interface Verb {
 export interface PlayHome {
   place: string;
   name: string;
+  spot?: string;
   aura: string;
   rooms: string[];
   how: 'buy' | 'rent' | 'claim' | 'take';
@@ -2265,6 +2268,17 @@ export interface HomeSeed {
 export interface HomeRent {
   yearly: number;
   due: string;
+}
+/**
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "PlayRecipe".
+ */
+export interface PlayRecipe {
+  itemId: string;
+  recipe: string;
+  craft: string;
+  makes: string;
+  note?: string;
 }
 /**
  * The arrays where the player is: the standing ones (`laid`), the ones laid before a fight

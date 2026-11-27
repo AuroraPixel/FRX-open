@@ -71,6 +71,12 @@ const QUIET_VERBS = new Set(RULES.quietVerbs);
 const hooks = { sealed: () => false };
 const DAY = clock.DAY_MINUTES;
 
+function contractedRetreat(env, road) {
+  if (road || env.verbKind !== 'cultivate') return false;
+  const home = require('./home.cjs');
+  return !!home.homeOf(env)?.spot && home.atHome(env);
+}
+
 function monthly(env, road = null) {
   const facts = road || places.placeFacts(env);
   const at = road ? road.where : here.where(env);
@@ -80,7 +86,8 @@ function monthly(env, road = null) {
   const pool = localCauses(env, road);
   if (!pool.length) return { chance: 0, danger: facts.danger, steps, kind: facts.kind, sheltered: true };
   // The difficulty moves it (world.json difficulties interrupts).
-  const chance = Math.min(1, Math.max(0, (facts.danger / 100 + RULES.perStep * steps) * require('./world.cjs').difficulty(env).interrupts));
+  const danger = facts.danger * (contractedRetreat(env, road) ? RULES.contractedRetreatDanger : 1);
+  const chance = Math.min(1, Math.max(0, (danger / 100 + RULES.perStep * steps) * require('./world.cjs').difficulty(env).interrupts));
   // Every cause in this pool had an equal share of the original risk. Quiet verbs omit
   // the ambient shares, so filtering out visitors cannot make robberies more frequent.
   const fraction = causesHere(env, road, pool).length / pool.length;
@@ -109,6 +116,8 @@ function dueAfter(env, today, road = null) {
     const day = clock.dayOfDate(entry?.date);
     if (entry?.kind === 'own' && !RULES.calendar.own.includes(entry.type)) continue;
     if (entry?.kind === 'director' && entry.place && !here.within({ kind: 'place', value: entry.place }, at)) continue;
+    if (!road && env.verbKind === 'cultivate' && entry?.kind === 'director'
+        && /朔日集|旬日集|坊市常集/.test(entry.title)) continue;
     if (day !== null && day > today) {
       due.push({ day, origin: 'calendar', cause: entry.title, event: { kind: entry.kind, id: entry.id, title: entry.title } });
     }
@@ -120,7 +129,9 @@ function dueAfter(env, today, road = null) {
   }
   // the map place the player is at, by its name or its coordinates (places.cjs)
   const mapPlace = road ? road.place : places.placeFacts(env).place;
-  for (const fixed of calendar.CALENDAR.fixed) {
+  // Public events run while secluded. Personal appointments and escalating threats still reach the player.
+  const fixedEvents = contractedRetreat(env, road) ? [] : calendar.CALENDAR.fixed;
+  for (const fixed of fixedEvents) {
     // as the world line left it (a fixed event that no longer opens, or opens elsewhere)
     const next = mapPlace ? calendar.nextOpen(env, fixed, today) : null;
     if (!next || next.event.place !== mapPlace) continue;

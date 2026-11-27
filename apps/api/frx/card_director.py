@@ -1746,15 +1746,18 @@ def new_chapter(chapter, number, status):
     }
 
 
-def _judge(chapter, met, claim):
+def _judge(chapter, met, claim, marks):
     """Engine conditions and linked facts must hold; the model can judge unlinked story goals."""
     claimed, why = claim["done"], claim["why"]
     if not met:
         if not claimed:
             return False, why
         return False, "由引擎判断的条件尚未全部达成" + (f"；{why}" if why else "")
-    if not any(c.get("kind") == "其他" and not c.get("evidence")
-               for c in chapter.get("conditions") or []):
+    if not any(
+        c.get("kind") == "其他" and not c.get("evidence")
+        and (_mark(marks, index, c) or {}).get("met") is not True
+        for index, c in enumerate(chapter.get("conditions") or [])
+    ):
         return True, why or "完成条件已全部达成"
     return bool(claimed), why
 
@@ -1818,7 +1821,7 @@ def settle_plan(prep, plan, progress_plot, turn):
             judgement = {"done": False, "why": "当前一章已按玩家的选择改写"}
             return threads, plot, judgement, False
         met = all_met(chapter, marks)
-        done, why = _judge(chapter, met, plan["chapter_done"])
+        done, why = _judge(chapter, met, plan["chapter_done"], marks)
         judgement = {"done": done, "why": why}
         if written:
             plot["chapters"] = plot["chapters"][: prep.index + 1] + [

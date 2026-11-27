@@ -396,7 +396,7 @@ function view(env) {
     ...(env.play.scene && !fighting ? { cards: actions.viewCards(env) } : {}),
     ...(inside ? { realm: inside } : {}), ...poison.view(env), gear: worn, itemTiers, beasts: kept,
     leads: leads.view(env), ...karma.view(env), threads: threads.view(env), sect: sect.view(env), joining: sect.joining(env), next: legacy.choosing(env) ? [] : hints.next(env),
-    book: book.view(env), ...(own ? { home: own } : {}), arrays: arrays.view(env), legacy: legacy.view(env) };
+    book: book.view(env), ...(own ? { home: own } : {}), recipes: crafts.readRecipes(env), arrays: arrays.view(env), legacy: legacy.view(env) };
 }
 
 const OPS = {

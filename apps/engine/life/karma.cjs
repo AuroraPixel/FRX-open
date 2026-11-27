@@ -115,6 +115,53 @@ function knot(env, kind, who, what, day = clock.today(env)) {
   return entry;
 }
 
+function objective(text) {
+  return plain(text).replace(/^(?:在)?[一二三四五六七八九十百\d]+(?:个)?[日天月年](?:之)?内/, '')
+    .replace(/^(?:前往|赶赴|赶往|赴|去)/, '').replace(/[\s，。；、]/g, '');
+}
+
+function fulfilledPromises(env) {
+  const history = list(env.play?.threadHistory);
+  const fulfilled = new Map();
+  for (const entry of ledger(env)) {
+    if (entry.kind !== '诺' || entry.done || !entry.who?.name) continue;
+    const since = clock.dayOfDate(entry.date), due = clock.dayOfDate(entry.due);
+    if (since === null || due === null) continue;
+    const what = plain(entry.what);
+    const prefix = `答应${entry.who.name}`;
+    const goal = objective(what.startsWith(prefix) ? what.slice(prefix.length) : what);
+    if (goal.length < 6) continue;
+    const proof = history.find(fact => {
+      const day = clock.dayOfDate(fact.date);
+      return fact.status === 'completed' && plain(fact.result) && day !== null && day >= since && day <= due
+        && objective(fact.text) === goal
+        && (!fact.who || fact.who.id === entry.who.id || fact.who.name === entry.who.name
+          || fact.who === entry.who.id || fact.who === entry.who.name);
+    });
+    if (proof) fulfilled.set(entry.id, {
+      done: { date: proof.date, how: '同一事项已按期办成', threadId: proof.id },
+      ...(entry.broken ? { penalty: { who: entry.who.id, date: entry.broken,
+        what: cut(said(RULES.promise.what, { 名: entry.who.name, 事: entry.what }), RULES.whatMost) } } : {}),
+    });
+  }
+  return fulfilled;
+}
+
+function reconciledKarma(env, fulfilled = fulfilledPromises(env)) {
+  if (!fulfilled.size) return { karma: ledger(env), knots: knotsOf(env) };
+  const penalties = [...fulfilled.values()].flatMap(proof => proof.penalty ? [proof.penalty] : []);
+  const isPenalty = entry => penalties.some(p => p.who === entry.who?.id && p.date === entry.date && p.what === entry.what);
+  const karma = ledger(env).filter(entry => !(entry.kind === '怨' && entry.from === 'rule' && isPenalty(entry)))
+    .map(entry => {
+      const proof = fulfilled.get(entry.id);
+      if (!proof) return entry;
+      const { broken, ...promise } = entry;
+      return { ...promise, done: proof.done };
+    });
+  const knots = knotsOf(env).filter(entry => entry.kind !== RULES.promise.knot.kind || !isPenalty(entry));
+  return { karma, knots };
+}
+
 const brief = entry => ({ id: entry.id, kind: entry.kind, who: entry.who, what: entry.what });
 
 // ---------------------------------------------------------------- the engine's own entries
@@ -145,9 +192,23 @@ function robbed(env, receipt) {
   });
 }
 
+function reconcile(env) {
+  const fulfilled = fulfilledPromises(env);
+  if (!fulfilled.size) return [];
+  const found = ledger(env).filter(entry => fulfilled.has(entry.id));
+  const corrected = reconciledKarma(env, fulfilled);
+  for (const entry of found) {
+    if (entry.entry) calendar.remove(env, entry.entry);
+  }
+  env.play.karma = corrected.karma;
+  if (env.play.knots) env.play.knots = corrected.knots;
+  return found.map(brief);
+}
+
 async function settle(env) {
   const today = clock.today(env);
   if (today === null) return;
+  reconcile(env);
   const made = [];
   for (const receipt of [...env.receipts]) {
     const met = cardRule(receipt);
@@ -284,14 +345,15 @@ function demons(env, gate) {
 // ---------------------------------------------------------------- the view
 
 function view(env) {
-  const shown = ledger(env).map(entry => ({ id: entry.id, kind: entry.kind, who: entry.who.name, what: entry.what, back: entry.back, year: entry.year,
+  const { karma, knots } = reconciledKarma(env);
+  const shown = karma.map(entry => ({ id: entry.id, kind: entry.kind, who: entry.who.name, what: entry.what, back: entry.back, year: entry.year,
     ...(entry.due ? { due: clock.dateOf(clock.dayOfDate(entry.due) * clock.DAY_MINUTES) } : {}),
     ...(entry.done ? { done: true } : {}), ...(entry.broken ? { broken: true } : {}) }));
   return {
     karma: [...shown.filter(entry => !entry.done && !entry.broken), ...shown.filter(entry => entry.done || entry.broken)],
-    knots: knotsOf(env).filter(entry => RULES.knots.kinds.includes(entry.kind))
+    knots: knots.filter(entry => RULES.knots.kinds.includes(entry.kind))
       .map(entry => ({ id: entry.id, kind: entry.kind, who: entry.who?.name || '', what: entry.what, year: entry.year })),
   };
 }
 
-module.exports = { RULES, watches, settle, karma: karmaOp, knot: knotOp, demons, view, present, presentOrJustDead };
+module.exports = { RULES, watches, settle, reconcile, karma: karmaOp, knot: knotOp, demons, view, present, presentOrJustDead };

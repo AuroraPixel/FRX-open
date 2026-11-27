@@ -301,7 +301,7 @@ function formulaOf(c, record, affinity, pool, stonesHelp, minded, lifted = null)
   const stepDays = Math.round(speed.stepDaysOf(c.major));
   const { aura } = record.factors;
   const terms = [
-    { label: '境界', value: `${ORDER[c.major] ?? ORDER.at(-1)} 每步${stepDays}日，每日${round2(100 / stepDays)}` },
+    { label: '境界', value: `${ORDER[c.major] ?? ORDER.at(-1)} 每步${stepDays}日，每日${Number((100 / stepDays).toFixed(4))}` },
     { label: '灵根', value: `${c.root.assumed ? '未注明，按真灵根' : `${c.root.tier}灵根`} ${times(c.root.factor)}` },
     { label: '功法', value: `${c.technique.name ? `「${c.technique.name}」` : '没有功法'} ${times(c.technique.factor)}` },
   ];
@@ -387,6 +387,7 @@ function cultivate(env, verb, upTo = null) {
       : `没有灵石可用，缺${count(shortfall)}块，全程按灵气计。`);
   }
   if (record.restored) lines.push('法力、气血回满。');
+  if (verb.full === true) lines.push('遇事出关时会保留已修得的进度，零头也计入下次修炼。');
   if (c.technique.unequipped) lines.push(`储物袋中的「${c.technique.unequipped}」尚未装备。`);
   preview.lines = lines;
   return {

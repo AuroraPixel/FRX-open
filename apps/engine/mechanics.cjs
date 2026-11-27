@@ -1929,7 +1929,40 @@ function heldMatch(value) {
     : heldBare(name).includes(heldBare(value)));
 }
 
-function conditionStatus(env, c, condition) {
+function investigationGoal(text) {
+  const match = plain(text).match(/(?:查明|查清|打听明晰|打听清楚|调查清楚)([^。；！？，,]{6,})/);
+  return match?.[1].replace(/[\s《》「」『』]/g, '') || '';
+}
+
+function recordChapterEvidence(play, plot, before, after, receipts) {
+  const chapter = plot?.chapters?.find(each => each.status !== '已完成');
+  if (!chapter?.id) return;
+  const previous = play.chapterEvidence?.chapter === chapter.id ? play.chapterEvidence : {};
+  const evidence = { chapter: chapter.id };
+  if (chapter.conditions?.some(condition => condition.kind === '灵石')) {
+    evidence.stones = Math.max(previous.stones || 0, stonesOf(before['0']?.B1) || 0, stonesOf(after['0']?.B1) || 0);
+  }
+  const outcomes = receipts.filter(receipt => receipt.ok && receipt.kind === 'act'
+    && ['探查', '交涉'].includes(receipt.check?.kind)
+    && ['成功', '大成功'].includes(receipt.check?.outcome))
+    .map(receipt => ({ title: plain(receipt.card?.title), goal: investigationGoal(receipt.card?.title) }))
+    .filter(action => action.goal);
+  const inquiries = (chapter.conditions || []).filter(condition => condition.kind === '其他').flatMap(condition => {
+    const goal = investigationGoal(condition.value);
+    if (!goal) return [];
+    const verified = previous.inquiries?.includes(condition.value) || outcomes.some(action => {
+      if (action.goal === goal) return true;
+      if (action.goal.length < 8 || !goal.endsWith(action.goal)) return false;
+      const scope = goal.slice(0, -action.goal.length);
+      return scope.length >= 2 && action.title.includes(scope);
+    });
+    return verified ? [condition.value] : [];
+  });
+  if (inquiries.length) evidence.inquiries = inquiries;
+  if (evidence.stones !== undefined || inquiries.length || play.chapterEvidence) play.chapterEvidence = evidence;
+}
+
+function conditionStatus(env, c, condition, evidence = {}) {
   const kind = plain(condition?.kind), value = plain(condition?.value);
   const count = Number.isFinite(Number(condition?.count)) && condition?.count !== null && condition?.count !== '' && condition?.count !== undefined
     ? Number(condition.count) : undefined;
@@ -2005,9 +2038,12 @@ function conditionStatus(env, c, condition) {
       const want = count ?? numberIn(value);
       if (want === null || want === undefined) return done(false, '没有写明灵石数目');
       const stones = stonesOf(env.state['0']?.B1) ?? 0;
-      return done(stones >= want, `当前灵石${stones}块`);
+      const gathered = Math.max(stones, evidence.stones || 0);
+      return done(gathered >= want, gathered > stones && gathered >= want
+        ? `曾为本章筹得灵石${gathered}块` : `当前灵石${stones}块`);
     }
     case '其他': {
+      if (evidence.inquiries?.includes(value)) return done(true, '本章的调查检定已成功');
       const { threadId, quote } = condition.evidence || {};
       if (typeof threadId !== 'string' || !/^T\d+$/.test(threadId)
           || typeof quote !== 'string' || quote.length < 4) return done(null, '');
@@ -2027,7 +2063,8 @@ function plotView(env, plot) {
   const chapters = Array.isArray(plot?.chapters) ? plot.chapters : [];
   const views = chapters.map(chapter => ({
     id: plain(chapter?.id),
-    conditions: (Array.isArray(chapter?.conditions) ? chapter.conditions : []).map(condition => conditionStatus(env, c, condition)),
+    conditions: (Array.isArray(chapter?.conditions) ? chapter.conditions : []).map(condition => conditionStatus(env, c, condition,
+      env.play?.chapterEvidence?.chapter === chapter.id ? env.play.chapterEvidence : undefined)),
   }));
   const index = chapters.findIndex(chapter => plain(chapter?.status) !== '已完成');
   const checkable = index >= 0 ? views[index].conditions.filter(condition => condition.met !== null) : [];
@@ -2039,7 +2076,7 @@ module.exports = {
   proficiencyAfter, useSkill, resolveAttack, equipItem, unequipItem, bagGear, wornGear, updateQuest, activeQuests, combatOver,
   standingFoes, revivedStatus, rest, tradeItem, isFallen, FALLEN_WORDS, inventoryEdit,
   ledgerOf, emptyLedger, numberIn, progressValue, readClock, clockRow, formatDay, cultivator, cultivate, breakthrough, chapterReward,
-  pendingChapterRewards, itemProgress, cultivationView, cultivationPrompt, plotView, isAid, worldFactorsOf, worldRealm, shelvedMethod,
+  pendingChapterRewards, itemProgress, cultivationView, cultivationPrompt, plotView, recordChapterEvidence, isAid, worldFactorsOf, worldRealm, shelvedMethod,
   openingPurse, stonesOf,
   // For the cultivation-life play (apps/engine/life/), which moves the clock itself.
   clockText, spanMinutes, agedRemarks, placeOf,
