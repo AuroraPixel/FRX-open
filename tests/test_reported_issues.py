@@ -58,6 +58,27 @@ def test_granted_and_legacy_mislabelled_manuals_work_through_the_real_equip_and_
     assert equipped["kept"]["currentState"]["1"]["I3"]["2"] == "重要物品"
 
 
+@pytest.mark.parametrize(("effect", "declared_cap", "eligible"), [
+    ("记载直指元婴中期的完整水法口诀与凝婴心得", "", True),
+    ("记载直指元婴中期的完整水法口诀与凝婴心得", "结丹后期", False),
+    ("记载直指元婴中期的残缺口诀", "", False),
+    ("听闻原本直指元婴", "", False),
+])
+def test_equipped_story_manual_uses_declared_cultivation_limit(effect, declared_cap, eligible):
+    value = archive()
+    state = value["data"]["state"]
+    tables = state["currentState"]
+    tables["0"]["B1"]["2"] = "结丹后期|散修"
+    tables["1"]["I5"] = {"0": "I5", "1": "澄海水灵诀骨简", "2": "功法",
+                         "3": "三阶功法", "4": effect, "5": "1", "7": declared_cap}
+    result = engine(value, mode="life", op="equip", args={"itemId": "I5"}, keep=True)
+    state.update(result["kept"])
+    cap = next(row for row in engine(value, mode="life", op="gate")["gate"]["requires"] if row["key"] == "cap")
+    assert cap["met"] is eligible, cap
+    if eligible:
+        assert cap["text"] == "可至元婴中期"
+
+
 def test_free_gate_and_method_changes_refuse_before_reserving_or_consuming(tmp_path, monkeypatch):
     monkeypatch.setenv("FRX_AUTH", "off")
     monkeypatch.setenv("FRX_DATA_DIR", str(tmp_path))

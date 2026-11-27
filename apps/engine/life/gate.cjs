@@ -115,7 +115,7 @@ const stepDaysOf = major => speed.stepDaysOf(major);
 const TIER_REALMS = data('goods').tiers;
 const given = value => value !== undefined && value !== null && value !== '';
 const DESCRIBED_CAP = new RegExp(
-  `(?:可修(?:炼)?[至到]|(?:修炼|修行)上限[：:])\\s*((?:${ORDER.slice(1).join('|')})(?:[一二三四五六七八九十\\d]+层|初期|中期|后期|大圆满|圆满|巅峰)?)`,
+  `(?:可修(?:炼)?[至到]|(?:修炼|修行)上限[：:]|(?:^|[：:\\s「《]|(?:记载|载有|内载)(?:着)?)直指)\\s*((?:${ORDER.slice(1).join('|')})(?:[一二三四五六七八九十\\d]+层|初期|中期|后期|大圆满|圆满|巅峰)?)`,
 );
 
 // ---------------------------------------------------------------- what the sheet reads
@@ -137,8 +137,11 @@ function capOfItem(env, row) {
   const written = text ? mechanics.parseRealm(text) : null;
   if (written && !written.unknown) return { ...written, written: true };
   for (const field of [row.effect ?? row['4'], row.currentEffect ?? row['9'], row.description ?? row['3']]) {
-    const described = plain(field).match(DESCRIBED_CAP);
-    if (described) return { ...mechanics.parseRealm(described[1]), written: true };
+    for (const clause of plain(field).split(/[，,。；;\n]/)) {
+      if (/残缺|残页|残篇|残卷|仅提及|传闻|无法|尚不能|并非|不能|不是/.test(clause)) continue;
+      const described = clause.match(DESCRIBED_CAP);
+      if (described) return { ...mechanics.parseRealm(described[1]), written: true };
+    }
   }
   const tier = gear.tierOfItem(env, row);
   const realm = TIER_REALMS[tier] ? mechanics.parseRealm(TIER_REALMS[tier]) : null;
