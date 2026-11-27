@@ -1081,6 +1081,8 @@ def play_view(save, progress):
         else None,
         recipes=[M.PlayRecipe.model_validate(row) for row in rows("recipes")] if "recipes" in life
         else None,
+        journey=M.HumanJourney.model_validate(life["journey"]) if isinstance(life.get("journey"), dict)
+        else None,
         arrays=M.PlayArrays.model_validate(life["arrays"]) if isinstance(life.get("arrays"), dict)
         else None,
         # the spirit beasts (item 41): the engine's beasts.view, with the days of binding left

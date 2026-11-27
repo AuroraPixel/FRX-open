@@ -1486,6 +1486,7 @@ export interface PlayView {
   next?: PlayHint[];
   home?: PlayHome;
   recipes?: PlayRecipe[];
+  journey?: HumanJourney;
   arrays?: PlayArrays;
   beasts?: PlayBeasts;
   sect?: PlaySect;
@@ -2279,6 +2280,46 @@ export interface PlayRecipe {
   craft: string;
   makes: string;
   note?: string;
+}
+/**
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "HumanJourney".
+ */
+export interface HumanJourney {
+  title: string;
+  complete: boolean;
+  stage?: HumanJourneyStage;
+  chapters: HumanJourneyStep[];
+  choices: HumanJourneyChoice[];
+}
+/**
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "HumanJourneyStage".
+ */
+export interface HumanJourneyStage {
+  id: string;
+  title: string;
+  goal: string;
+}
+/**
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "HumanJourneyStep".
+ */
+export interface HumanJourneyStep {
+  id: string;
+  title: string;
+  done: boolean;
+}
+/**
+ * This interface was referenced by `FrxContracts`'s JSON-Schema
+ * via the `definition` "HumanJourneyChoice".
+ */
+export interface HumanJourneyChoice {
+  title: string;
+  text: string;
+  verb?: Verb;
+  realm?: string;
+  gate?: boolean;
 }
 /**
  * The arrays where the player is: the standing ones (`laid`), the ones laid before a fight

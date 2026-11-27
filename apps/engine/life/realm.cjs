@@ -121,7 +121,7 @@ function admission(env, row, spec, player = false) {
   if (major != null && rank !== major) return `${spec.name}只许${order[major]}期的人进`;
   if (identity?.length && !identity.some(word => identityOf(row).includes(word))
       && !(player && require('./sect.cjs').disciple(env))) return `${spec.name}只许宗门弟子进`;
-  return null;
+  return player && spec.journey ? require('./human-journey.cjs').realmReason(env, spec.journey) : null;
 }
 
 const fits = (env, row, spec) => !admission(env, row, spec) && !mechanics.isFallen(env.ctx, row);
@@ -290,13 +290,15 @@ function foeOf(env, realm, node, entry) {
 async function guardOver(env, realm) {
   if (!realm.guard || env.play.fight) return;
   const row = env.state['0']?.[realm.guard.foe];
-  const beaten = !row || mechanics.isFallen(env.ctx, row);
+  const beaten = realm.guard.defeated ?? (!row || mechanics.isFallen(env.ctx, row));
   const node = realm.guard.node;
   realm.guard = null;
   realm.cleared = beaten;
   if (!beaten) return;
   const { items, made } = await loot(env, realm, node, 2);
+  const journey = require('./human-journey.cjs').realmDone(env, realm.id);
   await env.settle({ kind: 'realm', ok: true, source: 'engine', action: 'loot', node: { id: node, kind: '守' }, items,
+    ...(journey ? { journey, ...(journey.mind ? { mind: [journey.mind] } : {}) } : {}),
     commands: made.commands.join('\n'), owns: made.owns, summary: `击败「守」，得${goods.listed(items) || '一无所获'}` });
 }
 

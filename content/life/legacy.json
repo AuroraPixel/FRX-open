@@ -17,7 +17,7 @@
   "clockReason": "前人坐化",
   "stop": { "cause": "寿元将尽", "preview": "{日期}寿元用尽，就此坐化。", "summary": "{日期}寿元用尽" },
   "reset": { "scene": null, "cards": null, "fight": null, "offer": null, "gates": {}, "foundation": {}, "perks": [] },
-  "drop": ["encounter", "realm", "perkUses", "mind", "minded", "warped", "toxin", "toxinCut", "pills", "crafts", "belt", "sect", "ties", "karma", "knots", "gifts", "hunt", "birth", "opening", "twilight"],
+  "drop": ["humanJourney", "encounter", "realm", "perkUses", "mind", "minded", "warped", "toxin", "toxinCut", "pills", "crafts", "belt", "sect", "ties", "karma", "knots", "gifts", "hunt", "birth", "opening", "twilight"],
   "calendar": ["injury", "cooldown", "lifespan", "contest", "promise", "realm", "job"],
   "pending": ["来访", "求助", "相邀", "反目", "重逢", "护法"],
   "record": {

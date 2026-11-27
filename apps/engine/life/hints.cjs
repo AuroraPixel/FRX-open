@@ -113,6 +113,7 @@ const trade = require('./trade.cjs');
 const goods = require('./goods.cjs');
 const travel = require('./travel.cjs');
 const starSea = require('./star-sea.cjs');
+const humanJourney = require('./human-journey.cjs');
 const verbs = require('./verbs.cjs');
 const methods = require('./methods.cjs');
 const speed = require('./speed.cjs');
@@ -1219,7 +1220,7 @@ function calendarHints(env) {
   return [];
 }
 
-const SOURCES = [['thread', threadHints], ['starSea', starSea.hints], ['earn', earnHints], ['main', mainHints], ['job', jobHints], ['duty', dutyHints],
+const SOURCES = [['thread', threadHints], ['humanJourney', humanJourney.hints], ['starSea', starSea.hints], ['earn', earnHints], ['main', mainHints], ['job', jobHints], ['duty', dutyHints],
   ['due', dueHints], ['gate', env => gateOnce(env)],
   ['hook', hookHints], ['venue', venueHints], ['calendar', calendarHints],
   ['talk', env => [...threadHints(env, true), ...talkHints(env)]]];
@@ -1370,7 +1371,7 @@ function hintsOf(env) {
   const hurt = !soon && injury.active(env);
   // Concrete unfinished events lead; optional generic conversations only fill spare space after
   // cultivation, resources and scheduled obligations, including older saves' followUp threads.
-  const first = [...new Set(['thread', ...(soon || ready ? ['main'] : []), ...(ready || gateSoon(env) ? ['gate'] : []),
+  const first = [...new Set(['humanJourney', 'thread', ...(soon || ready ? ['main'] : []), ...(ready || gateSoon(env) ? ['gate'] : []),
     ...(hurt ? ['due', 'gate'] : []), 'starSea'])];
   const order = [...first.map(name => SOURCES.find(([key]) => key === name)), ...SOURCES.filter(([name]) => !first.includes(name))];
   for (const [name, source] of order) {

@@ -178,6 +178,23 @@
     }
   },
   "named": {
+    "砚霞城": {"kind": "城镇", "aura": "中", "danger": 4, "trade": {"sells": ["丹·四阶", "符·四阶"], "buys": ["灵物·四阶"], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "砚霞城公议盟会坐落于此"},
+    "苔栅旧营": {"kind": "妖兽之地", "aura": "中", "danger": 35, "trade": {"sells": [], "buys": [], "produces": ["妖兽材料·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "旧营与草原往来的粮道"},
+    "断谷外驿": {"kind": "药山", "aura": "中", "danger": 15, "trade": {"sells": [], "buys": [], "produces": ["灵草·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "谷外镇息之草可稳住裂隙"},
+    "乌篱议盟台": {"kind": "城镇", "aura": "中", "danger": 3, "trade": {"sells": [], "buys": [], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "草原外使可以交牒"},
+    "纹契外驿": {"kind": "城镇", "aura": "中", "danger": 3, "trade": {"sells": [], "buys": [], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "纹契院山门之外可递抄图"},
+    "沉誓谷": {"kind": "秘境", "aura": "中", "danger": 55, "trade": {"sells": [], "buys": [], "produces": ["灵物·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "潮岚道谷底有古封印"},
+    "封山古道": {"kind": "妖兽之地", "aura": "中", "danger": 35, "trade": {"sells": [], "buys": [], "produces": ["妖兽材料·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "守御傀儡已走出阵位"},
+    "归元岭": {"kind": "秘境", "aura": "浓", "danger": 55, "trade": {"sells": [], "buys": [], "produces": ["灵物·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "封印开启时可入山"},
+    "鸣霜坊": {"kind": "坊市", "aura": "中", "danger": 8, "trade": {"sells": ["丹·四阶", "符·四阶"], "buys": ["灵物·四阶"], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "宫外商栈和守峰人均可接待散修"},
+    "寒脉外庭": {"kind": "药山", "aura": "浓", "danger": 20, "trade": {"sells": [], "buys": [], "produces": ["灵草·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "寒脉堆积天生冰苔"},
+    "冷星屿": {"kind": "秘境", "aura": "浓", "danger": 45, "trade": {"sells": [], "buys": [], "produces": ["灵物·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "退潮后的冰洞另有一层"},
+    "海隙渡口": {"kind": "坊市", "aura": "中", "danger": 6, "trade": {"sells": ["丹·四阶", "符·四阶"], "buys": ["灵物·四阶"], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "阵口通往海上"},
+    "长汐礁": {"kind": "灵地", "aura": "浓", "danger": 20, "trade": {"sells": [], "buys": [], "produces": ["灵物·四阶", "灵草·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "镇脉石列之间可闭关"},
+    "翡翠井": {"kind": "矿", "aura": "中", "danger": 25, "trade": {"sells": [], "buys": [], "produces": ["矿材·四阶", "灵物·四阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "外海矿脉可采样"},
+    "雾鳞渡": {"kind": "坊市", "aura": "中", "danger": 8, "trade": {"sells": ["丹·五阶", "符·五阶"], "buys": ["灵物·四阶"], "produces": []}, "access": {"realm": null, "status": null, "calendar": null}, "note": "阵师在岛坊张贴测潮告示"},
+    "沉鳞礁": {"kind": "妖兽之地", "aura": "中", "danger": 38, "trade": {"sells": [], "buys": [], "produces": ["妖兽材料·五阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "近节点的海兽群受潮缝惊扰"},
+    "环潮空间节点": {"kind": "秘境", "aura": "浓", "danger": 32, "trade": {"sells": [], "buys": [], "produces": ["灵物·五阶"]}, "access": {"realm": null, "status": null, "calendar": null}, "note": "外缘可测灵砂，深处需要过乱流"},
     "回潮渡": {
       "kind": "城镇",
       "aura": "薄",
@@ -642,6 +659,9 @@
   "draft": {
     "notes": "初稿（drafts）的规则：云汀湾以外的地点由 tools/life_places.cjs 照这里和 words 读出来，标 draft，留给所有者看；看过的挪进 named。种类、灵气、危险照 words；专营照种类给类（trade），阶照所在的区域（tiers：先看 sub_region，再看 main_region，都没有取 default）；城镇的名字以 big.name 收尾、或说明里有 big.text 的是大城，多卖 bigSells；开放照种类给身份（status），境界和日历不写。",
     "tiers": {
+      "潮缝群岛": "五阶",
+      "应符府": "四阶",
+      "上霄原": "五阶",
       "云汀湾": "一阶",
       "潮岚道": "二阶",
       "风盐原": "二阶",

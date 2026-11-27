@@ -500,6 +500,15 @@ function normalizeStoryCommands(parseOne, base, receipts, text, biographies, cas
     const id = op ? (op.command === "set" ? op.data?.["0"] : op.id) : null;
     if (cast.beatTime && op?.command === "add" && id === "TIME_LOCATION_ROW" && op.data && Object.hasOwn(op.data, "0")) {
       const engineRow = String(rules.mechanics.clockRow(base)?.["0"] ?? "");
+      const placeRules = require("./life/places.cjs");
+      const spirit = require("./life/data.cjs").data('travel').spirit;
+      const before = placeRules.mapPosition(engineRow, cast.worldMap).region;
+      const proposed = placeRules.mapPosition(String(op.data["0"] ?? ""), cast.worldMap).region;
+      if (proposed && spirit.includes(before) !== spirit.includes(proposed)) {
+        kept.push(`add("TIME_LOCATION_ROW",${JSON.stringify({ ...op.data, 0: engineRow })})`);
+        notes.push("人界与灵界之间须由玩家亲自走飞升路线，地点照引擎回执");
+        continue;
+      }
       if (engineRow && journey && rules.checkOwnership([op], receipts).length) {
         kept.push(`add("TIME_LOCATION_ROW",${JSON.stringify({ ...op.data, 0: engineRow })})`);
         notes.push("地点以本回合的赶路回执为准");
@@ -972,7 +981,7 @@ async function settle(input) {
       fallen: row => rules.mechanics.isFallen(scratch, row),
       parseRemarks: value => scratch.parseRemarksString(value),
       serializeRemarks: value => scratch.serializeRemarksObject(value),
-      ...(life ? { life: true, beatTime: require("./life/scene.cjs").beatTime, protagonist: require("./life/saga.cjs").protagonist,
+      ...(life ? { life: true, worldMap: scratch.WORLD_MAP_DATA, beatTime: require("./life/scene.cjs").beatTime, protagonist: require("./life/saga.cjs").protagonist,
         lockedItems: state => scratch.storedItemIds(state) } : {}),
     });
     cleaned.text = normalized.text;

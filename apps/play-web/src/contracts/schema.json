@@ -4125,6 +4125,108 @@
       "title": "Hours",
       "type": "object"
     },
+    "HumanJourney": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "stage": {
+          "$ref": "#/definitions/HumanJourneyStage"
+        },
+        "chapters": {
+          "items": {
+            "$ref": "#/definitions/HumanJourneyStep"
+          },
+          "type": "array"
+        },
+        "choices": {
+          "items": {
+            "$ref": "#/definitions/HumanJourneyChoice"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "complete",
+        "chapters",
+        "choices"
+      ],
+      "title": "HumanJourney",
+      "type": "object"
+    },
+    "HumanJourneyChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "verb": {
+          "$ref": "#/definitions/Verb"
+        },
+        "realm": {
+          "type": "string"
+        },
+        "gate": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "text"
+      ],
+      "title": "HumanJourneyChoice",
+      "type": "object"
+    },
+    "HumanJourneyStage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "goal"
+      ],
+      "title": "HumanJourneyStage",
+      "type": "object"
+    },
+    "HumanJourneyStep": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "done": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "done"
+      ],
+      "title": "HumanJourneyStep",
+      "type": "object"
+    },
     "IconEntry": {
       "additionalProperties": false,
       "properties": {
@@ -7254,6 +7356,9 @@
             "$ref": "#/definitions/PlayRecipe"
           },
           "type": "array"
+        },
+        "journey": {
+          "$ref": "#/definitions/HumanJourney"
         },
         "arrays": {
           "$ref": "#/definitions/PlayArrays"

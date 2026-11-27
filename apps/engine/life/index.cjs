@@ -390,13 +390,15 @@ function view(env) {
   }));
   const kept = beasts.view(env);
   const own = home.view(env);
+  const journey = require('./human-journey.cjs').view(env);
   return { date: now ? clock.dateOf(now) : null, age: mechanics.numberIn(remarks['年龄']), lifespan: mechanics.numberIn(remarks['寿元']),
     mind: mind.view(env), place: placed(env), near: travel.near(env), clocks: clocks.view(env), calendar: calendar.upcoming(env, 5), verbs: verbs.list(env),
     ...(next ? { gate: next } : {}), ...(fighting ? { fight: fighting } : {}),
     ...(env.play.scene && !fighting ? { cards: actions.viewCards(env) } : {}),
     ...(inside ? { realm: inside } : {}), ...poison.view(env), gear: worn, itemTiers, beasts: kept,
     leads: leads.view(env), ...karma.view(env), threads: threads.view(env), sect: sect.view(env), joining: sect.joining(env), next: legacy.choosing(env) ? [] : hints.next(env),
-    book: book.view(env), ...(own ? { home: own } : {}), recipes: crafts.readRecipes(env), arrays: arrays.view(env), legacy: legacy.view(env) };
+    book: book.view(env), ...(own ? { home: own } : {}), ...(journey ? { journey } : {}),
+    recipes: crafts.readRecipes(env), arrays: arrays.view(env), legacy: legacy.view(env) };
 }
 
 const OPS = {

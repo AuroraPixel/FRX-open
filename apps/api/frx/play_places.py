@@ -57,10 +57,15 @@ def story_places():
     return rules.get("storyPlaces", [])
 
 
+@cache
+def human_journey_rules():
+    return json.loads((ROOT / "content/life/human-journey.json").read_text(encoding="utf-8"))
+
+
 def known_world_map(world_map, life=False):
     has_map = isinstance(world_map, dict) and world_map.get("points_of_interest")
     source = world_map if has_map else default_world_map()
-    if not life or not story_places():
+    if not life:
         return source
     points = source["points_of_interest"]
     names = {row.get("name") for row in points if isinstance(row, dict)}
@@ -68,6 +73,16 @@ def known_world_map(world_map, life=False):
              for row in (source.get("sub_regions") or []) if isinstance(row, dict)}
     extra = [row for row in story_places() if row["name"] not in names
              and (row["main_region"], row["sub_region"]) in areas]
+    journey = human_journey_rules()
+    source_regions = {row.get("main_region") for row in points if isinstance(row, dict)}
+    if journey["mainland"] in source_regions:
+        overlay = journey["map"]
+        extra.extend(row for row in overlay["points_of_interest"] if row["name"] not in names)
+        regions = source.get("main_regions") or []
+        wanted = {row.get("name") for row in regions if isinstance(row, dict)}
+        appended = [row for row in overlay.get("main_regions", []) if row["name"] not in wanted]
+        if appended:
+            source = {**source, "main_regions": [*regions, *appended]}
     return {**source, "points_of_interest": [*points, *extra]} if extra else source
 FIELDS = ("setting", "terrain", "structure", "features", "scale", "mood")
 SCALES = ("narrow", "open")

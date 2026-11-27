@@ -732,6 +732,10 @@ function end(env, round, how) {
     // A beast tamed leaves the scene's table: it is the player's, in table 7.
     round.commands.push(gone.has(id) ? `de(${J(id)})` : `add(${J(id)},{"31":"false"})`);
   }
+  const guard = env.play.realm?.guard;
+  if (guard && round.fight.foes.some(foe => foe.id === guard.foe)) {
+    guard.defeated = how === 'win' && round.felled.some(foe => foe.id === guard.foe);
+  }
   hooks.ended(env, round, how);
   env.play.fight = null;
 }

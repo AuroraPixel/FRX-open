@@ -15,6 +15,7 @@ import re
 from . import play_models as M
 from .card_turns import tool_capable
 from .domain import ROOT
+from .play_places import human_journey_rules, known_world_map
 
 VERSION = 1
 FIRST_MONTH = "0001-01"
@@ -50,16 +51,33 @@ def regional_lore(archive, *, director=False, destination=None):
     time_row = next((row for row in rows if isinstance(row, dict) and row.get("id") == "TIME_LOCATION_ROW"), {})
     area = str(time_row.get("0") or "").split("/")
     region = area[1] if len(area) > 1 else ""
+    rank = str(((tables.get("0") or {}).get("B1") or {}).get("2") or "").split("|", 1)[0]
     if destination:
-        points = (state.get("worldMap") or {}).get("points_of_interest") or []
+        points = known_world_map(state.get("worldMap"), life=True)["points_of_interest"]
         arrived = next((poi for poi in points if poi.get("name") == destination), None)
         if arrived:
             region = arrived.get("main_region")
+    if re.match(r"元婴|化神|炼虚|合体|大乘|渡劫", rank):
+        late = human_journey_rules()
+        journey = (state.get("frxPlay") or {}).get("humanJourney") or {}
+        high = bool(re.match(r"化神|炼虚|合体|大乘|渡劫", rank))
+        if not journey.get("ascended"):
+            deeds = journey.get("deeds") or {}
+            stage = next((stage for stage in late["stages"]
+                          if stage["id"] not in deeds and not (stage.get("rank") and high)), None)
+            if stage:
+                known = [
+                    (previous.get("jobs") or {}).get(deeds[previous["id"]].get("way"), {}).get("title")
+                    or previous["title"] for previous in late["stages"] if previous["id"] in deeds
+                ]
+                line = f"【{late['title']}·{stage['title']}】{stage['goal']} {stage['story']}"
+                if known:
+                    line += " 已有回执的阶段：" + "、".join(known[-4:]) + "。"
+                return "\n".join([line, late["director"]]) if director else line
+        return ""
     if region == REGIONAL_ROUTES["overseas"]:
         lore = REGIONAL_LORE["overseas"]
     elif region == REGIONAL_ROUTES["mainland"]:
-        players = tables.get("0") or {}
-        rank = str((players.get("B1") or {}).get("2") or "").split("|", 1)[0]
         if not re.match(r"筑基(?:后期|大圆满|圆满|巅峰)|假丹|结丹|金丹|元婴|化神|炼虚|合体|大乘", rank):
             return ""
         lore = REGIONAL_LORE["mainland"]

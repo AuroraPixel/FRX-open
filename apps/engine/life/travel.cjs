@@ -95,7 +95,7 @@ function route(env, to) {
   const foot = footOf(env);
   const overland = RULES.landLinks?.some(pair => pair.includes(at.main) && pair.includes(dest.main_region));
   if (at.main && dest.main_region && at.main !== dest.main_region && !overland) {
-    const gate = hooks.cross(env, at, dest);
+    const gate = require('./human-journey.cjs').crossing(env, at, dest) || hooks.cross(env, at, dest);
     if (!gate) return { refused: across(at.main, dest) };
     return gate.refused ? gate : { to: dest, from: at, distance, foot, walk: 0, days: gate.days, teleport: gate };
   }
@@ -166,6 +166,7 @@ function plan(env, verb, upTo = null, source = 'verb') {
   if (fighting(env)) return { refused: '仍在战斗中，不能赶路' };
   const trip = route(env, verb.to);
   if (trip.refused) return trip;
+  if (trip.teleport?.ascension && source !== 'verb') return { refused: '飞升须从道途或地图亲自启程' };
   const full = trip.days * DAY;
   const over = clock.overrun(env, full);
   if (over) return { refused: `赶路${chronicle.spanText(full)}${over}` };
@@ -183,10 +184,12 @@ function plan(env, verb, upTo = null, source = 'verb') {
   const receipt = {
     kind: 'travel', ok: true, source, commands: gate ? `add("B1",{"26":"${purse - gate.stones}"})` : '',
     owns: gate ? { ...ownsNothing(), currency: true } : ownsNothing(),
-    summary: gate ? `传送：从${gate.station}经传送阵往${dest.name}，付灵石${gate.stones}块`
+    summary: gate?.ascension ? `飞升：由${gate.station}穿渡至${dest.name}，用灵石${gate.stones}块护阵`
+      : gate ? `传送：从${gate.station}经传送阵往${dest.name}，付灵石${gate.stones}块`
       : `赶路：往${dest.name}，路程${rounded(trip.distance)}，日行${trip.walk}，${arrived ? `行${span}` : `行至第${chronicle.numeral(walked)}日`}`,
     travel: { from: trip.from.facts.place || trip.from.facts.spot || '', to: dest.name, distance: rounded(trip.distance),
-      walk: trip.walk, days: trip.days, walked, arrived, ...(gate ? { teleport: { station: gate.station, stones: gate.stones } } : {}) },
+      walk: trip.walk, days: trip.days, walked, arrived, ...(gate ? { teleport: { station: gate.station, stones: gate.stones,
+        ...(gate.ascension ? { ascension: true } : {}) } } : {}) },
   };
   const now = mechanics.readClock(env.state);
   const preview = gate ? {
@@ -199,15 +202,20 @@ function plan(env, verb, upTo = null, source = 'verb') {
     formula: [{ label: '路程', value: String(rounded(trip.distance)) }, { label: `${RULES.stat} ${trip.foot}`, value: `日行${trip.walk}` },
       { label: '日数', value: `${rounded(trip.distance)} ÷ ${trip.walk} → ${trip.days}` }],
   };
+  if (gate?.ascension) {
+    preview.lines = [`从${gate.station}飞升至${dest.name}，护阵耗灵石${gate.stones}块。飞升后无法沿此路返回人界。`];
+    preview.formula[0].label = '空间节点';
+  }
   return {
     minutes, receipt, preview, ...(gate ? {} : { at: road(env, trip) }), place,
-    line: gate ? ['teleport', { 离: leaving(trip), 到: dest.name, 灵石: chronicle.numeral(gate.stones) }]
+    line: gate?.ascension ? ['humanFlight', { 地: dest.name }] : gate ? ['teleport', { 离: leaving(trip), 到: dest.name, 灵石: chronicle.numeral(gate.stones) }]
       : ['travel', { 离: leaving(trip), 到: dest.name, 时长: arrived ? span : '' }],
     finish: settled => {
       settled.summary += `；时间 ${settled.time.before}→${settled.time.after}` + (settled.age ? `；年龄 ${settled.age.before}→${settled.age.after}` : '');
       if (!arrived) return;
       chronicle.write(env, 'arrive', { 到: dest.name });
       require('./star-sea.cjs').arrived(env, trip.from, dest);
+      require('./human-journey.cjs').landed(env, trip.from, dest, settled);
       // 心境 (item 36): the first visit to the place and to its region; the place left counts as seen
       const gains = mind.arrived(env, { place: dest.name, region: dest.sub_region || dest.main_region },
         { place: trip.from.facts.place, region: trip.from.poi ? trip.from.poi.sub_region || trip.from.poi.main_region : null });

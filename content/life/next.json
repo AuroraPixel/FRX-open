@@ -12,6 +12,7 @@
   "clip": 30,
   "gatherDays": 3,
   "caps": {
+    "humanJourney": 1,
     "thread": 2,
     "talk": 1,
     "earn": 1,

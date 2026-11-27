@@ -413,7 +413,8 @@ async function choose(env, args) {
   play.clocks = list(play.clocks).filter(found => found?.scope?.kind !== 'self');
   for (const found of ended) chronicle.write(env, 'clockGone', { 缘由: LEGACY.clockReason, 钟: plain(found.name) });
   play.calendar = list(play.calendar).filter(entry => !(entry?.kind === 'own' && LEGACY.calendar.includes(entry.type)));
-  play.pending = list(play.pending).filter(each => !(each?.from === 'people' && (LEGACY.pending.includes(each.event) || each.person === heir.id)));
+  play.pending = list(play.pending).filter(each => each?.from !== 'humanJourney'
+    && !(each?.from === 'people' && (LEGACY.pending.includes(each.event) || each.person === heir.id)));
   if (heir.id && play.people?.by?.[heir.id]) {
     delete play.people.by[heir.id];
     play.people.next = Object.values(play.people.by).filter(person => person.alive)

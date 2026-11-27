@@ -27,7 +27,8 @@
       "saga": "calendar",
       "people": "visit",
       "thread": "thread",
-      "starSea": "director"
+      "starSea": "director",
+      "humanJourney": "director"
     },
     "peopleEvents": {
       "诀别": "friend_death",

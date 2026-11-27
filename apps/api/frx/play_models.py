@@ -1472,6 +1472,34 @@ class PlayHint(Contract):
     verb: Verb | SkipJsonSchema[None] = None
 
 
+class HumanJourneyStep(Contract):
+    id: str
+    title: str
+    done: bool
+
+
+class HumanJourneyStage(Contract):
+    id: str
+    title: str
+    goal: str
+
+
+class HumanJourneyChoice(Contract):
+    title: str
+    text: str
+    verb: Verb | SkipJsonSchema[None] = None
+    realm: OptStr = None
+    gate: OptBool = None
+
+
+class HumanJourney(Contract):
+    title: str
+    complete: bool
+    stage: HumanJourneyStage | SkipJsonSchema[None] = None
+    chapters: list[HumanJourneyStep]
+    choices: list[HumanJourneyChoice]
+
+
 # A worn piece's kind of slot (content/life/gear.json slots): 武器, 护甲, 法宝, 功法.
 GearSlot = Literal["weapon", "armor", "treasure", "technique"]
 
@@ -1825,6 +1853,7 @@ class PlayView(Contract):
     next: list[PlayHint] | SkipJsonSchema[None] = None
     home: PlayHome | SkipJsonSchema[None] = None
     recipes: list[PlayRecipe] | SkipJsonSchema[None] = None
+    journey: HumanJourney | SkipJsonSchema[None] = None
     arrays: PlayArrays | SkipJsonSchema[None] = None
     beasts: PlayBeasts | SkipJsonSchema[None] = None
     sect: PlaySect | SkipJsonSchema[None] = None
