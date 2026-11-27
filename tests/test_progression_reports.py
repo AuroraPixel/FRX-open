@@ -50,6 +50,43 @@ def test_spell_cards_distinguish_circulating_qi_from_a_named_skill_and_pay_mana(
     assert "法力不够" in engine(value, mode="life", op="act", args={"index": 1})["reason"]
 
 
+def test_spell_cards_use_a_worn_methods_aspect_or_a_held_focus():
+    value = archive()
+    state = state_of(value)
+    tables = state["currentState"]
+    tables["0"]["B1"]["2"] = "结丹后期|散修"
+    mana(value, 100)
+    tables["1"].update({
+        "I5": {"0": "I5", "1": "弱水真解", "2": "功法", "3": "三阶功法", "5": "1"},
+        "I6": {"0": "I6", "1": "风灵残羽", "2": "材料", "5": "1"},
+        "I7": {"0": "I7", "1": "覆地玄水残旗", "2": "阵旗", "5": "1"},
+    })
+    for item_id in ("I2", "I5"):
+        state.update(engine(value, mode="life", op="equip", args={"itemId": item_id}, keep=True)["kept"])
+    state["frxPlay"]["scene"] = {"id": "S1", "title": "试阵", "beats": 1}
+    offers = [
+        {"kind": "施术", "title": "借风暴停滞潜入风穴", "target": "风灵残羽"},
+        {"kind": "施术", "title": "以弱水真意调和地火阵枢", "target": "弱水真意"},
+        {"kind": "施术", "title": "以极阴冰煞封髓", "target": "极阴冰煞"},
+        {"kind": "施术", "title": "布设覆地玄水隐匿法阵", "target": "覆地玄水隐匿法阵"},
+        {"kind": "施术", "title": "施展敛息术", "target": "敛息术"},
+    ]
+    result = engine(value, mode="life", op="cards", args={"cards": offers[:4]}, keep=True)
+    assert [card["locked"] for card in result["cards"][:4]] == [False] * 4, result["cards"]
+    assert result["cards"][0]["cost"]["items"] == [
+        {"id": "I6", "name": "风灵残羽", "count": 1, "consumed": False},
+    ]
+    state.update(result["kept"])
+    used = engine(value, mode="life", op="act", args={"index": 1}, keep=True)
+    assert used["kept"]["currentState"]["1"]["I6"]["5"] == "1"
+    action = next(row for row in used["receipts"] if row["kind"] == "act")
+    assert action["paid"][0]["after"] == 100 - result["cards"][0]["cost"]["stats"][0]["amount"]
+    removed = state["currentState"]["1"].pop("I6")
+    assert removed["5"] == "1"
+    cards = engine(value, mode="life", op="cards", args={"cards": [offers[0], offers[-1]]})["cards"]
+    assert all(card["locked"] for card in cards[:2])
+
+
 def test_array_activation_does_not_reserve_a_turn_or_treat_a_formula_as_an_item(tmp_path, monkeypatch):
     monkeypatch.setenv("FRX_AUTH", "off")
     monkeypatch.setenv("FRX_DATA_DIR", str(tmp_path))

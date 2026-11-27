@@ -263,13 +263,37 @@ function retrieving(title) {
 }
 const ARRAY_TRAVEL = /(?:催动|激发|激活|启动|启用|开启|运转|踏入|进入|借|乘|通过|使用)[^，。；！？]{0,24}(?:古(?:代|老)?传送阵|(?:大)?挪移(?:大阵|阵)|跨域传送阵|远距(?:离)?传送阵)/;
 const CHANNEL_QI = /(?:真元|真气|法力|灵力|法诀)|(?:布设|布下|温养|稳固|修补|封堵)[^，。；！？]{0,16}(?:阵|禁制|警禁)/;
+const CHANNEL_ASPECT = /([\u4e00-\u9fff]{0,6}?)(真意|真元|真气|冰煞|雷罡)/g;
+const CHANNEL_FOCUS = /材料|灵材|灵物|阵旗|阵盘|阵图/;
+const USE_ARRAY = /(?:布设|布下|布置)[^，。；！？]{0,22}(?:阵|禁制)/;
+
+function channelFocus(bag, key, title) {
+  const match = findIn(bag, key) || (!key ? namedIn(bag, title) : null);
+  if (match && match.count > 0 && CHANNEL_FOCUS.test(match.type + match.name)) return match;
+  if (!USE_ARRAY.test(title)) return null;
+  return bag.find(({ name, count }) => {
+    const stem = name.replace(/(?:残旗|阵旗|阵盘|阵图)(?:与杂记)?$/, '');
+    return count > 0 && stem !== name && stem.length >= 4 && title.includes(stem)
+      && (!key || key.includes(stem) || key === '阵法');
+  }) || null;
+}
 
 function channelOf(ctx, key, title, person) {
   const methods = ctx.methods || [];
   const manual = findIn(methods, key) || namedIn(methods, title);
-  const generic = CHANNEL_QI.test(title) && !/[《「『][^》」』]{1,28}[》」』]/.test(title);
+  const unquoted = !/[《「『][^》」』]{1,28}[》」』]/.test(title);
+  const aspect = unquoted && [...title.matchAll(CHANNEL_ASPECT)].some(([phrase, quality, form]) =>
+    (!key || (key.length >= 2 && phrase.endsWith(key)) || person)
+    && methods.some(method => {
+      const texts = method.name + ' ' + (method.text || '');
+      const name = method.name.replace(/(?:真解|真诀|法诀|心法|宝典|功法|诀|经|功)$/, '');
+      return (name.length >= 2 && quality.endsWith(name))
+        || (form === '冰煞' && /(?:极阴|冰道|冰系|冰属性|寒霜|凝霜)/.test(texts))
+        || (form === '雷罡' && /(?:雷道|雷系|雷属性)/.test(texts));
+    }));
+  const generic = CHANNEL_QI.test(title) && unquoted;
   const localTarget = /阵[盘眼脉法纹]|阵枢|禁制|警禁|阵门/.test(key) && title.includes(key);
-  if (!manual && (!generic || (key && !person && !localTarget) || !methods.length)) return null;
+  if (!manual && (!methods.length || (!aspect && (!generic || (key && !person && !localTarget))))) return null;
   return { stat: '法力', amount: mechanics.spellManaCost(statNumbers(ctx.mana).max) };
 }
 
@@ -415,7 +439,15 @@ function price(ctx, card) {
   }
   if (kind.object === 'skill' && !ARRAY_TRAVEL.test(title)) {
     skill = findIn(skills, key) || namedIn(skills, title);
-    if (!skill) channel = channelOf(ctx, key, title, person);
+    if (!skill) {
+      item = channelFocus(bag, key, title);
+      if (item) {
+        cost.items.push({ id: item.id, name: item.name, count: 1, consumed: false });
+        channel = { stat: '法力', amount: mechanics.spellManaCost(statNumbers(ctx.mana).max) };
+      } else {
+        channel = channelOf(ctx, key, title, person);
+      }
+    }
     const payment = skill?.cost || channel;
     if (!skill && !channel) reasons.push(missingSkill(key));
     else if (payment?.stat && Number.isFinite(Number(payment.amount))) {
@@ -639,11 +671,16 @@ function contextOf(env, card) {
   const barter = plain(card?.kind) === '买卖' && /以物易物|换宝|抵价|(?:以|用|拿|凭|交出|交付)[^，。；]{1,25}(?:换取|换得|抵作)/.test(plain(card?.title));
   const deal = barter ? { barter: true } : paysFee ? { price: fee, fee: true }
     : plain(card?.kind) === '买卖' ? dealOf(env, card, bag) : null;
+  const casting = kindName(plain(card?.kind)) === '施术' || classify(plain(card?.title)) === '施术';
+  const methods = casting ? gear.methods(env) : [];
   return {
     stats, realm: plain(player['2']), stones: mechanics.stonesOf(player) ?? 0, bag, skills,
-    ...(kindName(plain(card?.kind)) === '施术' || classify(plain(card?.title)) === '施术' ? {
+    ...(casting ? {
       mana: mechanics.readStats(env, 'B1')['法力'],
-      methods: gear.activeGear(env).filter(piece => piece.slot === 'technique'),
+      methods: gear.activeGear(env).filter(piece => piece.slot === 'technique').map(piece => {
+        const row = methods.find(method => plain(method.id ?? method['0']) === piece.id);
+        return { ...piece, text: [row?.description ?? row?.['3'], row?.effect ?? row?.['4']].map(plain).join(' ') };
+      }),
     } : {}),
     target: row ? { id, name: rowName(row), realm: plain(row['2']), favour: favourOf(row) } : null,
     relationshipGains: env.play.scene?.relationshipGains,
