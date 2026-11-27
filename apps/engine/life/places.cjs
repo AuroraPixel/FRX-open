@@ -100,7 +100,11 @@ function poisOf(map) {
   const areas = Array.isArray(source.sub_regions) ? source.sub_regions : [];
   const storyPlaces = (data('travel').storyPlaces || []).filter(poi => !own.some(each => each.name === poi.name)
     && areas.some(area => area?.name === poi.sub_region && area.main_region === poi.main_region));
-  return [...own, ...storyPlaces];
+  const journey = data('human-journey');
+  const onJourneyMap = own.some(poi => poi.main_region === journey.mainland);
+  const journeyPlaces = onJourneyMap ? journey.map.points_of_interest.filter(poi =>
+    !own.some(each => each.name === poi.name)) : [];
+  return [...own, ...storyPlaces, ...journeyPlaces];
 }
 
 // The map place a spot names: the place itself, or the longest place name inside it.

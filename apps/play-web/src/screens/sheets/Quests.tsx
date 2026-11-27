@@ -4,14 +4,16 @@
 // The cultivation life has the story instead of the card (Story.tsx): the storyline's name and hook,
 // 这一章, 疑点, 因果 and 心结.
 import { useId, useState } from 'react';
-import type { Mainline, Quest } from '../../contracts';
+import type { HumanJourney, Mainline, Quest } from '../../contracts';
 import { useStateStore } from '../../store/state';
 import { useTurnsStore } from '../../store/turns';
-import { followLead } from '../play/commands';
+import { followLead, sendCommand } from '../play/commands';
+import { useUiStore } from '../../store/ui';
+import { Btn } from '../../ui/Btn';
 import { Entry } from '../../ui/Entry';
 import { Empty, Loading } from '../../ui/Loading';
 import { Tabs } from '../../ui/Tabs';
-import { useAim } from './aim';
+import { aimSheet, useAim } from './aim';
 import { Director } from './Director';
 import { More } from './More';
 import { QUEST_GLYPH, QUEST_STATE_NAME } from './labels';
@@ -65,6 +67,40 @@ function QuestMore({ id, quest }: { id: string; quest: Quest }) {
   );
 }
 
+function JourneyCard({ journey, busy }: { journey: HumanJourney; busy: boolean }) {
+  const open = useUiStore((s) => s.openSheet);
+  const close = useUiStore((s) => s.closeSheet);
+  return (
+    <section className={styles.main} aria-label={journey.title}>
+      <span className={styles.kicker}>{journey.title} · {journey.chapters.filter((row) => row.done).length}/{journey.chapters.length}</span>
+      <strong className={styles.chapter}>{journey.stage?.title ?? '已飞升灵界'}</strong>
+      {journey.stage && <p className={styles.goal}>{journey.stage.goal}</p>}
+      {journey.choices.map((choice) => (
+        <div key={choice.title}>
+          <p className={styles.goal}>{choice.text}</p>
+          {(choice.verb || choice.realm || choice.gate) && (
+            <Btn disabled={busy} onClick={() => {
+              if (choice.gate || choice.verb?.kind === 'cultivate') {
+                open(choice.gate ? 'gate' : 'cultivate');
+                return;
+              }
+              if (choice.verb?.kind === 'travel' && choice.verb.to) {
+                aimSheet({ sheet: 'map', pick: choice.verb.to });
+                open('map');
+                return;
+              }
+              const sent = choice.realm
+                ? sendCommand({ step: { action: 'enter', realm: choice.realm } })
+                : sendCommand({ verb: choice.verb });
+              if (sent) close();
+            }}>{choice.title}</Btn>
+          )}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export function Quests({ saveId }: { saveId: string }) {
   const view = useStateStore((s) => s.view);
   const busy = useTurnsStore((s) => s.conflict || s.live?.status === 'streaming' || s.live?.status === 'pending');
@@ -86,6 +122,7 @@ export function Quests({ saveId }: { saveId: string }) {
     <>
       {view.play ? (
         <>
+          {view.play.journey && <JourneyCard journey={view.play.journey} busy={Boolean(busy || view.play.scene || view.play.fight || view.play.realm)} />}
           {view.mainline && <StoryHead line={view.mainline} date={view.play.date} />}
           <Leads leads={view.play.leads ?? []} disabled={busy} onFollow={followLead} />
           <Karma karma={view.play.karma ?? []} />

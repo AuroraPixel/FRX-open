@@ -119,7 +119,8 @@ function drawn(env, place, half) {
 }
 
 function localNotices(env, board, half) {
-  return Object.entries(RULES.local?.[board] || {}).flatMap(([kind, notice]) => {
+  const local = { ...RULES.local?.[board], ...require('./human-journey.cjs').jobsAt(env, board) };
+  return Object.entries(local).flatMap(([kind, notice]) => {
     const completed = Object.values(env.state['6'] || {}).some(row =>
       row?.['1'] === `差事：${notice.title}` && String(row['5']).startsWith('已完成'));
     if (completed || mechanics.cultivator(env).major < notice.major
@@ -189,7 +190,9 @@ function job(env, verb) {
     line: ['job', { 地点: place, 差事: notice.title }],
     finish: settled => {
       const entry = calendar.register(env, 'job', { date: due, title: notice.title, place: notice.place });
-      env.play.jobs = [...taken(env), { ...receipt.job, entry: entry.id, board: place }];
+      const job = { ...receipt.job, entry: entry.id, board: place };
+      env.play.jobs = [...taken(env), job];
+      require('./human-journey.cjs').jobTaken(env, job);
       settled.summary = `接下差事「${notice.title}」：去${notice.place}，期限${clock.dateOf(clock.dayOfDate(due) * DAY).text}，酬${notice.pay}块灵石`;
     },
   };
@@ -215,7 +218,7 @@ function did(job, receipt, here) {
 function goodsFor(env, entry) {
   const rewards = require('./rewards.cjs');
   const rule = RULES.reward;
-  const reward = RULES.local?.[entry.board]?.[entry.kind]?.reward;
+  const reward = (RULES.local?.[entry.board]?.[entry.kind] || require('./human-journey.cjs').jobRule(entry.board, entry.kind))?.reward;
   if (reward) return [rewards.itemOf(goods.byId(reward), 1)];
   const facts = places.factsOf(entry.place, env.worldMap);
   return rewards.roll(env, rule.source, { place: entry.place, tier: places.tierAt(entry.place, env.worldMap),
@@ -257,7 +260,9 @@ async function close(env, entry, action) {
   else delete env.play.jobsClosed;
   chronicle.write(env, { done: 'jobDone', orphan: 'jobOrphan' }[action] || 'jobLapse', { 差事: entry.title, 酬: chronicle.count(entry.pay) });
   const moves = action === 'done' ? require('./clocks.cjs').react(env, { kind: 'task', task: entry.title }) : [];
+  const journey = action === 'done' && require('./human-journey.cjs').jobDone(env, entry);
   await env.settle({ kind: 'job', ok: true, source: 'engine', action, job: entry, ...(pay ? { pay } : {}), ...(items.length ? { items } : {}),
+    ...(journey ? { journey, ...(journey.mind ? { mind: [journey.mind] } : {}) } : {}),
     ...(moves.length ? { clocks: moves } : {}),
     commands: commands.join('\n'), owns,
     summary: action === 'done' ? `差事「${entry.title}」办成：灵石 ${pay ? `${pay.before}→${pay.after}` : `+${entry.pay}`}`

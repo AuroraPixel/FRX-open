@@ -48,7 +48,8 @@ const here = require('./here.cjs');
 const { data } = require('./data.cjs');
 const { list, nextId, ownsNothing } = require('./play.cjs');
 
-const CALENDAR = data('calendar');
+const baseCalendar = data('calendar');
+const CALENDAR = { ...baseCalendar, fixed: [...baseCalendar.fixed, ...data('human-journey').calendar] };
 const { daysPerMonth, monthsPerYear } = clock.CALENDAR;
 const YEAR_DAYS = daysPerMonth * monthsPerYear;
 const DAY = clock.DAY_MINUTES;
@@ -71,6 +72,7 @@ function openings(event, from, to) {
 }
 
 function asOf(env, event, day) {
+  if (event.minMajor && (!env?.state || mechanics.cultivator(env).major < event.minMajor)) return null;
   const change = env?.play?.world?.calendar?.[event.id];
   const since = change ? clock.dayOfDate(change.since) : null;
   if (since === null || day < since) return event;

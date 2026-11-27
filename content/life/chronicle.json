@@ -22,6 +22,9 @@
     "moment": "片刻"
   },
   "templates": {
+    "humanJourney": "人界道途「{章}」有了结果。",
+    "humanFlight": "启阵飞升，护住落点{地}。",
+    "humanAscended": "抵达{地}，人界一卷到此收束。",
     "wait": "[{地点}。]静候{时长}。",
     "calendar": "{名}{开}。",
     "clockStart": "[{缘由}，]惹上{钟}。",

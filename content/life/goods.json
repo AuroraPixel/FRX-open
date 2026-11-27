@@ -64,6 +64,11 @@
   "none": "无市价",
   "salvage": { "一阶": 3, "二阶": 25, "三阶": 180, "四阶": 850, "五阶": 3800 },
   "goods": [
+    {"id": "journey-rift-seal", "name": "镇隙古印", "class": "成品", "tier": "四阶", "kind": "器", "type": "法宝", "effect": "物防+75", "price": 4000, "uses": "一方能压住摇晃阵脚的古修印", "key": false, "shop": false, "unit": "件"},
+    {"id": "journey-jin-paper", "name": "观潮阵稿", "class": "成品", "tier": "四阶", "kind": "器", "type": "法宝", "effect": "神识+50", "price": 4000, "uses": "校读古阵脉纹所得，祭炼可助感知异动", "key": false, "shop": false, "unit": "件"},
+    {"id": "journey-method", "name": "太虚观元录", "class": "成品", "tier": "五阶", "kind": "功法", "type": "功法", "effect": "主修的功法", "price": 4000, "uses": "五阶功法，可修到化神为止", "key": false, "shop": false, "unit": "部"},
+    {"id": "journey-cold-jade", "name": "寒脉护心玉", "class": "成品", "tier": "四阶", "kind": "器", "type": "法宝", "effect": "法防+85", "price": 4000, "uses": "北地寒脉凝成的护心法宝", "key": false, "shop": false, "unit": "件"},
+    {"id": "journey-node-charm", "name": "定虚护行符", "class": "成品", "tier": "五阶", "kind": "符", "type": "消耗品", "effect": "恢复200点法力", "price": 4000, "uses": "护行灵符，可在穿渡前回补法力", "key": false, "shop": false, "unit": "件"},
     { "id": "pill-dispel-thunder", "name": "融雷散", "class": "成品", "tier": "三阶", "price": 380, "uses": "调和风雷煞气，温养经脉", "key": false, "kind": "丹", "type": "消耗品", "unit": "份", "effect": "恢复120点血量", "shop": false },
     { "id": "pill-ocean-essence", "name": "定煞海元丹", "class": "成品", "tier": "三阶", "price": 1800, "uses": "淬炼金丹道胎", "key": false, "kind": "丹", "type": "消耗品", "unit": "枚", "effect": "修为+8", "shop": false },
     { "id": "material-storm-bone", "name": "风雷雷煞骨珠", "aliases": ["雷煞骨珠", "风雷骨珠"], "class": "灵物", "tier": "三阶", "price": 360, "uses": "可入药调和风雷之煞", "key": false, "unit": "枚", "shop": false },

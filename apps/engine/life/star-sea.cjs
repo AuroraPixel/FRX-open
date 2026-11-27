@@ -131,6 +131,7 @@ function hintTo(env, goal) {
 }
 
 function hints(env) {
+  if (mechanics.cultivator(env).major >= 4) return [];
   const at = travel.standing(env);
   if (at.main === RULES.mainland) {
     if (!env.play.starSea?.entered) return voyageHints(env, at);
