@@ -1,5 +1,6 @@
 """Storage quota and inventory regressions for long cultivation-life saves."""
 
+import hashlib
 import json
 
 import pytest
@@ -95,7 +96,8 @@ def test_save_limit_counts_a_shared_snapshot_once_and_keeps_restore_data(
     assert full["data"]["logs"][1]["frxBeforeSnapshot"] == previous
     assert full["data"]["logs"][2]["frxBeforeSnapshot"] == latest
 
-    updated["data"]["logs"][-1]["frxStateSnapshot"] = {"state": {"new": "独" * 7000}}
+    unique = [hashlib.sha256(f"unique {index}".encode()).hexdigest() for index in range(1200)]
+    updated["data"]["logs"][-1]["frxStateSnapshot"] = {"state": {"new": unique}}
     with pytest.raises(HTTPException) as err:
         records.write("archives", name, updated, written["version"], lean=True)
     assert err.value.status_code == 413
