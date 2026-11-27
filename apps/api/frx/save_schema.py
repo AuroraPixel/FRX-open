@@ -6,7 +6,6 @@ game's evolving state fields and individual snapshot payloads.
 """
 
 import copy
-import hashlib
 import json
 from contextlib import nullcontext
 from functools import lru_cache
@@ -298,7 +297,8 @@ class ArchiveLog(Base):
                         raise missing_snapshot()
                     payload = held.payload
                     if snapshot_storage.parts_of(payload):
-                        siblings = parts_for({item.field: item for item in self.snapshots}, ref.field)
+                        refs = {item.field: item for item in self.snapshots}
+                        siblings = parts_for(refs, ref.field)
                         payload = snapshot_storage.restored(payload, {
                             item.snapshot_digest: item.snapshot.payload for item in siblings
                         }, {})
@@ -405,7 +405,9 @@ def snapshot_payloads(session, user_id, digests):
         parts = {key for value in roots.values() for key in snapshot_storage.parts_of(value)}
         gathered = {key: row.payload for key, row in snapshot_rows(session, user_id, parts).items()}
     decoded = {}
-    return {key: snapshot_storage.restored(value, gathered, decoded) for key, value in roots.items()}
+    return {
+        key: snapshot_storage.restored(value, gathered, decoded) for key, value in roots.items()
+    }
 
 
 def compact_archive_snapshots(row):
@@ -431,11 +433,13 @@ def compact_archive_snapshots(row):
                     continue
                 payload = originals[ref.snapshot_digest]
                 before = ref.snapshot_digest
-                converted.extend(store_field(log, ref, payload, encoded(payload).encode(), cache, fields))
+                raw = encoded(payload).encode()
+                converted.extend(store_field(log, ref, payload, raw, cache, fields))
                 if before != ref.snapshot_digest:
                     count += 1
             if converted:
-                log.snapshots = [*log.snapshots, *(ref for ref in converted if ref.field not in fields)]
+                added = [ref for ref in converted if ref.field not in fields]
+                log.snapshots = [*log.snapshots, *added]
         return count
 
 
@@ -650,7 +654,9 @@ def add_demo_coast(state):
     for field in ("terrains", "main_regions", "sub_regions", "points_of_interest"):
         existing = world.get(field) or []
         names = {entry.get("name") for entry in existing if isinstance(entry, dict)}
-        world[field] = existing + [clone(entry) for entry in expanded[field] if entry["name"] not in names]
+        world[field] = existing + [
+            clone(entry) for entry in expanded[field] if entry["name"] not in names
+        ]
     return state
 
 

@@ -97,14 +97,13 @@ def test_materialize_refuses_missing_snapshot(database):
     assert "快照缺失" in caught.value.detail
 
 
-def test_full_history_survives_lossless_compaction_when_a_turn_would_exceed_quota(database, monkeypatch):
+def test_compaction_at_quota_preserves_full_history(database, monkeypatch):
     import hashlib
     import json
 
-    from sqlalchemy import func, select
-
     from frx.card_import import archive_of, document_of
     from frx.usage import Limits
+    from sqlalchemy import func, select
 
     value = save()
     data = value["data"]
@@ -126,10 +125,14 @@ def test_full_history_survives_lossless_compaction_when_a_turn_would_exceed_quot
     data["logs"] = history
     normal = CardStore(LOCAL_USER_ID, database.sessions)
     with monkeypatch.context() as patch:
-        patch.setattr(save_schema.snapshot_storage, "stored_payload", lambda field, payload, raw: (payload, {}))
+        patch.setattr(
+            save_schema.snapshot_storage, "stored_payload",
+            lambda field, payload, raw: (payload, {}),
+        )
         normal.write("archives", value["name"], value, 0)
     with normal.sessions() as session:
-        before = save_schema.archive_storage_bytes(normal.record(session, "archives", value["name"]))
+        row = normal.record(session, "archives", value["name"])
+        before = save_schema.archive_storage_bytes(row)
     before_full = normal.get("archives", value["name"])["value"]
 
     limited = CardStore(LOCAL_USER_ID, database.sessions, limits=Limits(save_bytes=before // 2))
