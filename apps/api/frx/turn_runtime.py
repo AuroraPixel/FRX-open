@@ -343,6 +343,11 @@ async def settle_card(
     """The whole-turn settle. `after_progress` ({ plot? }) asks the same engine process for the
     progress of the state the settlement leaves (settle.cjs settleTurn): the result's
     afterProgress, read where the state view after the commit would ask for it again."""
+    chapter_progress = None
+    if pilot is not None and "frxPlay" in archive["data"]["state"]:
+        from .card_director import presettle_plot
+
+        chapter_progress = presettle_plot(archive["data"])
     result = await run_engine(
         dict(
             archive=archive,
@@ -353,6 +358,7 @@ async def settle_card(
             action=action,
             story=card_story(reply),
             pilot=pilot,
+            **({"chapterProgress": chapter_progress} if chapter_progress else {}),
             **({"afterProgress": after_progress} if after_progress is not None else {}),
         )
     )

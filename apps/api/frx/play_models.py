@@ -65,7 +65,7 @@ VerbKind = Literal["wait", "cultivate", "rest", "breakthrough", "perk", "elabora
 # (tame) a beast foe worn down enough (item 41), and 破 (break) while the foes' array stands.
 MoveCommand = Literal["strike", "skill", "item", "guard", "flee", "probe", "talk", "tame", "break"]
 # What the verb home does (洞府, gameplay plan item 45).
-HomeAction = Literal["buy", "rent", "claim", "take", "build", "plant", "harvest", "leave"]
+HomeAction = Literal["buy", "rent", "claim", "take", "build", "plant", "harvest", "leave", "enter", "exit"]
 # How long the cultivation life's beats run (frxPlay.length): 简, 中, 详.
 LengthTier = Literal["brief", "standard", "full"]
 
@@ -1409,6 +1409,7 @@ class PlayHome(Contract):
 
     place: str
     name: str
+    spot: OptStr = None
     aura: str
     rooms: list[str]
     how: Literal["buy", "rent", "claim", "take"]
@@ -1779,6 +1780,14 @@ class LifeView(Contract):
     eulogies: list[LegacyEulogy]
 
 
+class PlayRecipe(Contract):
+    item_id: str
+    recipe: str
+    craft: str
+    makes: str
+    note: OptStr = None
+
+
 class PlayView(Contract):
     """The cultivation life's state (saves with data.state.frxPlay): the game day, age and
     lifespan, the 心境, the place and the nearest places to set out for (near, nearest first),
@@ -1815,6 +1824,7 @@ class PlayView(Contract):
     book: PlayBook | SkipJsonSchema[None] = None
     next: list[PlayHint] | SkipJsonSchema[None] = None
     home: PlayHome | SkipJsonSchema[None] = None
+    recipes: list[PlayRecipe] | SkipJsonSchema[None] = None
     arrays: PlayArrays | SkipJsonSchema[None] = None
     beasts: PlayBeasts | SkipJsonSchema[None] = None
     sect: PlaySect | SkipJsonSchema[None] = None

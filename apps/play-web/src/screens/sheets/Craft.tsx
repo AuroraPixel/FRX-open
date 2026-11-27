@@ -39,13 +39,13 @@ export function oddsWords(odds: Record<string, number | undefined> | undefined):
     .join(' · ');
 }
 
-function RecipeDetail({ saveId, recipe, craft, onBack }: { saveId: string; recipe: Item; craft: string; onBack: () => void }) {
+function RecipeDetail({ saveId, recipe, recipeName, craft, onBack }: { saveId: string; recipe: Item; recipeName: string; craft: string; onBack: () => void }) {
   const view = useStateStore((s) => s.view);
   const closeSheet = useUiStore((s) => s.closeSheet);
   const busy = useTurnsStore((s) => s.live?.status === 'streaming' || s.live?.status === 'pending');
   const [batches, setBatches] = useState(1);
   const [hire, setHire] = useState(false);
-  const verb: Verb = { kind: 'craft', recipe: recipe.name, batches, ...(hire ? { hire: true } : {}) };
+  const verb: Verb = { kind: 'craft', recipe: recipeName, batches, ...(hire ? { hire: true } : {}) };
   const { preview, problem, asking } = usePreview(saveId, verb);
   const inScene = Boolean(view?.play?.scene || view?.play?.fight);
   const ready = Boolean(preview?.ok) && !asking && !busy && !inScene;
@@ -122,20 +122,23 @@ export function CraftSheet({ saveId }: { saveId: string }) {
   const view = useStateStore((s) => s.view);
   const [picked, setPicked] = useState<string | null>(null);
   if (!view) return <Loading />;
-  const recipes = recipesOf(view.bag);
+  const recipes = view.play?.recipes?.flatMap((entry) => {
+    const item = view.bag.find((each) => each.id === entry.itemId);
+    return item ? [{ ...entry, item }] : [];
+  }) ?? recipesOf(view.bag).map((entry) => ({ ...entry, recipe: entry.item.name, note: undefined }));
   if (!recipes.length) return <Empty title="储物袋里没有配方" text="丹方、器谱、符谱、阵图在手，才能在丹房、器室这些地方炼制。" />;
-  const recipe = recipes.find((each) => each.item.id === picked);
-  if (recipe) return <RecipeDetail key={recipe.item.id} saveId={saveId} recipe={recipe.item} craft={recipe.craft} onBack={() => setPicked(null)} />;
+  const recipe = recipes.find((each) => `${each.item.id}:${each.recipe}` === picked);
+  if (recipe && !recipe.note) return <RecipeDetail key={picked} saveId={saveId} recipe={recipe.item} recipeName={recipe.recipe} craft={recipe.craft} onBack={() => setPicked(null)} />;
   return (
     <div className={shop.shop}>
       <ul className={shop.rows} aria-label="配方">
         {recipes.map((each) => (
-          <li key={each.item.id}>
-            <button type="button" className={shop.row} onClick={() => setPicked(each.item.id)}>
+          <li key={`${each.item.id}:${each.recipe}`}>
+            <button type="button" className={shop.row} disabled={Boolean(each.note)} onClick={() => setPicked(`${each.item.id}:${each.recipe}`)}>
               <span className={shop.what}>
                 <b>{each.item.name}</b>
                 <small>
-                  {each.craft} · 炼出{each.makes}
+                  {each.note || `${each.craft} · 炼出${each.makes}`}
                 </small>
               </span>
             </button>

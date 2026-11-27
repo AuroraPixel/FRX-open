@@ -74,9 +74,38 @@ const J = JSON.stringify;
 const isObject = value => value && typeof value === 'object' && !Array.isArray(value);
 const fill = (template, values) => chronicle.fill(template, values);
 const rowName = row => plain(row?.['1']).split('|')[0];
-const homeOf = env => (isObject(env.play?.home) && env.play.home.place ? env.play.home : null);
 const hereOf = env => places.placeFacts(env);
-const atHome = env => { const home = homeOf(env); return !!home && hereOf(env).place === home.place; };
+
+function contractedHome(env) {
+  for (const [id, row] of Object.entries(env.state['1'] || {})) {
+    const name = rowName(row), from = plain(row?.['3']), effect = plain(row?.['4']);
+    if (!/(?:阵牌|门禁令牌|洞府凭证)$/.test(name) || !/立契|租契|洞府租约/.test(from)
+        || !/持此可(?:自由)?出入(?:该)?洞府/.test(effect) || list(env.play?.releasedHomes).includes(id)
+        || !(env.ctx.itemStackCount(row['5']) > 0)) continue;
+    const found = effect.match(/^([\p{Script=Han}]{2,25}?(?:洞府|洞|室|窟|居))(?:的)?(?:护府|禁制|门禁)/u);
+    if (!found) continue;
+    const anchor = places.poisOf(env.worldMap).filter(poi => from.includes(poi.name))
+      .sort((a, b) => b.name.length - a.name.length)[0];
+    if (!anchor) continue;
+    const spot = `${anchor.name}·${found[1]}`;
+    const local = places.factsOf(`${anchor.main_region}/${anchor.sub_region}（${spot}）${anchor.x},${anchor.y}`, env.worldMap);
+    return { place: anchor.name, name: found[1], spot, proof: id, aura: homeAura(local),
+      rooms: [], garden: [], how: 'rent', since: '' };
+  }
+  return null;
+}
+
+const homeOf = env => (isObject(env.play?.home) && env.play.home.place ? env.play.home : contractedHome(env));
+const atHome = env => {
+  const home = homeOf(env), here = hereOf(env);
+  return !!home && here.place === home.place && (!home.spot || here.spot === home.spot);
+};
+
+function registerContract(env) {
+  if (env.play.home?.place) return;
+  const home = contractedHome(env);
+  if (home) env.play.home = home;
+}
 const purseOf = env => mechanics.stonesOf(env.state['0']?.B1) ?? 0;
 const shown = (env, minutes, lines) => ({ ok: true, minutes, ends: clock.dateOf(mechanics.readClock(env.state).minutes + minutes), lines, formula: [] });
 const paid = (purse, stones) => (stones ? [`add("B1",{"26":"${purse - stones}"})`] : []);
@@ -86,6 +115,7 @@ function giveUp(env) {
   const old = homeOf(env);
   if (!old) return;
   for (const id of [old.rent?.entry, ...list(old.garden).map(bed => bed.entry)].filter(Boolean)) calendar.remove(env, id);
+  if (old.proof) env.play.releasedHomes = [...new Set([...list(env.play.releasedHomes), old.proof])];
   env.play.home = null;
 }
 
@@ -308,8 +338,23 @@ function leave(env) {
   };
 }
 
+function doorstep(env, action) {
+  const home = homeOf(env), facts = hereOf(env);
+  if (!home?.spot) return { refused: '此处没有可通行的洞府门牌' };
+  if (facts.place !== home.place) return { refused: `请先从地图前往${home.place}` };
+  const entering = action === 'enter';
+  if (entering === atHome(env)) return { refused: entering ? '你已在洞府里' : '你已在洞府外' };
+  const anchor = places.poisOf(env.worldMap).find(poi => poi.name === home.place);
+  if (!anchor) return { refused: '地图上找不到洞府所在地点' };
+  const spot = entering ? home.spot : home.place;
+  const place = `/${anchor.main_region}/${anchor.sub_region || anchor.main_region}（${spot}）${anchor.x},${anchor.y}`;
+  const summary = entering ? `进入${home.name}` : `离开${home.name}，回到${home.place}`;
+  return { minutes: 0, place, preview: shown(env, 0, [summary]), line: ['homeDoor', { 事: summary }],
+    receipt: { kind: 'home', ok: true, source: 'verb', action, commands: '', owns: ownsNothing(), summary } };
+}
+
 const ACTIONS = { buy: env => acquire(env, 'buy'), rent: env => acquire(env, 'rent'), claim: (env, verb, upTo) => claim(env, upTo), take,
-  build, plant, harvest, leave };
+  build, plant, harvest, leave, enter: env => doorstep(env, 'enter'), exit: env => doorstep(env, 'exit') };
 
 function homePlan(env, verb, upTo = null) {
   const blocked = rewards.blockedFor(env, VERB);
@@ -428,6 +473,7 @@ function view(env) {
   const home = homeOf(env);
   if (!home) return null;
   return { place: home.place, name: home.name, aura: home.aura, rooms: list(home.rooms), how: home.how, since: home.since,
+    ...(home.spot ? { spot: home.spot } : {}),
     garden: list(home.garden).map(bed => ({ id: bed.id, herb: bed.herb, count: bed.count, due: bed.due, ripe: (clock.dayOfDate(bed.due) ?? Infinity) <= (clock.today(env) ?? -1) })),
     plots: RULES.garden.plots, seeds: seedsOf(env), ...(home.rent ? { rent: { yearly: home.rent.yearly, due: home.rent.due } } : {}), here: atHome(env) };
 }
@@ -452,4 +498,4 @@ function install(verbs, { fight, beasts }) {
   fight.hooks.ended = (env, at, how) => { end(env, at, how); ended(env, at, how); };
 }
 
-module.exports = { RULES, homePlan, month, view, install, atHome, homeOf, homeAura };
+module.exports = { RULES, homePlan, month, view, install, atHome, homeOf, homeAura, registerContract };

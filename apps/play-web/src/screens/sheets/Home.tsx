@@ -13,6 +13,7 @@ import { Btn } from '../../ui/Btn';
 import { Empty, Loading, NOVEL_SAVE } from '../../ui/Loading';
 import { Sub } from '../../ui/Sub';
 import { dateWords, todayOf } from './Cultivate';
+import { aimSheet } from './aim';
 import shop from './Shop.module.css';
 import { Options, Said, Stepper, VerbDetail } from './VerbDetail';
 import styles from './Home.module.css';
@@ -32,6 +33,8 @@ export const HOME_WORDS: Record<HomeAction, { glyph: string; name: string; title
   plant: { glyph: '种', name: '种下', title: '药园种药' },
   harvest: { glyph: '收', name: '收药', title: '药园收药' },
   leave: { glyph: '弃', name: '弃了它', title: '弃了洞府' },
+  enter: { glyph: '入', name: '进入', title: '进入洞府' },
+  exit: { glyph: '出', name: '离开', title: '离开洞府' },
 };
 
 /** 「0002-02-03」 said: 「二月初三」, with the year when it is not this one. */
@@ -45,6 +48,7 @@ export function keyWords(key: string, view: StateView | null): string {
 /** How the home was had: 「买下的」「租的 · 每年三十块灵石 · 2年正月初五交下一年」「占下的」「夺来的」. */
 export function howWords(home: PlayHome, view: StateView | null): string {
   if (home.how === 'rent' && home.rent) return `租的 · 每年${chineseNumber(home.rent.yearly)}块灵石 · ${keyWords(home.rent.due, view)}交下一年`;
+  if (home.how === 'rent' && home.spot) return '已立租契 · 租期以契书为准';
   return { buy: '买下的', rent: '租的', claim: '占下的', take: '夺来的' }[home.how];
 }
 
@@ -124,6 +128,16 @@ function HomeView({ home, view, onDo }: { home: PlayHome; view: StateView; onDo:
           {!home.here && <span className={styles.away}>人不在洞府里</span>}
         </p>
       </header>
+      {home.spot && (
+        <div className={styles.actions}>
+          {home.here || view.play?.place?.name === home.place
+            ? <Btn variant="solid" onClick={() => onDo(home.here ? 'exit' : 'enter')}>{home.here ? '离开洞府' : '进入洞府'}</Btn>
+            : <Btn onClick={() => {
+              aimSheet({ sheet: 'map', pick: home.place });
+              openSheet('map');
+            }}>查看前往{home.place}的路线</Btn>}
+        </div>
+      )}
       <section aria-label="房">
         <Sub>房</Sub>
         <ul className={styles.rows}>

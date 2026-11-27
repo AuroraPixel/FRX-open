@@ -6341,6 +6341,9 @@
         "name": {
           "type": "string"
         },
+        "spot": {
+          "type": "string"
+        },
         "aura": {
           "type": "string"
         },
@@ -6802,6 +6805,34 @@
       "title": "PlayRealm",
       "type": "object"
     },
+    "PlayRecipe": {
+      "additionalProperties": false,
+      "properties": {
+        "itemId": {
+          "type": "string"
+        },
+        "recipe": {
+          "type": "string"
+        },
+        "craft": {
+          "type": "string"
+        },
+        "makes": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "itemId",
+        "recipe",
+        "craft",
+        "makes"
+      ],
+      "title": "PlayRecipe",
+      "type": "object"
+    },
     "PlayScene": {
       "additionalProperties": false,
       "description": "The scene under way: its name and how many beats it has had.",
@@ -7217,6 +7248,12 @@
         },
         "home": {
           "$ref": "#/definitions/PlayHome"
+        },
+        "recipes": {
+          "items": {
+            "$ref": "#/definitions/PlayRecipe"
+          },
+          "type": "array"
         },
         "arrays": {
           "$ref": "#/definitions/PlayArrays"
@@ -9665,7 +9702,9 @@
             "build",
             "plant",
             "harvest",
-            "leave"
+            "leave",
+            "enter",
+            "exit"
           ],
           "type": "string"
         },

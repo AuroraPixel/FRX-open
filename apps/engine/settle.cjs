@@ -1187,6 +1187,16 @@ async function settle(input) {
     if (time && typeof time['0'] === 'string') {
       time['0'] = require('./life/places.cjs').normalizedTimeRow(time['0'], context.WORLD_MAP_DATA);
     }
+    if (input.chapterProgress && input.pilot) {
+      pilotPlay = structuredClone(pilotPlay ?? initialArchive.data.state.frxPlay);
+      rules.mechanics.recordChapterEvidence(pilotPlay, input.chapterProgress, initialArchive.data.state.currentState,
+        result.newState, input.pilot.receipts || []);
+    }
+    if (input.pilot && !(pilotPlay ?? initialArchive.data.state.frxPlay).home?.place) {
+      const play = structuredClone(pilotPlay ?? initialArchive.data.state.frxPlay);
+      require('./life/home.cjs').registerContract({ ctx: context, play, state: result.newState, worldMap: context.WORLD_MAP_DATA });
+      if (play.home) pilotPlay = play;
+    }
   }
   // A turn's settlement (it has a story) reports the gear its commands moved; a bare block of
   // commands returns exactly what the card's own settlement returned.

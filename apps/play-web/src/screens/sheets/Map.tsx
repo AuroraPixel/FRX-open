@@ -98,6 +98,7 @@ const PAGES = [
 /** 近处 first (or the journey to a place picked, ?pick= on the screenshot page), the whole map second. */
 function Places({ saveId }: { saveId: string }) {
   const play = useStateStore((s) => s.view?.play);
+  const openSheet = useUiStore((s) => s.openSheet);
   const aimed = useAim('map');
   const page = useUiStore((s) => s.mapPage);
   const setPage = useUiStore((s) => s.setMapPage);
@@ -113,6 +114,7 @@ function Places({ saveId }: { saveId: string }) {
         <Tabs items={PAGES} value={page} label="去处" controls={paneId} onChange={(id) => setPage(id === 'map' ? 'map' : 'near')} />
       </div>
       <div id={paneId} role="tabpanel" aria-label={page === 'near' ? '近处' : '全图'} className={styles.places}>
+        {play?.home?.spot && <Btn onClick={() => openSheet('home')}>洞府 · {play.home.name}</Btn>}
         {page === 'map' ? (
           <WorldMap saveId={saveId} onTravel={travel} />
         ) : to ? (

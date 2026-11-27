@@ -471,7 +471,7 @@ def counted(condition, mark):
     detail = str(mark.get("detail") or "")
     count = mark.get("count", condition.get("count"))
     if kind == "灵石":
-        have = re.search(r"当前灵石(\d+)块", detail)
+        have = re.search(r"(?:当前|曾为本章筹得)灵石(\d+)块", detail)
         value = str(condition.get("value") or "")
         need = count if isinstance(count, int) else re.search(r"\d+", value)
         need = need if isinstance(need, int) else int(need.group()) if need else None
@@ -1078,6 +1078,8 @@ def play_view(save, progress):
         if "next" in life and not held else None,
         # the home (item 45) and the arrays here (item 43): the engine's home.view and arrays.view
         home=M.PlayHome.model_validate(life["home"]) if isinstance(life.get("home"), dict)
+        else None,
+        recipes=[M.PlayRecipe.model_validate(row) for row in rows("recipes")] if "recipes" in life
         else None,
         arrays=M.PlayArrays.model_validate(life["arrays"]) if isinstance(life.get("arrays"), dict)
         else None,

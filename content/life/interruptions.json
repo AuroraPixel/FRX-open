@@ -6,6 +6,7 @@
     "rest",
     "cultivate"
   ],
+  "contractedRetreatDanger": 0.15,
   "perStep": 0.06,
   "seedType": "interrupt",
   "calendar": {

@@ -64,6 +64,14 @@
   "none": "无市价",
   "salvage": { "一阶": 3, "二阶": 25, "三阶": 180, "四阶": 850, "五阶": 3800 },
   "goods": [
+    { "id": "pill-dispel-thunder", "name": "融雷散", "class": "成品", "tier": "三阶", "price": 380, "uses": "调和风雷煞气，温养经脉", "key": false, "kind": "丹", "type": "消耗品", "unit": "份", "effect": "恢复120点血量", "shop": false },
+    { "id": "pill-ocean-essence", "name": "定煞海元丹", "class": "成品", "tier": "三阶", "price": 1800, "uses": "淬炼金丹道胎", "key": false, "kind": "丹", "type": "消耗品", "unit": "枚", "effect": "修为+8", "shop": false },
+    { "id": "material-storm-bone", "name": "风雷雷煞骨珠", "aliases": ["雷煞骨珠", "风雷骨珠"], "class": "灵物", "tier": "三阶", "price": 360, "uses": "可入药调和风雷之煞", "key": false, "unit": "枚", "shop": false },
+    { "id": "material-storm-marrow", "name": "风雷灵髓", "aliases": ["九阶风雷灵髓"], "class": "灵物", "tier": "三阶", "price": 1500, "uses": "可与灵芝合炼成丹", "key": false, "unit": "份", "shop": false },
+    { "id": "treasure-storm-wings", "name": "风雷翅", "class": "成品", "tier": "四阶", "price": 8400, "uses": "汇聚风雷，助主人疾行", "key": false, "kind": "器", "type": "法宝", "unit": "对", "effect": "脚力+120", "shop": false },
+    { "id": "recipe-dispel-thunder", "name": "丹方·融雷散", "class": "成品", "tier": "三阶", "price": 800, "uses": "外海古丹方所载的融雷散", "key": false, "kind": "方", "type": "重要物品", "unit": "张", "shop": false, "recipe": { "craft": "炼丹", "scroll": "外海古丹方骨简", "materials": [{ "name": "风雷雷煞骨珠", "count": 1 }, { "name": "冰魄草", "count": 1 }], "days": 7, "output": { "name": "融雷散", "count": 1 } } },
+    { "id": "recipe-ocean-essence", "name": "丹方·定煞海元丹", "class": "成品", "tier": "三阶", "price": 2000, "uses": "外海古丹方所载的定煞海元丹", "key": false, "kind": "方", "type": "重要物品", "unit": "张", "shop": false, "recipe": { "craft": "炼丹", "scroll": "外海古丹方骨简", "materials": [{ "name": "风雷灵髓", "count": 1 }, { "name": "千年灵芝", "count": 1 }], "days": 15, "output": { "name": "定煞海元丹", "count": 1 } } },
+    { "id": "recipe-storm-wings", "name": "器谱·风雷翅", "class": "成品", "tier": "四阶", "price": 6200, "uses": "完整器谱，须掌握收束古禁", "key": false, "kind": "方", "type": "重要物品", "unit": "卷", "shop": false, "recipe": { "craft": "炼器", "scroll": "风雷翅器谱", "materials": [{ "name": "风雷灵髓", "count": 1 }, { "name": "风雷雷煞骨珠", "count": 1 }, { "name": "天雷竹", "count": 1 }], "days": 35, "output": { "name": "风雷翅", "count": 1 } } },
     { "id": "winged-yaksha-wings", "name": "骨翼夜叉的双翼", "aliases": ["骨翼夜叉双翼", "夜叉双翼"], "class": "妖兽材料", "tier": "三阶", "price": 1450, "uses": "炼制风属性飞舟与遁器的一对骨翼", "key": false, "shop": false, "marketSalvage": true, "unit": "对" },
     { "id": "ore-dark-ice", "name": "二阶玄冰煞石", "aliases": ["玄冰煞石"], "class": "矿材", "tier": "二阶", "price": 90, "uses": "凝练冰道根基、淬炼法宝的冰煞灵材", "key": false, "shop": false, "marketSalvage": true },
 

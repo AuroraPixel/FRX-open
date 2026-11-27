@@ -666,13 +666,15 @@ async function op(env, args) {
     settledPeople: completed.map(({ thread }) => thread.who).filter(Boolean) });
   const shown = added.map(rowOf);
   const result = { threads: { added: shown, dropped, settled } };
-  if (JSON.stringify(env.play.threads ?? null) === before && !dropped.length && !moves.length) return result;
-  await env.settle({ kind: 'thread', ok: true, hidden: !moves.length, source: 'engine',
+  const fulfilled = require('./karma.cjs').reconcile(env);
+  if (JSON.stringify(env.play.threads ?? null) === before && !dropped.length && !moves.length && !fulfilled.length) return result;
+  await env.settle({ kind: 'thread', ok: true, hidden: !moves.length && !fulfilled.length, source: 'engine',
     commands: bounty ? `add("B1",{"26":"${bounty.after}"})` : '',
     owns: { ...ownsNothing(), currency: !!bounty }, ...(bounty ? { bounty } : {}),
     thread: { added: shown, dropped, settled },
     ...(moves.length ? { clocks: moves } : {}),
     summary: [...settled.map(each => fill(RULES[each.status] || RULES.settled, { 事: each.text })),
+      ...fulfilled.map(entry => `已履行对${entry.who.name}的承诺「${entry.what}」`),
       ...added.map(each => fill(RULES.noted, { 事: each.text })),
       ...moves.map(each => each.gone ? `「${each.name}」平息` : `「${each.name}」退至${each.after}格`),
       ...dropped.map(each => fill(RULES.notNoted, { 事: each.text || '（空）', 因: each.why }))].join('；') || RULES.seen });
