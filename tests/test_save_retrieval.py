@@ -2,10 +2,11 @@
 
 import hashlib
 import json
+from uuid import uuid4
 
 import pytest
 from fastapi import HTTPException
-from frx.auth import LOCAL_USER_ID
+from frx.auth import LOCAL_USER_ID, UserRecord
 from frx.card_snapshots import pack_snapshot
 from frx.card_store import CardStore
 from frx.card_timeline import CardTimeline
@@ -106,4 +107,86 @@ def test_save_limit_counts_a_shared_snapshot_once_and_keeps_restore_data(
     restored = records.get("archives", name)["value"]["data"]
     assert restored["state"]["currentState"]["0"]["B1"]["26"] == "2"
     assert [log["id"] for log in restored["logs"]] == ["round-1", "round-2"]
+    store.engine.dispose()
+
+
+def test_storage_breakdown_matches_the_quota_and_splits_growth_sources(tmp_path):
+    """The diagnostic must agree with the number the 413 guard uses (issue #36)."""
+    from frx.save_schema import PART_FIELD, archive_storage_breakdown, archive_storage_bytes
+
+    url = f"sqlite:///{tmp_path}/breakdown.db"
+    store = Store(url)
+    store.initialize()
+    value = archive()
+    state = value["data"]["state"]
+    state["currentState"]["0"]["B1"]["26"] = "8"
+    history = [{"text": hashlib.sha256(str(i).encode()).hexdigest()} for i in range(1200)]
+    previous = pack_snapshot({"state": state, "history": history, "turn": 1})
+    latest = pack_snapshot({"state": state, "history": history, "turn": 2})
+    value["data"]["logs"] = [
+        {"id": "round-1", "type": "ai", "content": "上一回合。", "frxStateSnapshot": previous},
+        {"id": "round-2", "type": "ai", "content": "本回合。",
+         "frxBeforeSnapshot": previous, "frxStateSnapshot": latest},
+        {"id": "round-3", "type": "ai", "content": "又" * 4000, "frxBeforeSnapshot": latest},
+    ]
+    records = CardStore(LOCAL_USER_ID, store.sessions)
+    records.write("archives", value["name"], value, 0, lean=True)
+    with records.sessions() as session:
+        row = records.record(session, "archives", value["name"], lean=True)
+        detail = archive_storage_breakdown(row)
+        assert detail["total"] == archive_storage_bytes(row)
+        refs = [ref for log in row.logs for ref in log.snapshots]
+        chunks = [ref for ref in refs if ref.field.startswith(PART_FIELD)]
+        distinct_chunks = {ref.snapshot_digest: ref.size for ref in chunks}
+        manifests = {ref.snapshot_digest: ref.size for ref in refs if ref not in chunks}
+        assert 0 < len(distinct_chunks) < len(chunks)
+        assert len(manifests) == 2
+        assert detail["by_field"] == {
+            "chunks": sum(distinct_chunks.values()), "shared": sum(manifests.values()),
+        }
+        assert detail["snapshot_ref_bytes"] == sum(
+            len(ref.field) + len(ref.snapshot_digest) for ref in chunks
+        )
+        assert detail["snapshot_count"] == len(distinct_chunks) + len(manifests)
+        assert detail["snapshot_refs"] == len(refs)
+    assert detail["snapshots"] == sum(detail["by_field"].values())
+    assert detail["total"] == sum(
+        detail[key] for key in ("envelope", "logs", "snapshots", "snapshot_ref_bytes")
+    )
+    # The long round-3 body lands in logs, not snapshots, so the split names the growth source.
+    assert detail["logs"] > detail["envelope"]
+    store.engine.dispose()
+
+
+def test_save_size_cli_reads_each_owner_through_postgres_rls(pg_server_role, monkeypatch, capsys):
+    from frx.save_schema import Archive
+    from frx.save_size import main
+    from sqlalchemy import select, text
+
+    store = Store(pg_server_role.server)
+    store.initialize(pg_server_role.owner)
+    other_id = str(uuid4())
+    with store.sessions.begin() as session:
+        session.add(UserRecord(id=other_id, username="other", username_key="other", role="player"))
+    archive_ids = {}
+    for owner in (LOCAL_USER_ID, other_id):
+        value = archive()
+        value["data"]["archiveId"] = archive_ids[owner] = str(uuid4())
+        value["data"]["logs"] = []
+        CardStore(owner, store.sessions).write("archives", value["name"], value, 0)
+    with store.sessions() as session:
+        assert session.scalar(text("SELECT row_security_active('archives')"))
+        assert session.scalars(select(Archive.archive_id)).all() == []
+
+    monkeypatch.setenv("FRX_DATABASE_URL", pg_server_role.server)
+    monkeypatch.setenv("PGOPTIONS", "-c default_transaction_read_only=on")
+    main(["--name", value["name"], "--json"])
+    rows = json.loads(capsys.readouterr().out)
+    assert {row["user_id"]: row["archive_id"] for row in rows} == archive_ids
+    main(["--archive-id", archive_ids[other_id], "--json"])
+    assert [row["user_id"] for row in json.loads(capsys.readouterr().out)] == [other_id]
+    with pytest.raises(SystemExit) as error:
+        main(["--archive-id", archive_ids[other_id], "--user-id", LOCAL_USER_ID])
+    assert error.value.code == 2
+    assert "没有匹配的存档" in capsys.readouterr().err
     store.engine.dispose()

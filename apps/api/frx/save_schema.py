@@ -660,21 +660,42 @@ def add_demo_coast(state):
     return state
 
 
-def archive_storage_bytes(row):
-    """Count the stored archive fields and each referenced snapshot once, using reference sizes."""
-    size = len(encoded({
+def archive_storage_breakdown(row):
+    """Measure one save by the same rules as the write quota."""
+    envelope = len(encoded({
         **(row.document_meta or {}), "name": row.name,
         "data": {**(row.data_meta or {}), "archiveId": row.archive_id,
                  "state": row.state.value, "logs": []},
     }).encode())
+    logs = 0
+    reference_count = 0
+    reference_bytes = 0
     snapshots = {}
     for log in row.logs:
-        size += len(encoded(log.fields_value()).encode())
+        logs += len(encoded(log.fields_value()).encode())
         for ref in log.snapshots:
-            snapshots[ref.snapshot_digest] = ref.size
+            reference_count += 1
+            field = ref.field
             if ref.field.startswith(PART_FIELD):
-                size += len(ref.field) + len(ref.snapshot_digest)
-    return size + sum(snapshots.values())
+                reference_bytes += len(ref.field) + len(ref.snapshot_digest)
+                field = "chunks"
+            _, previous = snapshots.get(ref.snapshot_digest, (ref.size, field))
+            snapshots[ref.snapshot_digest] = (ref.size, field if previous == field else "shared")
+    by_field = {}
+    for size, field in snapshots.values():
+        by_field[field] = by_field.get(field, 0) + size
+    snapshot_bytes = sum(by_field.values())
+    return {
+        "envelope": envelope, "logs": logs, "snapshots": snapshot_bytes,
+        "snapshot_ref_bytes": reference_bytes,
+        "total": envelope + logs + snapshot_bytes + reference_bytes,
+        "log_count": len(row.logs), "snapshot_count": len(snapshots),
+        "snapshot_refs": reference_count, "by_field": by_field,
+    }
+
+
+def archive_storage_bytes(row):
+    return archive_storage_breakdown(row)["total"]
 
 
 def archive_value(row, lean=False):
