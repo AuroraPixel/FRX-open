@@ -6,7 +6,6 @@ game's evolving state fields and individual snapshot payloads.
 """
 
 import copy
-import hashlib
 import json
 from contextlib import nullcontext
 from functools import lru_cache
@@ -38,6 +37,7 @@ from sqlalchemy.orm import (
     undefer,
 )
 
+from . import snapshot_storage
 from .card_snapshots import KEPT, NEAR, SERVER_FIELDS, TABLES, is_kept
 from .domain import ROOT
 from .storage import Base
@@ -45,6 +45,7 @@ from .storage import Base
 SNAPSHOT_FIELDS = (
     *SERVER_FIELDS, TABLES, "biographySnapshot", "worldMapSnapshot", "snapshotOfLogs",
 )
+PART_FIELD = "@part:"
 
 
 def clone(value):
@@ -254,35 +255,20 @@ class ArchiveLog(Base):
                 if ref is None or ref.snapshot_digest != payload["sha256"]:
                     raise missing_snapshot()
                 refs.append(ref)
+                refs.extend(parts_for(existing, field))
                 continue
             if field == "snapshotOfLogs":
                 # A summary may carry a copy of the lean logs it replaced. Make this undo
                 # snapshot self-contained before their direct references are collected.
                 payload = expand_nested_snapshots(payload, owned_snapshots)
-            raw = encoded(payload)
-            digest = hashlib.sha256(raw.encode()).hexdigest()
+            raw = encoded(payload).encode()
+            digest = snapshot_storage.digest(raw)
             if ref is None:
                 ref = LogSnapshotRef(user_id=self.user_id, log_id=self.id, field=field)
-            if ref.snapshot_digest != digest or ref.snapshot is None:
-                held = cache.get(digest)
-                if held is None:
-                    session = object_session(self)
-                    if session is not None:
-                        with session.no_autoflush:
-                            held = session.get(Snapshot, (self.user_id, digest))
-                    if held is None:
-                        held = Snapshot(user_id=self.user_id, digest=digest,
-                                        payload=clone(payload), size=len(raw.encode()))
-                    cache[digest] = held
-                ref.snapshot = held
-                ref.snapshot_digest = digest
-                ref.size = held.size
-                if field == TABLES:
-                    from .play_blocks import round_names
-
-                    ref.names = sorted(round_names(payload))
-                else:
-                    ref.names = []
+            if ref.snapshot_digest == digest:
+                refs.extend(parts_for(existing, field))
+            else:
+                refs.extend(store_field(self, ref, payload, raw, cache, existing))
             refs.append(ref)
         self.snapshots = refs
 
@@ -294,6 +280,8 @@ class ArchiveLog(Base):
     def value(self, lean=False, keep_tables=True, seen=None, payloads=None):
         result = self.fields_value()
         for ref in self.snapshots:
+            if ref.field not in SNAPSHOT_FIELDS:
+                continue
             if lean and (ref.field in SERVER_FIELDS or (ref.field == TABLES and not keep_tables)):
                 stub = {"codec": KEPT, "sha256": ref.snapshot_digest, "bytes": ref.size}
                 if ref.field == TABLES:
@@ -308,6 +296,12 @@ class ArchiveLog(Base):
                     if held is None:
                         raise missing_snapshot()
                     payload = held.payload
+                    if snapshot_storage.parts_of(payload):
+                        refs = {item.field: item for item in self.snapshots}
+                        siblings = parts_for(refs, ref.field)
+                        payload = snapshot_storage.restored(payload, {
+                            item.snapshot_digest: item.snapshot.payload for item in siblings
+                        }, {})
                 else:
                     if ref.snapshot_digest not in payloads:
                         raise missing_snapshot()
@@ -344,6 +338,109 @@ class LogSnapshotRef(Base):
     names: Mapped[list] = mapped_column(JSON, default=list)
     log: Mapped[ArchiveLog] = relationship(back_populates="snapshots", overlaps="snapshot")
     snapshot: Mapped[Snapshot] = relationship(overlaps="log,snapshots")
+
+
+def parts_for(refs, field):
+    prefix = f"{PART_FIELD}{field}:"
+    return [ref for name, ref in refs.items() if name.startswith(prefix)]
+
+
+def put_snapshot(log, digest, payload, raw, cache):
+    if digest not in cache:
+        session = object_session(log)
+        held = session.get(Snapshot, (log.user_id, digest)) if session is not None else None
+        cache[digest] = held if held is not None else Snapshot(
+            user_id=log.user_id, digest=digest, payload=clone(payload), size=len(raw),
+        )
+    return cache[digest]
+
+
+def attach(ref, held):
+    ref.snapshot = held
+    ref.snapshot_digest = held.digest
+    ref.size = held.size
+
+
+def store_field(log, ref, payload, raw, cache, existing):
+    stored, parts = snapshot_storage.stored_payload(ref.field, payload, raw)
+    stored_raw = encoded(stored).encode() if parts else raw
+    digest = snapshot_storage.digest(stored_raw)
+    if digest == ref.snapshot_digest:
+        return parts_for(existing, ref.field)
+    attach(ref, put_snapshot(log, digest, stored, stored_raw, cache))
+    if ref.field == TABLES:
+        from .play_blocks import round_names
+
+        ref.names = sorted(round_names(payload))
+    else:
+        ref.names = []
+    refs = []
+    for index, (key, part) in enumerate(parts.items()):
+        field = f"{PART_FIELD}{ref.field}:{index}"
+        child = existing.get(field)
+        if child is None:
+            child = LogSnapshotRef(user_id=log.user_id, log_id=log.id, field=field, names=[])
+        attach(child, put_snapshot(log, key, part, encoded(part).encode(), cache))
+        refs.append(child)
+    return refs
+
+
+def snapshot_rows(session, user_id, digests):
+    found = {}
+    ordered = sorted(set(digests))
+    for start in range(0, len(ordered), 400):
+        rows = session.scalars(select(Snapshot).options(undefer(Snapshot.payload)).where(
+            Snapshot.user_id == user_id, Snapshot.digest.in_(ordered[start:start + 400]),
+        ))
+        found.update({row.digest: row for row in rows})
+    needed = set(ordered) - found.keys()
+    found.update({row.digest: row for row in session.new if isinstance(row, Snapshot)
+                  and row.user_id == user_id and row.digest in needed})
+    return found
+
+
+def snapshot_payloads(session, user_id, digests):
+    with session.no_autoflush:
+        roots = {key: row.payload for key, row in snapshot_rows(session, user_id, digests).items()}
+        parts = {key for value in roots.values() for key in snapshot_storage.parts_of(value)}
+        gathered = {key: row.payload for key, row in snapshot_rows(session, user_id, parts).items()}
+    decoded = {}
+    return {
+        key: snapshot_storage.restored(value, gathered, decoded) for key, value in roots.items()
+    }
+
+
+def compact_archive_snapshots(row):
+    """Replace large standalone snapshots in an existing archive within the owner's transaction."""
+    session = object_session(row)
+    if session is None:
+        return 0
+    with session.no_autoflush:
+        candidates = {ref.snapshot_digest for log in row.logs for ref in log.snapshots
+                      if ref.field in SNAPSHOT_FIELDS and ref.size >= snapshot_storage.MINIMUM * 2}
+        stored = snapshot_rows(session, row.user_id, candidates)
+        originals = {key: item.payload for key, item in stored.items()
+                     if not snapshot_storage.parts_of(item.payload)}
+        if not originals:
+            return 0
+        cache = {}
+        count = 0
+        for log in row.logs:
+            fields = {ref.field: ref for ref in log.snapshots}
+            converted = []
+            for ref in tuple(log.snapshots):
+                if ref.field not in SNAPSHOT_FIELDS or ref.snapshot_digest not in originals:
+                    continue
+                payload = originals[ref.snapshot_digest]
+                before = ref.snapshot_digest
+                raw = encoded(payload).encode()
+                converted.extend(store_field(log, ref, payload, raw, cache, fields))
+                if before != ref.snapshot_digest:
+                    count += 1
+            if converted:
+                added = [ref for ref in converted if ref.field not in fields]
+                log.snapshots = [*log.snapshots, *added]
+        return count
 
 
 MEMORY_FIELDS = {
@@ -557,43 +654,47 @@ def add_demo_coast(state):
     for field in ("terrains", "main_regions", "sub_regions", "points_of_interest"):
         existing = world.get(field) or []
         names = {entry.get("name") for entry in existing if isinstance(entry, dict)}
-        world[field] = existing + [clone(entry) for entry in expanded[field] if entry["name"] not in names]
+        world[field] = existing + [
+            clone(entry) for entry in expanded[field] if entry["name"] not in names
+        ]
     return state
 
 
 def archive_storage_breakdown(row):
-    """Break ``archive_storage_bytes`` down so a full save can be diagnosed.
-
-    The total is kept byte-for-byte identical to ``archive_storage_bytes``: the same envelope,
-    the same per-log ``fields_value()`` and the same digest-keyed snapshot set. Callers that only
-    need the number should keep using ``archive_storage_bytes``; this is for explaining where the
-    bytes went (issue #36: a save that reached 50 MB again after the dedup fix).
-    """
+    """Measure one save by the same rules as the write quota."""
     envelope = len(encoded({
         **(row.document_meta or {}), "name": row.name,
         "data": {**(row.data_meta or {}), "archiveId": row.archive_id,
                  "state": row.state.value, "logs": []},
     }).encode())
-    log_bytes = 0
+    logs = 0
+    reference_count = 0
+    reference_bytes = 0
     snapshots = {}
     for log in row.logs:
-        log_bytes += len(encoded(log.fields_value()).encode())
+        logs += len(encoded(log.fields_value()).encode())
         for ref in log.snapshots:
-            snapshots[ref.snapshot_digest] = ref.size
-    snapshot_bytes = sum(snapshots.values())
+            reference_count += 1
+            field = ref.field
+            if ref.field.startswith(PART_FIELD):
+                reference_bytes += len(ref.field) + len(ref.snapshot_digest)
+                field = "chunks"
+            _, previous = snapshots.get(ref.snapshot_digest, (ref.size, field))
+            snapshots[ref.snapshot_digest] = (ref.size, field if previous == field else "shared")
+    by_field = {}
+    for size, field in snapshots.values():
+        by_field[field] = by_field.get(field, 0) + size
+    snapshot_bytes = sum(by_field.values())
     return {
-        "envelope": envelope,
-        "logs": log_bytes,
-        "snapshots": snapshot_bytes,
-        "total": envelope + log_bytes + snapshot_bytes,
-        "log_count": len(row.logs),
-        "snapshot_count": len(snapshots),
-        "snapshot_refs": sum(len(log.snapshots) for log in row.logs),
+        "envelope": envelope, "logs": logs, "snapshots": snapshot_bytes,
+        "snapshot_ref_bytes": reference_bytes,
+        "total": envelope + logs + snapshot_bytes + reference_bytes,
+        "log_count": len(row.logs), "snapshot_count": len(snapshots),
+        "snapshot_refs": reference_count, "by_field": by_field,
     }
 
 
 def archive_storage_bytes(row):
-    """Count the stored archive fields and each referenced snapshot once, using reference sizes."""
     return archive_storage_breakdown(row)["total"]
 
 
@@ -605,27 +706,11 @@ def archive_value(row, lean=False):
     logs = sorted(row.logs, key=lambda item: item.position)
     needed = {
         ref.snapshot_digest for at, log in enumerate(logs) for ref in log.snapshots
-        if not lean or ref.field not in SERVER_FIELDS
-        and (ref.field != TABLES or at == 0 or at >= len(logs) - NEAR)
+        if ref.field in SNAPSHOT_FIELDS and (not lean or ref.field not in SERVER_FIELDS
+        and (ref.field != TABLES or at == 0 or at >= len(logs) - NEAR))
     }
     session = object_session(row)
-    payloads = None
-    if session is not None:
-        payloads = {}
-        ordered = sorted(needed)
-        with session.no_autoflush:
-            for start in range(0, len(ordered), 400):
-                snapshots = session.scalars(
-                    select(Snapshot).options(undefer(Snapshot.payload)).where(
-                        Snapshot.user_id == row.user_id,
-                        Snapshot.digest.in_(ordered[start:start + 400]),
-                    )
-                )
-                payloads.update({held.digest: held.payload for held in snapshots})
-            # Newly created snapshots may not have been flushed yet.
-            payloads.update({held.digest: held.payload for held in session.new
-                             if isinstance(held, Snapshot) and held.user_id == row.user_id
-                             and held.digest in needed})
+    payloads = snapshot_payloads(session, row.user_id, needed) if session is not None else None
     seen = set()
     return {**clone(row.document_meta or {}), "name": row.name,
             "data": {**clone(row.data_meta or {}), "archiveId": row.archive_id,
@@ -640,13 +725,7 @@ def materialize_value(session, user_id, value):
     stubs = [(log, field) for log in value["data"].get("logs", [])
              for field in SNAPSHOT_FIELDS if is_kept(log.get(field))]
     digests = {log[field]["sha256"] for log, field in stubs}
-    found = {}
-    ordered = sorted(digests)
-    for start in range(0, len(ordered), 400):
-        rows = session.scalars(select(Snapshot).options(undefer(Snapshot.payload)).where(
-            Snapshot.user_id == user_id, Snapshot.digest.in_(ordered[start:start + 400]),
-        ))
-        found.update({row.digest: row.payload for row in rows})
+    found = snapshot_payloads(session, user_id, digests)
     if digests - found.keys():
         raise missing_snapshot()
     for log, field in stubs:
@@ -662,7 +741,17 @@ def expand_nested_snapshots(value, owned, resolving=None):
         active = resolving or set()
         if ref is None or digest in active or ref.snapshot is None:
             raise missing_snapshot()
-        return expand_nested_snapshots(ref.snapshot.payload, owned, active | {digest})
+        session = object_session(ref)
+        if session is None:
+            restored = ref.snapshot.payload
+            if snapshot_storage.parts_of(restored):
+                parts = parts_for({item.field: item for item in ref.log.snapshots}, ref.field)
+                restored = snapshot_storage.restored(restored, {
+                    item.snapshot_digest: item.snapshot.payload for item in parts
+                }, {})
+        else:
+            restored = snapshot_payloads(session, ref.user_id, [digest])[digest]
+        return expand_nested_snapshots(restored, owned, active | {digest})
     if isinstance(value, dict):
         return {key: expand_nested_snapshots(item, owned, resolving) for key, item in value.items()}
     if isinstance(value, list):
@@ -700,7 +789,7 @@ def deduplicate_snapshots(session, _context, _instances):
                 replaced[row] = held
     for ref in list(session.new) + list(session.dirty):
         if isinstance(ref, LogSnapshotRef) and ref.snapshot in replaced:
-            ref.snapshot = replaced[ref.snapshot]
+            attach(ref, replaced[ref.snapshot])
     for row in replaced:
         session.expunge(row)
 

@@ -189,7 +189,7 @@ def _storage_limits(session, _flush_context, _instances):
     from fastapi import HTTPException
     from sqlalchemy import func, inspect, select
 
-    from .save_schema import Archive, archive_storage_bytes
+    from .save_schema import Archive, archive_storage_bytes, compact_archive_snapshots
 
     added, written = 0, []
     for row in list(session.new) + list(session.dirty):
@@ -207,6 +207,8 @@ def _storage_limits(session, _flush_context, _instances):
     if limits.save_bytes is not None:
         for row in written:
             size = archive_storage_bytes(row)
+            if size > limits.save_bytes and compact_archive_snapshots(row):
+                size = archive_storage_bytes(row)
             if size > limits.save_bytes:
                 raise HTTPException(
                     413,

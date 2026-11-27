@@ -1,16 +1,14 @@
 """Explain where a save's storage quota is spent.
 
-The 50 MB write limit counts the current state, every log's ordinary fields, and each
-snapshot entity once by digest (``archive_storage_bytes``). When a long save reaches the
-limit it is not obvious which of those grew; this tool prints the same total, split by
-part, so a report can name the field instead of guessing (issue #36).
-
-Nothing is written. Safe to run against a live database.
+The report uses the write quota's accounting. Snapshot entities are counted once per save.
+Chunks appear under ``chunks``, and snapshot entities referenced by multiple ordinary fields
+appear under ``shared``. Chunk reference bytes are reported separately.
+This command only reads the database.
 
 usage:
   uv run python -m frx.save_size                       # all saves
-  uv run python -m frx.save_size --name 毛毛
-  uv run python -m frx.save_size --archive-id 736f2055-...
+  uv run python -m frx.save_size --name <存档名>
+  uv run python -m frx.save_size --archive-id <存档编号> --user-id <用户编号>
   uv run python -m frx.save_size --url sqlite:////path/to/data.db
   uv run python -m frx.save_size --json
 """
@@ -20,12 +18,9 @@ import json
 import os
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
-# auth imports the users table that Archive's foreign key points at; importing it here
-# registers every mapped table before a query configures the mappers (as frx.admin does).
-from . import auth  # noqa: F401
-from .domain import ROOT
+from .auth import UserRecord
+from .card_store import CardStore
 from .save_schema import Archive, archive_storage_breakdown
 from .storage import Store
 
@@ -34,32 +29,33 @@ def _human(size):
     return f"{size / 1048576:.2f} MiB"
 
 
-def _rows(session, name, archive_id):
-    query = select(Archive).where(Archive.deleted.is_(False))
+def report(store, name=None, archive_id=None, user_id=None):
+    """Read each owner's matching saves in their own row-level security transaction."""
+    if user_id is None:
+        # Account rows are visible to the server role so it can look up a user's ID.
+        with store.sessions() as session:
+            owners = session.scalars(select(UserRecord.id).order_by(UserRecord.id)).all()
+    else:
+        owners = [user_id]
+
+    filters = [Archive.deleted.is_(False)]
     if name:
-        query = query.where(Archive.name == name)
+        filters.append(Archive.name == name)
     if archive_id:
-        query = query.where(Archive.archive_id == archive_id)
-    return session.scalars(query.order_by(Archive.name, Archive.archive_id))
-
-
-def report(session, name=None, archive_id=None):
-    """Yield one breakdown dict per matching save, including per-snapshot-field detail."""
-    for row in _rows(session, name, archive_id):
-        detail = archive_storage_breakdown(row)
-        by_field = {}
-        for log in row.logs:
-            for ref in log.snapshots:
-                # A digest is counted once; keep the first field name that references it.
-                by_field.setdefault(ref.field, {})[ref.snapshot_digest] = ref.size
-        detail.update({
-            "name": row.name,
-            "archive_id": row.archive_id,
-            "user_id": row.user_id,
-            "version": row.version,
-            "by_field": {field: sum(sizes.values()) for field, sizes in by_field.items()},
-        })
-        yield detail
+        filters.append(Archive.archive_id == archive_id)
+    for owner in owners:
+        records = CardStore(owner, store.sessions)
+        query = records.records_of("archives").where(*filters).order_by(
+            Archive.name, Archive.archive_id,
+        )
+        with records.sessions() as session:
+            records.read_lock(session)
+            batch = [{
+                "name": row.name, "archive_id": row.archive_id,
+                "user_id": row.user_id, "version": row.version,
+                **archive_storage_breakdown(row),
+            } for row in session.scalars(query)]
+        yield from batch
 
 
 def main(argv=None):
@@ -68,13 +64,14 @@ def main(argv=None):
                         help="数据库连接串；默认取 FRX_DATABASE_URL")
     parser.add_argument("--name", help="只看这个存档名")
     parser.add_argument("--archive-id", help="只看这个存档编号")
+    parser.add_argument("--user-id", help="只查这个用户的存档")
     parser.add_argument("--json", action="store_true", help="输出 JSON")
     args = parser.parse_args(argv)
-    url = args.url or f"sqlite:///{ROOT / '.frx' / 'frx.db'}"
-    store = Store(url)
+    if not args.url:
+        parser.error("请通过 --url 或 FRX_DATABASE_URL 指定数据库")
+    store = Store(args.url)
     try:
-        with Session(store.engine) as session:
-            rows = list(report(session, args.name, args.archive_id))
+        rows = list(report(store, args.name, args.archive_id, args.user_id))
         if not rows:
             parser.error("没有匹配的存档")
         if args.json:
@@ -83,11 +80,13 @@ def main(argv=None):
         for row in rows:
             print(f"存档 {row['name']} ({row['archive_id']}) v{row['version']}")
             print(f"  合计        {_human(row['total'])}")
-            print(f"  当前状态    {_human(row['envelope'])}")
-            print(f"  逐回合文本  {_human(row['logs'])}  ({row['log_count']} 回合)")
-            print(f"  快照(去重)  {_human(row['snapshots'])}  "
+            print(f"  当前状态与元数据  {_human(row['envelope'])}")
+            print(f"  日志字段          {_human(row['logs'])}  ({row['log_count']} 条)")
+            print(f"  快照内容（去重）  {_human(row['snapshots'])}  "
                   f"({row['snapshot_count']} 个实体 / {row['snapshot_refs']} 次引用)")
+            print(f"  分片引用          {_human(row['snapshot_ref_bytes'])}")
             for field, size in sorted(row["by_field"].items(), key=lambda item: -item[1]):
+                field = {"chunks": "分片内容", "shared": "跨字段共享快照"}.get(field, field)
                 print(f"    - {field:<20} {_human(size)}")
     finally:
         store.engine.dispose()
