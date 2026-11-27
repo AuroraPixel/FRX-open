@@ -105,3 +105,37 @@ def test_save_limit_counts_a_shared_snapshot_once_and_keeps_restore_data(
     assert restored["state"]["currentState"]["0"]["B1"]["26"] == "2"
     assert [log["id"] for log in restored["logs"]] == ["round-1", "round-2"]
     store.engine.dispose()
+
+
+def test_storage_breakdown_matches_the_quota_and_splits_growth_sources(tmp_path):
+    """The diagnostic must agree with the number the 413 guard uses (issue #36)."""
+    from frx.save_schema import Archive, archive_storage_breakdown, archive_storage_bytes
+    from sqlalchemy import select
+
+    url = f"sqlite:///{tmp_path}/breakdown.db"
+    store = Store(url)
+    store.initialize()
+    value = archive()
+    state = value["data"]["state"]
+    state["currentState"]["0"]["B1"]["26"] = "8"
+    previous = pack_snapshot({"state": state, "history": "前" * 3000})
+    latest = pack_snapshot({"state": state, "history": "后" * 3000})
+    value["data"]["logs"] = [
+        {"id": "round-1", "type": "ai", "content": "上一回合。", "frxStateSnapshot": previous},
+        {"id": "round-2", "type": "ai", "content": "本回合。",
+         "frxBeforeSnapshot": previous, "frxStateSnapshot": latest},
+        {"id": "round-3", "type": "ai", "content": "又" * 4000, "frxBeforeSnapshot": latest},
+    ]
+    records = CardStore(LOCAL_USER_ID, store.sessions)
+    records.write("archives", value["name"], value, 0, lean=True)
+    with store.sessions() as session:
+        row = session.scalar(select(Archive).where(
+            Archive.archive_id == value["data"]["archiveId"]))
+        detail = archive_storage_breakdown(row)
+    assert detail["total"] == archive_storage_bytes(row)
+    assert detail["total"] == detail["envelope"] + detail["logs"] + detail["snapshots"]
+    # Two distinct packed snapshots: counted once each, not once per reference.
+    assert detail["snapshot_refs"] == 4 and detail["snapshot_count"] == 2
+    # The long round-3 body lands in logs, not snapshots, so the split names the growth source.
+    assert detail["logs"] > detail["envelope"]
+    store.engine.dispose()

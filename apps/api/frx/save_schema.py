@@ -561,19 +561,40 @@ def add_demo_coast(state):
     return state
 
 
-def archive_storage_bytes(row):
-    """Count the stored archive fields and each referenced snapshot once, using reference sizes."""
-    size = len(encoded({
+def archive_storage_breakdown(row):
+    """Break ``archive_storage_bytes`` down so a full save can be diagnosed.
+
+    The total is kept byte-for-byte identical to ``archive_storage_bytes``: the same envelope,
+    the same per-log ``fields_value()`` and the same digest-keyed snapshot set. Callers that only
+    need the number should keep using ``archive_storage_bytes``; this is for explaining where the
+    bytes went (issue #36: a save that reached 50 MB again after the dedup fix).
+    """
+    envelope = len(encoded({
         **(row.document_meta or {}), "name": row.name,
         "data": {**(row.data_meta or {}), "archiveId": row.archive_id,
                  "state": row.state.value, "logs": []},
     }).encode())
+    log_bytes = 0
     snapshots = {}
     for log in row.logs:
-        size += len(encoded(log.fields_value()).encode())
+        log_bytes += len(encoded(log.fields_value()).encode())
         for ref in log.snapshots:
             snapshots[ref.snapshot_digest] = ref.size
-    return size + sum(snapshots.values())
+    snapshot_bytes = sum(snapshots.values())
+    return {
+        "envelope": envelope,
+        "logs": log_bytes,
+        "snapshots": snapshot_bytes,
+        "total": envelope + log_bytes + snapshot_bytes,
+        "log_count": len(row.logs),
+        "snapshot_count": len(snapshots),
+        "snapshot_refs": sum(len(log.snapshots) for log in row.logs),
+    }
+
+
+def archive_storage_bytes(row):
+    """Count the stored archive fields and each referenced snapshot once, using reference sizes."""
+    return archive_storage_breakdown(row)["total"]
 
 
 def archive_value(row, lean=False):
